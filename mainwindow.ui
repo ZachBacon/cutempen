@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CuteMupen 0.0.1</string>
+   <string>CuteMupen</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QWidget" name="layoutWidget">
@@ -338,7 +338,7 @@
            <widget class="QTextBrowser" name="txt_About">
             <property name="source">
              <url>
-              <string>qrc:/docs/docs/about.html</string>
+              <string>qrc:/about/resources/about.html</string>
              </url>
             </property>
             <property name="openExternalLinks">

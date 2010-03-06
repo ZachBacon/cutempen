@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'mainwindow.ui'
 **
-** Created: Fri Mar 5 15:22:58 2010
+** Created: Sat Mar 6 11:53:14 2010
 **      by: Qt User Interface Compiler version 4.5.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -261,7 +261,7 @@ public:
 
         txt_About = new QTextBrowser(layoutWidget3);
         txt_About->setObjectName(QString::fromUtf8("txt_About"));
-        txt_About->setSource(QUrl("qrc:/docs/docs/about.html"));
+        txt_About->setSource(QUrl("qrc:/about/resources/about.html"));
         txt_About->setOpenExternalLinks(true);
 
         verticalLayout->addWidget(txt_About);
@@ -293,7 +293,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "CuteMupen 0.0.1", 0, QApplication::UnicodeUTF8));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "CuteMupen", 0, QApplication::UnicodeUTF8));
         pb_Run->setText(QApplication::translate("MainWindow", "Run", 0, QApplication::UnicodeUTF8));
         pb_Quit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
         pb_Library->setText(QApplication::translate("MainWindow", "Mupen64 library", 0, QApplication::UnicodeUTF8));
