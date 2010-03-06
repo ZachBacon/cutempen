@@ -25,8 +25,16 @@ Building from source code:
   - Mupen64Plus 1.99+ Core source code
 
   Building:
-  - Edit INCPATH in cutemupen.pro to point on Mupen64Plus api/ subdirectory
+  - Edit INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdirectory
   - Run "qmake cutemupen.pro"
-  - Run "make" or, for MSVC users, "nmake"
+  - Run "make"
+
+  Building with MSVC:
+  - Edit INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdirectory
+  - Run "qmake cutemupen.pro"
+  - Run "qmake -tp vc"
+  - Open the .vcproj file using MSVC, and generate the solution
+
+    
  
  
