@@ -119,9 +119,8 @@ int MainWindow::clickedROM(const QModelIndex & index)
 {
   ROMFile = dirModel->filePath(index);
 #if defined(Q_WS_WIN)
-  ROMFile.replace("/", "\\");
+  ROMFile.replace(QChar('/'), QChar('\\'));
 #endif
-  //QMessageBox::information(this, "ROM Selected", ROMFile);
   return 0;
 }
 
@@ -138,7 +137,9 @@ int MainWindow::clickedRun()
 		return 1;
     ApplyConfiguration();
 
-    const char* l_ROMFilepath = ROMFile.toStdString().c_str();
+	// (vk) this doesn't seem to get desired result on windows...
+	//const char* l_ROMFilepath = ROMFile.toStdString().c_str();
+    const char* l_ROMFilepath = ROMFile.toLocal8Bit();
 
     /* load ROM image */
     FILE *fPtr = fopen(l_ROMFilepath, "rb");
@@ -186,10 +187,11 @@ int MainWindow::clickedRun()
     }
     /* the core copies the ROM image, so we can release this buffer immediately */
     free(ROM_buffer);
-
+	printf("Plugin dir is:\n%s\n", Mupen64PluginDir.toStdString().c_str());
     /* search for and load plugins */
     m64p_error rval = PluginSearchLoad(
         l_ConfigUI, Mupen64PluginDir.toStdString().c_str());
+		//l_ConfigUI, Mupen64PluginDir.toLocal8Bit());
     if (rval != M64ERR_SUCCESS)
     {
         QMessageBox::critical(this, "Plugin Search",

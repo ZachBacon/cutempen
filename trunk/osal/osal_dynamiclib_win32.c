@@ -31,18 +31,15 @@ m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibra
     if (pLibHandle == NULL || pccLibraryPath == NULL)
         return M64ERR_INPUT_ASSERT;
 
-    *pLibHandle = LoadLibrary((LPCWSTR)pccLibraryPath);
-	//*pLibHandle = LoadLibraryEx((LPCWSTR)pccLibraryPath, 0, LOAD_WITH_ALTERED_SEARCH_PATH);
-
+	*pLibHandle = LoadLibraryA((LPCSTR)pccLibraryPath);
     if (*pLibHandle == NULL)
     {
-        //char *pchErrMsg;
-		LPVOID pchErrMsg;
+        LPVOID pchErrMsg;
         DWORD dwErr = GetLastError();
-		printf("LoadLibrary returned error code %u\n", dwErr);
+        printf("LoadLibrary returned error code %lu\n", dwErr);
         FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwErr,
                       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &pchErrMsg, 0, NULL);
-        fprintf(stderr, "LoadLibrary('%s') error: %s\n", pccLibraryPath, pchErrMsg);
+        fprintf(stderr, "LoadLibrary('%s') error: %s\n", pccLibraryPath, (char*)pchErrMsg);
         LocalFree(pchErrMsg);
         return M64ERR_INPUT_NOT_FOUND;
     }

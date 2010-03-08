@@ -1,8 +1,7 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-02-26T16:25:43
 # -------------------------------------------------
-CONFIG += debug \
-    console
+CONFIG += console release
 TARGET = cutemupen
 TEMPLATE = app
 SOURCES += m64p/core_interface.c \
@@ -17,9 +16,10 @@ HEADERS += m64p/core_interface.h \
     osal/osal_files.h \
     osal/osal_preproc.h \
     version.h
-INCLUDEPATH += /usr/include/mupen64plus
+INCLUDEPATH += C:\dev\mupen64plus-bundle-src-1.99.3\source\mupen64plus-core\src\api
 FORMS += mainwindow.ui \
     mainwindow.ui
+win32:CONFIG += embed_manifest_exe
 win32:SOURCES += osal/osal_files_win32.cpp \
     osal/osal_dynamiclib_win32.c
 !win32:SOURCES += osal/osal_files_unix.c \
