@@ -75,7 +75,7 @@ void MainWindow::chooseMupen64PluginDir(bool skipDialog)
         {
             envSeparator = ";";
             envLD = "PATH";
-            Mupen64PluginDirNative.replace("/", "\\");
+            Mupen64PluginDirNative.replace(QChar('/'), QChar('\\'));
         }
 #elif defined(Q_WS_MAC)
         {
@@ -97,6 +97,11 @@ void MainWindow::chooseMupen64PluginDir(bool skipDialog)
         // Set current directory
         QDir::setCurrent(Mupen64PluginDir);
 
+#if defined(Q_WS_WIN)
+{
+		Mupen64PluginDir = Mupen64PluginDirNative;
+}
+#endif
 	//QString currentEnv (getenv(envLD.toStdString().c_str()));
 	//QMessageBox::information(this, "Now is Current " + envLD, currentEnv);
     }
