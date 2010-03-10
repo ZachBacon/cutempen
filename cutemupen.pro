@@ -16,7 +16,7 @@ HEADERS += m64p/core_interface.h \
     osal/osal_files.h \
     osal/osal_preproc.h \
     version.h
-INCLUDEPATH += C:\dev\mupen64plus-bundle-src-1.99.3\source\mupen64plus-core\src\api
+INCLUDEPATH += /usr/include/mupen64plus
 FORMS += mainwindow.ui \
     mainwindow.ui
 win32:CONFIG += embed_manifest_exe

@@ -24,6 +24,7 @@
 
 #include <QFileDialog>            // For directory selections
 #include <QMessageBox>
+#include <QDir>
 
 #include "osal/osal_preproc.h" // For default core library filename
 
@@ -43,7 +44,7 @@ void MainWindow::chooseMupen64Library(bool skipDialog)
     if (!Mupen64Library.isEmpty())
     {
         // Set label to the chosen directory
-        ui->lb_Library->setText(Mupen64Library);
+        ui->le_Library->setText(Mupen64Library);
 #if defined(Q_WS_WIN)
         {
             Mupen64Library.replace("/", "\\");
@@ -66,7 +67,7 @@ void MainWindow::chooseMupen64PluginDir(bool skipDialog)
     if (!Mupen64PluginDir.isEmpty())
     {
         // Set label to the chosen directory
-        ui->lb_Program->setText(Mupen64PluginDir);
+        ui->le_PluginsDir->setText(Mupen64PluginDir);
         // Tweak PATH or LD_LIBRARY depending on OS
         QString envSeparator;
         QString envLD;
@@ -120,7 +121,7 @@ void MainWindow::chooseMupen64DataDir(bool skipDialog)
     }
     // Set label to the chosen directory
     if (!Mupen64DataDir.isEmpty())
-        ui->lb_DataDir->setText(Mupen64DataDir);
+        ui->le_DataDir->setText(Mupen64DataDir);
 }
 
 void MainWindow::chooseMupen64ConfigDir(bool skipDialog)
@@ -136,7 +137,7 @@ void MainWindow::chooseMupen64ConfigDir(bool skipDialog)
     }
     // Set label to the chosen directory
     if (!Mupen64ConfigDir.isEmpty())
-        ui->lb_ConfigDir->setText(Mupen64ConfigDir);
+        ui->le_ConfigDir->setText(Mupen64ConfigDir);
 }
 
 void MainWindow::chooseROMsDir(bool skipDialog)
@@ -153,9 +154,15 @@ void MainWindow::chooseROMsDir(bool skipDialog)
     if (!ROMsDir.isEmpty())
     {
         // Set the label to the chosen directory
-        ui->lb_ROMsDirectory->setText(ROMsDir);
+        ui->le_ROMsDir->setText(ROMsDir);
         // Update the ROM browser view
+        QStringList filters;
+        filters << "*.n64" << "*.z64" << "*.N64" << "*.Z64";
         QModelIndex idx = dirModel->index(ROMsDir, 0);
+        //dirModel->setFilter(QDir::AllDirs);
+        //dirModel->setNameFilters(filters);
+        //dirModel->refresh();
+
         ui->treeView->setModel(dirModel);
         ui->treeView->setRootIndex(idx);
         ui->treeView->resizeColumnToContents(0);
@@ -163,6 +170,7 @@ void MainWindow::chooseROMsDir(bool skipDialog)
         ui->treeView->hideColumn(2);
         ui->treeView->hideColumn(3);
         //ui->treeView->expandAll();
+
 
         // (vk) for more recent Qt version (4.6+), use fsmodel
         //QFileSystemModel *fsmodel = new QFileSystemModel();
