@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // For the ROM browser
     dirModel = new QDirModel();
+    //dirList, QDir::AllEntries, QDir::DirsFirst|QDir::IgnoreCase|QDir::Name);
 
     // Get settings for the paths. If they're empty, prompt for selection
     Mupen64Library = settings.value ("Paths/Mupen64Library", "").toString();
