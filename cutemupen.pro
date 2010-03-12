@@ -1,10 +1,12 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-02-26T16:25:43
 # -------------------------------------------------
-CONFIG += console release
+CONFIG += console \
+    release
 TARGET = cutemupen
 TEMPLATE = app
-SOURCES += m64p/core_interface.c \
+SOURCES += settings.cpp \
+    m64p/core_interface.c \
     m64p/plugin.cpp \
     main.cpp \
     mainwindow.cpp \

@@ -156,12 +156,12 @@ void MainWindow::chooseROMsDir(bool skipDialog)
         // Set the label to the chosen directory
         ui->le_ROMsDir->setText(ROMsDir);
         // Update the ROM browser view
+        dirModel->setSorting(QDir::DirsFirst);
+        dirModel->setFilter(QDir::Files|QDir::AllDirs|QDir::NoDotAndDotDot);
         QStringList filters;
-        filters << "*.n64" << "*.z64" << "*.N64" << "*.Z64";
+        filters << "*.n64" << "*.v64" << "*.z64";
+        dirModel->setNameFilters(filters);
         QModelIndex idx = dirModel->index(ROMsDir, 0);
-        //dirModel->setFilter(QDir::AllDirs);
-        //dirModel->setNameFilters(filters);
-        //dirModel->refresh();
 
         ui->treeView->setModel(dirModel);
         ui->treeView->setRootIndex(idx);
@@ -170,7 +170,6 @@ void MainWindow::chooseROMsDir(bool skipDialog)
         ui->treeView->hideColumn(2);
         ui->treeView->hideColumn(3);
         //ui->treeView->expandAll();
-
 
         // (vk) for more recent Qt version (4.6+), use fsmodel
         //QFileSystemModel *fsmodel = new QFileSystemModel();
