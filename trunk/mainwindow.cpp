@@ -59,7 +59,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // For the ROM browser
     dirModel = new QDirModel();
-    //dirList, QDir::AllEntries, QDir::DirsFirst|QDir::IgnoreCase|QDir::Name);
 
     // Get settings for the paths. If they're empty, prompt for selection
     Mupen64Library = settings.value ("Paths/Mupen64Library", "").toString();
@@ -95,6 +94,24 @@ MainWindow::MainWindow(QWidget *parent) :
     // Restore OSD setting
     ui->cb_OSD->setChecked(settings.value("Video/OSD", true).toBool());
 
+    // Restore EmuMode setting
+    int emuMode = settings.value("Settings/EmuMode", 2).toInt();
+    switch (emuMode)
+    {
+      case 2:
+        ui->rb_DynaRec->setChecked(true);
+        break;
+      case 1:
+        ui->rb_Interpreter->setChecked(true);
+        break;
+      case 0:
+        ui->rb_PureInterpreter->setChecked(true);
+        break;
+      default:
+        QMessageBox::warning(this, tr("Unknown EmuMode setting"),
+            tr("Invalid value for EmuMode"));
+    }
+
     ROMFile = "";
 }
 
@@ -129,7 +146,7 @@ int MainWindow::clickedRun()
 {
     if (ROMFile.isEmpty())
     {
-        QMessageBox::warning(this, "No ROM selected",
+        QMessageBox::warning(this, tr("No ROM selected"),
             tr("Please select a ROM file in ""ROMs"" tab."));
         return 0;
     }
@@ -188,14 +205,14 @@ int MainWindow::clickedRun()
     }
     /* the core copies the ROM image, so we can release this buffer immediately */
     free(ROM_buffer);
-	printf("Plugin dir is:\n%s\n", Mupen64PluginDir.toStdString().c_str());
+
     /* search for and load plugins */
     m64p_error rval = PluginSearchLoad(
         l_ConfigUI, Mupen64PluginDir.toStdString().c_str());
 		//l_ConfigUI, Mupen64PluginDir.toLocal8Bit());
     if (rval != M64ERR_SUCCESS)
     {
-        QMessageBox::critical(this, "Plugin Search",
+        QMessageBox::critical(this, tr("Plugin Search"),
             tr("Error searching for plugins"));
         (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
         (*CoreShutdown)();
@@ -259,8 +276,8 @@ m64p_error MainWindow::initMupen64()
     CoreVersionFunc = (ptr_PluginGetVersion) osal_dynlib_getproc(CoreHandle, "PluginGetVersion");
     if (CoreVersionFunc == NULL)
     {
-        QMessageBox::critical(this, "PluginGetVersion",
-            "Couldn't find PluginGetVersion()");
+        QMessageBox::critical(this, tr("PluginGetVersion"),
+            tr("Couldn't find PluginGetVersion()"));
         osal_dynlib_close(CoreHandle);
         CoreHandle = NULL;
         return M64ERR_INPUT_INVALID;
@@ -332,7 +349,7 @@ m64p_error MainWindow::initMupen64()
 
     if (rval != M64ERR_SUCCESS)
     {
-        QMessageBox::critical(this, "Calling CoreStartup()",
+        QMessageBox::critical(this, tr("Calling CoreStartup()"),
             tr("Error starting Mupen64Plus core library."));
         DetachCoreLib();
         return rval;
@@ -342,8 +359,8 @@ m64p_error MainWindow::initMupen64()
     rval = OpenConfigurationHandles();
     if (rval != M64ERR_SUCCESS)
     {
-        QMessageBox::critical(this, "Loading Configuration",
-            tr("Problem loading config !"));
+        QMessageBox::critical(this, tr("Loading Configuration"),
+            tr("Problem while loading configuration !"));
         (*CoreShutdown)();
         DetachCoreLib();
         return rval;
@@ -414,8 +431,6 @@ m64p_error MainWindow::DetachCoreLib()
   osal_dynlib_close(CoreHandle);
   CoreHandle = NULL;
 
-  //QMessageBox::information(this, "Detaching Core lib", "Success !");
-
   return M64ERR_SUCCESS;
 }
 
@@ -446,7 +461,6 @@ m64p_error MainWindow::OpenConfigurationHandles(void)
     }
 
     /* Set default values for my Config parameters */
-    // @TODO Use Mupen64PluginDir for PluginDir ?
     (*ConfigSetDefaultString)(l_ConfigUI, "PluginDir", OSAL_CURRENT_DIR, "Directory in which to search for plugins");
     (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "m64p_video_rice" OSAL_DLL_EXTENSION, "Filename of video plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "m64p_audio_jttl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
@@ -475,36 +489,6 @@ m64p_error MainWindow::SaveConfigurationOptions(void)
         (*ConfigSetParameter)(l_ConfigUI, "RspPlugin", M64TYPE_STRING, g_RspPlugin);
 
     return (*ConfigSaveFile)();
-}
-
-void MainWindow::ApplyConfiguration ()
-{
-  QSettings settings ("CuteMupen", "CuteMupen");
-
-  int FullScreen;
-  ui->cb_Fullscreen->isChecked() ? FullScreen = 1 : FullScreen = 0;
-  (*ConfigSetParameter)(l_ConfigVideo, "Fullscreen", M64TYPE_BOOL, &FullScreen);
-  settings.setValue("Video/Fullscreen", ui->cb_Fullscreen->isChecked());
-
-  QString res = ui->cb_Resolution->currentText();
-  QRegExp resRegex ("^[0-9]{3,4}x[0-9]{3,4}$");
-  if (resRegex.exactMatch(res))
-  {
-    int xres, yres;
-    xres = res.section("x", 0, 0).toInt();   // leftmost field from "x" separator
-    yres = res.section("x", -1, -1).toInt(); // rightmost field from "x" separator
-    (*ConfigSetParameter)(l_ConfigVideo, "ScreenWidth", M64TYPE_INT, &xres);
-    (*ConfigSetParameter)(l_ConfigVideo, "ScreenHeight", M64TYPE_INT, &yres);
-    settings.setValue("Video/Resolution", res);
-  }
-  else
-    QMessageBox::warning(this, tr("Invalid resolution"),
-        tr("This resolution is invalid: ") + res);
-
-  int Osd;
-  ui->cb_OSD->isChecked() ? Osd = 1 : Osd = 0;
-  (*ConfigSetParameter)(l_ConfigCore, "OnScreenDisplay", M64TYPE_BOOL, &Osd);
-  settings.setValue("Video/OSD", ui->cb_OSD->isChecked());
 }
 
 void DebugCallback(void *Context, int level, const char *message)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
-    <height>429</height>
+    <width>752</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,302 +20,224 @@
    <string>CuteMupen</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>731</width>
-      <height>391</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gl_Main">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetNoConstraint</enum>
-     </property>
-     <item row="2" column="0">
-      <widget class="QPushButton" name="pb_Run">
-       <property name="text">
-        <string>Run</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="QPushButton" name="pb_Quit">
-       <property name="text">
-        <string>Quit</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="0" colspan="4">
-      <widget class="QTabWidget" name="tab_Paths">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>1</horstretch>
-         <verstretch>1</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="currentIndex">
-        <number>3</number>
-       </property>
-       <widget class="QWidget" name="tab">
-        <attribute name="title">
-         <string>Paths</string>
-        </attribute>
-        <widget class="QWidget" name="layoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>715</width>
-           <height>231</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gl_Paths">
-          <item row="0" column="2">
-           <widget class="QPushButton" name="pb_Library">
-            <property name="text">
-             <string>Browse...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="lb_Library">
-            <property name="text">
-             <string>M64+ library file</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="pb_Plugins">
-            <property name="text">
-             <string>Browse...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QPushButton" name="pb_DataDir">
-            <property name="text">
-             <string>Browse...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QPushButton" name="pb_ConfigDir">
-            <property name="text">
-             <string>Browse...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QPushButton" name="pb_ROMdir">
-            <property name="text">
-             <string>Browse...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="lb_Program">
-            <property name="text">
-             <string>M64+ plugins directory</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="lb_DataDir">
-            <property name="text">
-             <string>M64+ data directory</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="lb_ConfigDir">
-            <property name="text">
-             <string>M64+ config directory</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="lb_ROMsDirectory">
-            <property name="text">
-             <string>ROMs directory</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="le_Library"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="le_PluginsDir"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="le_DataDir"/>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="le_ConfigDir"/>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="le_ROMsDir"/>
-          </item>
-         </layout>
-        </widget>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gl_Main">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="pb_Run">
+        <property name="text">
+         <string>Run</string>
+        </property>
        </widget>
-       <widget class="QWidget" name="tab_Settings">
-        <attribute name="title">
-         <string>Settings</string>
-        </attribute>
-        <widget class="QWidget" name="layoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>551</width>
-           <height>71</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gl_Settings" columnstretch="0,0,1">
-          <property name="verticalSpacing">
-           <number>6</number>
-          </property>
+      </item>
+      <item row="2" column="3">
+       <widget class="QPushButton" name="pb_Quit">
+        <property name="text">
+         <string>Quit</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0" colspan="4">
+       <widget class="QTabWidget" name="tab_Paths">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>Paths</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
-           <widget class="QCheckBox" name="cb_Fullscreen">
-            <property name="text">
-             <string>Fullscreen</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="cb_Resolution">
-            <property name="maximumSize">
-             <size>
-              <width>110</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-            <item>
-             <property name="text">
-              <string>640x480</string>
-             </property>
+           <layout class="QGridLayout" name="gl_Paths">
+            <item row="0" column="2">
+             <widget class="QPushButton" name="pb_Library">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+             </widget>
             </item>
-            <item>
-             <property name="text">
-              <string>720x480</string>
-             </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="lb_Library">
+              <property name="text">
+               <string>M64+ library file</string>
+              </property>
+             </widget>
             </item>
-            <item>
-             <property name="text">
-              <string>800x600</string>
-             </property>
+            <item row="1" column="2">
+             <widget class="QPushButton" name="pb_Plugins">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+             </widget>
             </item>
-            <item>
-             <property name="text">
-              <string>1024x768</string>
-             </property>
+            <item row="2" column="2">
+             <widget class="QPushButton" name="pb_DataDir">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+             </widget>
             </item>
-           </widget>
+            <item row="3" column="2">
+             <widget class="QPushButton" name="pb_ConfigDir">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="QPushButton" name="pb_ROMdir">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="lb_Program">
+              <property name="text">
+               <string>M64+ plugins directory</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="lb_DataDir">
+              <property name="text">
+               <string>M64+ data directory</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="lb_ConfigDir">
+              <property name="text">
+               <string>M64+ config directory</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="lb_ROMsDirectory">
+              <property name="text">
+               <string>ROMs directory</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="le_Library"/>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="le_PluginsDir"/>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="le_DataDir"/>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="le_ConfigDir"/>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="le_ROMsDir"/>
+            </item>
+           </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QCheckBox" name="cb_OSD">
-            <property name="text">
-             <string>On Screen Display</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <spacer name="horizontalSpacer_2">
+           <spacer name="verticalSpacer_2">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>20</width>
+              <height>40</height>
              </size>
             </property>
            </spacer>
           </item>
          </layout>
         </widget>
-       </widget>
-       <widget class="QWidget" name="tab_ROMs">
-        <attribute name="title">
-         <string>ROMs</string>
-        </attribute>
-        <widget class="QTreeView" name="treeView">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>10</y>
-           <width>711</width>
-           <height>311</height>
-          </rect>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>1</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <family>AlArabiya</family>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="alternatingRowColors">
-          <bool>true</bool>
-         </property>
-         <property name="uniformRowHeights">
-          <bool>true</bool>
-         </property>
-         <attribute name="headerVisible">
-          <bool>false</bool>
+        <widget class="QWidget" name="tab_Settings">
+         <attribute name="title">
+          <string>Settings</string>
          </attribute>
-        </widget>
-       </widget>
-       <widget class="QWidget" name="tab_About">
-        <attribute name="title">
-         <string>About</string>
-        </attribute>
-        <widget class="QWidget" name="layoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>11</x>
-           <y>10</y>
-           <width>701</width>
-           <height>311</height>
-          </rect>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetDefaultConstraint</enum>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="1" column="0">
+           <layout class="QGridLayout" name="gl_Settings" columnstretch="0,0,2">
+            <property name="verticalSpacing">
+             <number>12</number>
             </property>
-            <item>
-             <spacer name="horizontalSpacer_3">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="cb_Fullscreen">
+              <property name="text">
+               <string>Fullscreen</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="cb_Resolution">
+              <property name="maximumSize">
+               <size>
+                <width>110</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="editable">
+               <bool>true</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>640x480</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>720x480</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>800x600</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>1024x768</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="cb_OSD">
+              <property name="text">
+               <string>On Screen Display</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <spacer name="horizontalSpacer_2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -327,59 +249,187 @@
               </property>
              </spacer>
             </item>
-            <item>
-             <widget class="QLabel" name="lb_About_NameVersion">
+            <item row="2" column="0" colspan="3">
+             <widget class="QGroupBox" name="gb_EmuMode">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="font">
-               <font>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
+              <property name="title">
+               <string>Emulator Mode</string>
               </property>
-              <property name="text">
-               <string notr="true">CuteMupen Version</string>
-              </property>
+              <widget class="QWidget" name="">
+               <property name="geometry">
+                <rect>
+                 <x>20</x>
+                 <y>30</y>
+                 <width>453</width>
+                 <height>25</height>
+                </rect>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_6">
+                <item row="0" column="0">
+                 <widget class="QRadioButton" name="rb_PureInterpreter">
+                  <property name="text">
+                   <string>Pure interpreter</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QRadioButton" name="rb_Interpreter">
+                  <property name="text">
+                   <string>Cached interpreter</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QRadioButton" name="rb_DynaRec">
+                  <property name="text">
+                   <string>Dynamic recompiler</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </item>
-          <item>
-           <widget class="QTextBrowser" name="txt_About">
-            <property name="source">
-             <url>
-              <string>qrc:/about/resources/about.html</string>
-             </url>
+          <item row="2" column="0">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
-            <property name="openExternalLinks">
+            <property name="sizeType">
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_ROMs">
+         <attribute name="title">
+          <string>ROMs</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QTreeView" name="treeView">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>1</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>AlArabiya</family>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
+            <property name="uniformRowHeights">
+             <bool>true</bool>
+            </property>
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
            </widget>
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="tab_About">
+         <attribute name="title">
+          <string>About</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetDefaultConstraint</enum>
+              </property>
+              <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QLabel" name="lb_About_NameVersion">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string notr="true">CuteMupen Version</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QTextBrowser" name="txt_About">
+              <property name="source">
+               <url>
+                <string>qrc:/about/resources/about.html</string>
+               </url>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </widget>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
@@ -393,8 +443,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>579</x>
-     <y>339</y>
+     <x>741</x>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
      <x>449</x>
@@ -409,8 +459,8 @@
    <slot>clickedRun()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>96</x>
-     <y>339</y>
+     <x>94</x>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
      <x>179</x>
@@ -441,8 +491,8 @@
    <slot>chooseMupen64Library()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>81</x>
-     <y>90</y>
+     <x>729</x>
+     <y>78</y>
     </hint>
     <hint type="destinationlabel">
      <x>11</x>
@@ -457,8 +507,8 @@
    <slot>chooseMupen64PluginDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>107</x>
-     <y>138</y>
+     <x>729</x>
+     <y>112</y>
     </hint>
     <hint type="destinationlabel">
      <x>11</x>
@@ -473,8 +523,8 @@
    <slot>chooseMupen64DataDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>102</x>
-     <y>178</y>
+     <x>729</x>
+     <y>146</y>
     </hint>
     <hint type="destinationlabel">
      <x>13</x>
@@ -489,8 +539,8 @@
    <slot>chooseMupen64ConfigDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>96</x>
-     <y>216</y>
+     <x>729</x>
+     <y>180</y>
     </hint>
     <hint type="destinationlabel">
      <x>12</x>
@@ -505,12 +555,60 @@
    <slot>chooseROMsDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>74</x>
-     <y>257</y>
+     <x>729</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
      <x>12</x>
      <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb_DynaRec</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>toggledEmuMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>307</x>
+     <y>168</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>182</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb_Interpreter</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>toggledEmuMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>225</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-2</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb_PureInterpreter</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>toggledEmuMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-2</x>
+     <y>272</y>
     </hint>
    </hints>
   </connection>
@@ -523,5 +621,7 @@
   <slot>chooseMupen64DataDir()</slot>
   <slot>chooseMupen64PluginDir()</slot>
   <slot>chooseMupen64ConfigDir()</slot>
+  <slot>slot1()</slot>
+  <slot>toggledEmuMode(bool)</slot>
  </slots>
 </ui>

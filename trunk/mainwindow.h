@@ -73,6 +73,7 @@ public slots:
     void chooseROMsDir(bool skipDialog = false);
     int clickedROM(const QModelIndex & index);
     int clickedRun();
+    void toggledEmuMode(bool checked);
 };
 
 #endif // MAINWINDOW_H
