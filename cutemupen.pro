@@ -5,7 +5,8 @@ CONFIG += console \
     release
 TARGET = cutemupen
 TEMPLATE = app
-SOURCES += settings.cpp \
+SOURCES += m64pcom.cpp \
+    settings.cpp \
     m64p/core_interface.c \
     m64p/plugin.cpp \
     main.cpp \

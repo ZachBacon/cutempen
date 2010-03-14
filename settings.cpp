@@ -25,8 +25,12 @@
 #include <QSettings>
 #include <QRadioButton>
 #include <QMessageBox>
+#include <QDesktopWidget>   // to get screen geometry
 
 #include <m64p/core_interface.h>
+
+extern bool doLog;
+extern bool doLogVerbose;
 
 void MainWindow::toggledEmuMode(bool /*checked*/)
 {
@@ -42,6 +46,81 @@ void MainWindow::toggledEmuMode(bool /*checked*/)
   else if (ui->rb_DynaRec->isChecked())
   {
     settings.setValue("Settings/EmuMode", 2);
+  }
+}
+
+void MainWindow::toggledLogging(bool /*checked*/)
+{
+  if (ui->rb_Log_Disabled->isChecked())
+  {
+    doLog = false;
+    doLogVerbose = false;
+  }
+  else if (ui->rb_Log_Enabled->isChecked())
+  {
+    doLog = true;
+    doLogVerbose = false;
+  }
+  else if (ui->rb_Log_Verbose->isChecked())
+  {
+    doLog = true;
+    doLogVerbose = true;
+  }
+}
+
+void MainWindow::RestoreSettings ()
+{
+  QSettings settings ("CuteMupen", "CuteMupen");
+  // Get settings for the paths. If they're empty, prompt for selection
+  Mupen64Library = settings.value ("Paths/Mupen64Library", "").toString();
+  chooseMupen64Library(!Mupen64Library.isEmpty());
+  Mupen64PluginDir = settings.value ("Paths/Mupen64PluginDir", "").toString();
+  chooseMupen64PluginDir(!Mupen64PluginDir.isEmpty());
+  Mupen64DataDir = settings.value ("Paths/Mupen64DataDir", "").toString();
+  chooseMupen64DataDir(!Mupen64DataDir.isEmpty());
+  Mupen64ConfigDir = settings.value ("Paths/Mupen64ConfigDir", "").toString();
+  chooseMupen64ConfigDir(!Mupen64ConfigDir.isEmpty());
+  ROMsDir = settings.value ("Paths/ROMsDir", "").toString();
+  chooseROMsDir(!ROMsDir.isEmpty());
+
+  // Get current screen resolution/size, and add it to the combobox
+  QDesktopWidget* desktop = QApplication::desktop();
+  int width = desktop->screenGeometry().size().width();
+  int height = desktop->screenGeometry().size().height();
+  QString geom;
+  geom.sprintf("%dx%d", width, height);
+  ui->cb_Resolution->addItem(geom);
+
+  // Restore fullscreen setting
+  ui->cb_Fullscreen->setChecked(settings.value("Video/Fullscreen", false).toBool());
+
+  // Restore screen size setting
+  QString resToRestore = settings.value("Video/Resolution", "640x480").toString();
+  int idxToRestore = ui->cb_Resolution->findText(resToRestore);
+  if (idxToRestore == -1) // not in the list, let's create an item for it
+    ui->cb_Resolution->addItem(resToRestore);
+  idxToRestore = ui->cb_Resolution->findText(resToRestore);
+  ui->cb_Resolution->setCurrentIndex(idxToRestore);
+
+  // Restore OSD setting
+  ui->cb_OSD->setChecked(settings.value("Video/OSD", true).toBool());
+
+  // Restore EmuMode setting
+  int emuMode = settings.value("Settings/EmuMode", 2).toInt();
+  switch (emuMode)
+  {
+    case 2:
+      ui->rb_DynaRec->setChecked(true);
+      break;
+    case 1:
+      ui->rb_Interpreter->setChecked(true);
+      break;
+    case 0:
+      ui->rb_PureInterpreter->setChecked(true);
+      break;
+    default:
+      QMessageBox::warning(this, tr("Unknown EmuMode setting"),
+          tr("Invalid value for EmuMode"));
   }
 }
 

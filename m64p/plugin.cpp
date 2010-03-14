@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <QString>
+
 extern "C" {
 #include "m64p_types.h"
 #include "m64p_common.h"
@@ -230,15 +232,18 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI, const char* path)
         /* print out the particular plugin used */
         if (g_PluginMap[i].handle == NULL)
         {
-            printf("UI-console: using %s plugin: <dummy>\n", g_PluginMap[i].name);
+            QString logLine;
+            logLine.sprintf("using %s plugin: <dummy>", g_PluginMap[i].name);
+            DebugCallback((void*)"CuteMupen", 3, logLine.toStdString().c_str());
         }
         else
         {
             //printf("UI-console: using %s plugin: '%s' v%i.%i.%i\n", g_PluginMap[i].name,
             //       g_PluginMap[i].libname, VERSION_PRINTF_SPLIT(g_PluginMap[i].libversion));
             //if (g_Verbose)
-            printf("UI-console: %s plugin library: %s\n", g_PluginMap[i].name, g_PluginMap[i].filename);
-
+            QString logLine;
+            logLine.sprintf("%s plugin library: %s", g_PluginMap[i].name, g_PluginMap[i].filename);
+            DebugCallback((void*)"CuteMupen", 3, logLine.toStdString().c_str());
         }
     }
 
