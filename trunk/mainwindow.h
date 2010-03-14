@@ -26,6 +26,7 @@
 #include <QSettings>
 #include <QModelIndex>
 #include <QDirModel>
+#include <QString>
 
 #include "m64p_types.h"
 
@@ -53,8 +54,10 @@ private:
     QString ROMFile;
     QDirModel *dirModel;
 
-    m64p_error initMupen64();
+    m64p_error InitMupen64();
+    void RestoreSettings();
     void ApplyConfiguration();
+    bool LoadRom(QString& ROMFile);
     m64p_error DetachCoreLib();
     m64p_error OpenConfigurationHandles();
     m64p_error SaveConfigurationOptions();
@@ -74,6 +77,7 @@ public slots:
     int clickedROM(const QModelIndex & index);
     int clickedRun();
     void toggledEmuMode(bool checked);
+    void toggledLogging(bool checked);
 };
 
 #endif // MAINWINDOW_H
