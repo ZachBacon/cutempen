@@ -28,7 +28,7 @@
 #include <QDesktopWidget>   // to get screen geometry
 
 extern "C" {
-#include <m64p/core_interface.h>
+#include "m64p/core_interface.h"
 }
 extern bool doLog;
 extern bool doLogVerbose;

@@ -55,7 +55,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    doLog = doLogVerbose = false;
+    doLog = true;
+    doLogVerbose = false;
     logLine = new QString();
     logList = new QStringList();
 
@@ -167,6 +168,7 @@ int MainWindow::clickedRun()
     // Display log in Logs tab
     for (i = 0; i < logList->size(); i++)
         ui->te_Logs->append(logList->at(i));
+    logList->clear();
     return 0;
 }
 
