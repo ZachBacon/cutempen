@@ -1,0 +1,48 @@
+CuteMupen
+A GUI front-end for the cross-platform Mupen64Plus N64 emulator.
+Written using Qt and MupenPlus64 v2.0 API.
+
+Website: http://cutemupen.sourceforge.net/
+License: GNU GPLv2
+Authors:
+ - Vincent Knecht <vknecht@users.sourceforge.net>
+ - Richard42 & others
+   Some parts of CuteMupen are taken from mupen64-ui-console
+Features:
+ - ROM browser
+ - Fullscreen, resolution and OSD settings
+ - Settings save and restore across runs
+Not supported yet:
+ - Cheats
+ - Gamepad configuration
+ - Compressed ROMs
+ - ...
+
+Building from source code:
+-------------------------
+  Dependencies:
+  - Qt 4.4+ development environment
+  - Mupen64Plus 1.99+ Core source code
+
+  Building with *NIX:
+  - Edit !win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir
+  - Run "qmake cutemupen.pro"
+  - Run "make"
+
+  Building with MSVC:
+  - Edit win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir
+  - Run "qmake cutemupen.pro"
+  - Run "qmake -tp vc"
+  - Open the .vcproj file using MSVC, and generate the solution
+
+Usage:
+-----
+  CuteMupen configuration settings are stored, depending on the OS, in 
+  - $HOME/.config/CuteMupen/CuteMupen.cfg file on *NIX
+  - HKEY_CURRENT_USER\Software\CuteMupen\CuteMupen registry entry on Windows
+
+  On first run, CuteMupen will ask you to set the paths to several Mupen64+
+  files and directories.
+
+ 
+ 
