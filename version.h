@@ -22,7 +22,7 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define CM_VERSION 0.0.6pre
-#define CM_VERSION_STR "0.0.6pre"
+#define CM_VERSION 0.0.6
+#define CM_VERSION_STR "0.0.6"
 
 #endif /* VERSION_H_ */

@@ -68,12 +68,23 @@ private:
     m64p_handle l_DataDirPath;
     m64p_handle l_ConfigDirPath;
 
+    void UpdateM64Library ();
+    void UpdateM64PluginDir ();
+    void UpdateM64DataDir ();
+    void UpdateM64ConfigDir ();
+    void UpdateROMsDir ();
+
 public slots:
     void chooseMupen64Library (bool skipDialog = false);
+    void editedMupen64Library ();
     void chooseMupen64PluginDir(bool skipDialog = false);
+    void editedMupen64PluginDir();
     void chooseMupen64DataDir (bool skipDialog = false);
+    void editedMupen64DataDir();
     void chooseMupen64ConfigDir (bool skipDialog = false);
+    void editedMupen64ConfigDir();
     void chooseROMsDir(bool skipDialog = false);
+    void editedROMsDir();
     int clickedROM(const QModelIndex & index);
     int clickedRun();
     void toggledEmuMode(bool checked);

@@ -24,17 +24,25 @@ Building from source code:
   - Qt 4.4+ development environment
   - Mupen64Plus 1.99+ Core source code
 
-  Building:
-  - Edit INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdirectory
+  Building with *NIX:
+  - Edit !win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir
   - Run "qmake cutemupen.pro"
   - Run "make"
 
   Building with MSVC:
-  - Edit INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdirectory
+  - Edit win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir
   - Run "qmake cutemupen.pro"
   - Run "qmake -tp vc"
   - Open the .vcproj file using MSVC, and generate the solution
 
-    
+Usage:
+-----
+  CuteMupen configuration settings are stored, depending on the OS, in 
+  - $HOME/.config/CuteMupen/CuteMupen.cfg file on *NIX
+  - HKEY_CURRENT_USER\Software\CuteMupen\CuteMupen registry entry on Windows
+
+  On first run, CuteMupen will ask you to set the paths to several Mupen64+
+  files and directories.
+
  
  
