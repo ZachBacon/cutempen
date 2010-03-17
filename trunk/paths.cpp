@@ -28,6 +28,10 @@
 
 #include "osal/osal_preproc.h" // For default core library filename
 
+extern "C" {
+#include "m64p/core_interface.h"
+}
+
 void MainWindow::chooseMupen64Library(bool skipDialog)
 {
     if (!skipDialog)
@@ -57,6 +61,12 @@ void MainWindow::editedMupen64Library()
 
 void MainWindow::UpdateM64Library()
 {
+  if (isCoreReady)
+  {
+    /* Shut down and release the Core library */
+    (*CoreShutdown)();
+    DetachCoreLib();
+  }
   if (!Mupen64Library.isEmpty())
   {
     // Save the chosen directory in CuteMupen config
@@ -70,6 +80,13 @@ void MainWindow::UpdateM64Library()
     }
 #endif
   }
+  if (InitMupen64() != M64ERR_SUCCESS)
+  {
+    isCoreReady = false;
+    return;
+  }
+  isCoreReady = true;
+  ApplyConfiguration();
 }
 
 void MainWindow::chooseMupen64PluginDir(bool skipDialog)
@@ -127,9 +144,9 @@ void MainWindow::UpdateM64PluginDir()
   }
 #endif
     // Set environment variable
-    QString env = getenv(envLD.toStdString().c_str());
+    QString env = getenv(envLD.toLocal8Bit().constData());
     QString newenv = envLD + "=" + env + envSeparator + Mupen64PluginDirNative;
-    const char* myEnv = newenv.toStdString().c_str();
+    const char* myEnv = newenv.toLocal8Bit().constData();
     putenv((char*)myEnv);
     // Set current directory
     QDir::setCurrent(Mupen64PluginDir);
@@ -139,7 +156,7 @@ void MainWindow::UpdateM64PluginDir()
           Mupen64PluginDir = Mupen64PluginDirNative;
 }
 #endif
-    //QString currentEnv (getenv(envLD.toStdString().c_str()));
+    //QString currentEnv (getenv(envLD.toLocal8Bit().constData()));
     //QMessageBox::information(this, "Now is Current " + envLD, currentEnv);
   }
 }

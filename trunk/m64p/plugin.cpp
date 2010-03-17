@@ -234,7 +234,7 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI, const char* path)
         {
             QString logLine;
             logLine.sprintf("using %s plugin: <dummy>", g_PluginMap[i].name);
-            DebugCallback((void*)"CuteMupen", 3, logLine.toStdString().c_str());
+            DebugCallback((void*)"CuteMupen", 3, logLine.toLocal8Bit().constData());
         }
         else
         {
@@ -243,7 +243,7 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI, const char* path)
             //if (g_Verbose)
             QString logLine;
             logLine.sprintf("%s plugin library: %s", g_PluginMap[i].name, g_PluginMap[i].filename);
-            DebugCallback((void*)"CuteMupen", 3, logLine.toStdString().c_str());
+            DebugCallback((void*)"CuteMupen", 3, logLine.toLocal8Bit().constData());
         }
     }
 

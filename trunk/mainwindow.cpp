@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    isCoreReady = false;
     doLog = true;
     doLogVerbose = false;
     logLine = new QString();
@@ -74,7 +74,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+  if (isCoreReady)
+  {
+    /* Shut down and release the Core library */
+    (*CoreShutdown)();
+    DetachCoreLib();
+  }
+  delete ui;
 }
 
 void MainWindow::changeEvent(QEvent *e)
@@ -98,17 +104,23 @@ int MainWindow::clickedROM(const QModelIndex & index)
 int MainWindow::clickedRun()
 {
     ui->te_Logs->clear();
+    if (!isCoreReady)
+    {
+        QMessageBox::warning(this, tr("Core library not ready"),
+            tr("Did you select M64+ library file in Paths tab ?"));
+        return 1;
+    }
+
+    ApplyConfiguration();
+
     if (ROMFile.isEmpty())
     {
         QMessageBox::warning(this, tr("No ROM selected"),
             tr("Please select a ROM file."));
         ui->tab_Paths->setCurrentIndex(2);
-        return 0;
+        return 1;
     }
 
-    if (InitMupen64() != M64ERR_SUCCESS)
-        return 1;
-    ApplyConfiguration();
     if (!LoadRom(ROMFile))
     {
         QMessageBox::critical(this, tr("Error loading ROM"),
@@ -118,8 +130,7 @@ int MainWindow::clickedRun()
 
     /* search for and load plugins */
     m64p_error rval = PluginSearchLoad(
-        l_ConfigUI, Mupen64PluginDir.toStdString().c_str());
-        //l_ConfigUI, Mupen64PluginDir.toLocal8Bit());
+        l_ConfigUI, Mupen64PluginDir.toLocal8Bit().constData());
     if (rval != M64ERR_SUCCESS)
     {
         QMessageBox::critical(this, tr("Plugin Search"),
@@ -161,10 +172,6 @@ int MainWindow::clickedRun()
     //if (l_SaveOptions)
     //    SaveConfigurationOptions();
 
-    /* Shut down and release the Core library */
-    (*CoreShutdown)();
-    DetachCoreLib();
-
     // Display log in Logs tab
     for (i = 0; i < logList->size(); i++)
         ui->te_Logs->append(logList->at(i));
@@ -186,5 +193,5 @@ void DebugCallback(void *Context, int level, const char *message)
     else if (level == 4)
         line.sprintf("%s Status: %s", (const char *) Context, message);
     if (!line.isEmpty())
-      logList->append(line);
+        logList->append(line);
 }
