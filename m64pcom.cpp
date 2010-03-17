@@ -45,14 +45,17 @@ extern QStringList* logList;
 
 m64p_error MainWindow::InitMupen64()
 {
+    if (isCoreReady)
+      return M64ERR_SUCCESS;
+
     // Load the core lib
     CoreHandle = NULL;
     m64p_error rval = M64ERR_INTERNAL;
-    rval = osal_dynlib_open(&CoreHandle, Mupen64Library.toStdString().c_str());
+    rval = osal_dynlib_open(&CoreHandle, Mupen64Library.toLocal8Bit().constData());
     if (rval != M64ERR_SUCCESS || CoreHandle == NULL)
     {
         QString res;
-        res.sprintf("file: %s\nrval: %x\n", Mupen64Library.toStdString().c_str(), rval);
+        res.sprintf("file: %s\nrval: %x\n", Mupen64Library.toLocal8Bit().constData(), rval);
         QMessageBox::critical(this, "Error loading Core library", res);
         return rval;
     }
@@ -170,7 +173,7 @@ bool MainWindow::LoadRom(QString & ROMFile)
     if ((*CoreDoCommand)(M64CMD_ROM_OPEN, (int) romlength, ROM_buffer) != M64ERR_SUCCESS)
     {
         logLine->sprintf("Error: core failed to open ROM image file '%s'.",
-            ROMFile.toStdString().c_str());
+            ROMFile.toLocal8Bit().constData());
         logList->append(*logLine);
         file.unmap(ROM_buffer);
         file.close();

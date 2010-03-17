@@ -74,6 +74,8 @@ private:
     void UpdateM64ConfigDir ();
     void UpdateROMsDir ();
 
+    bool isCoreReady;
+
 public slots:
     void chooseMupen64Library (bool skipDialog = false);
     void editedMupen64Library ();
