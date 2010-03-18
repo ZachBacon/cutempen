@@ -73,10 +73,10 @@ void MainWindow::RestoreSettings ()
 {
   QSettings settings ("CuteMupen", "CuteMupen");
   // Get settings for the paths. If they're empty, prompt for selection
-  Mupen64Library = settings.value ("Paths/Mupen64Library", "").toString();
-  chooseMupen64Library(!Mupen64Library.isEmpty());
   Mupen64PluginDir = settings.value ("Paths/Mupen64PluginDir", "").toString();
   chooseMupen64PluginDir(!Mupen64PluginDir.isEmpty());
+  Mupen64Library = settings.value ("Paths/Mupen64Library", "").toString();
+  chooseMupen64Library(!Mupen64Library.isEmpty());
   Mupen64DataDir = settings.value ("Paths/Mupen64DataDir", "").toString();
   chooseMupen64DataDir(!Mupen64DataDir.isEmpty());
   Mupen64ConfigDir = settings.value ("Paths/Mupen64ConfigDir", "").toString();
