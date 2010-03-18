@@ -73,6 +73,7 @@ private:
     void UpdateM64DataDir ();
     void UpdateM64ConfigDir ();
     void UpdateROMsDir ();
+    void AddToEnvVar (QString envVar, QString value);
 
     bool isCoreReady;
 

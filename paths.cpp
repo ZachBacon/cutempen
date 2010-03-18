@@ -54,6 +54,7 @@ void MainWindow::editedMupen64Library()
     QMessageBox::warning(this, tr("File does not exist"),
         tr("Please set the library file to a valid file."));
     ui->le_Library->setText(QDir::currentPath());
+    return;
   }
   Mupen64Library = path;
   UpdateM64Library();
@@ -80,6 +81,9 @@ void MainWindow::UpdateM64Library()
     }
 #endif
   }
+  else
+      return;
+
   if (InitMupen64() != M64ERR_SUCCESS)
   {
     isCoreReady = false;
@@ -127,27 +131,19 @@ void MainWindow::UpdateM64PluginDir()
     QString Mupen64PluginDirNative = Mupen64PluginDir;
 #if defined(Q_WS_WIN)
   {
-      envSeparator = ";";
       envLD = "PATH";
       Mupen64PluginDirNative.replace(QChar('/'), QChar('\\'));
   }
 #elif defined(Q_WS_MAC)
   {
-      envSeparator = ":";
       envLD = "DYLD_LIBRARY_PATH";
   }
-
 #else
   {
-      envSeparator = ":";
       envLD = "LD_LIBRARY_PATH";
   }
 #endif
-    // Set environment variable
-    QString env = getenv(envLD.toLocal8Bit().constData());
-    QString newenv = envLD + "=" + env + envSeparator + Mupen64PluginDirNative;
-    const char* myEnv = newenv.toLocal8Bit().constData();
-    putenv((char*)myEnv);
+
     // Set current directory
     QDir::setCurrent(Mupen64PluginDir);
 
@@ -156,6 +152,10 @@ void MainWindow::UpdateM64PluginDir()
           Mupen64PluginDir = Mupen64PluginDirNative;
 }
 #endif
+
+    // Set environment variable
+    AddToEnvVar(envLD, Mupen64PluginDir);
+
     //QString currentEnv (getenv(envLD.toLocal8Bit().constData()));
     //QMessageBox::information(this, "Now is Current " + envLD, currentEnv);
   }
@@ -290,4 +290,23 @@ void MainWindow::UpdateROMsDir()
     //fsmodel->setRootPath(QDir::currentPath());
     //ui->treeView->setModel(fsmodel);
   }
+}
+
+void MainWindow::AddToEnvVar (QString envVar, QString value)
+{
+    QString envSeparator;
+#if defined(Q_WS_WIN)
+  {
+      envSeparator = ";";
+  }
+#else
+  {
+      envSeparator = ":";
+  }
+#endif
+    // Set environment variable
+    QString env = getenv(envVar.toLocal8Bit());
+    QString newenv = envVar + "=" + env + envSeparator + value;
+    const char* myEnv = newenv.toLocal8Bit().constData();
+    putenv((char*)myEnv);
 }
