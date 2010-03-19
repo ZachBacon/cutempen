@@ -72,6 +72,7 @@ void MainWindow::UpdateM64Library()
   {
     // Save the chosen directory in CuteMupen config
     QSettings settings ("CuteMupen", "CuteMupen");
+    settings.setIniCodec("UTF-8");
     settings.setValue("Paths/Mupen64Library", Mupen64Library);
     // Set label to the chosen directory
     ui->le_Library->setText(Mupen64Library);
@@ -122,6 +123,7 @@ void MainWindow::UpdateM64PluginDir()
   {
     // Save the chosen directory in CuteMupen config
     QSettings settings ("CuteMupen", "CuteMupen");
+    settings.setIniCodec("UTF-8");
     settings.setValue("Paths/Mupen64PluginDir", Mupen64PluginDir);
     // Set label to the chosen directory
     ui->le_PluginsDir->setText(Mupen64PluginDir);
@@ -191,6 +193,7 @@ void MainWindow::UpdateM64DataDir()
 {
   // Save the chosen directory in CuteMupen config
   QSettings settings ("CuteMupen", "CuteMupen");
+  settings.setIniCodec("UTF-8");
   settings.setValue("Paths/Mupen64DataDir", Mupen64DataDir);
   // Set label to the chosen directory
   if (!Mupen64DataDir.isEmpty())
@@ -227,6 +230,7 @@ void MainWindow::UpdateM64ConfigDir()
 {
   // Save the chosen directory in CuteMupen config
   QSettings settings ("CuteMupen", "CuteMupen");
+  settings.setIniCodec("UTF-8");
   settings.setValue("Paths/Mupen64ConfigDir", Mupen64ConfigDir);
   // Set label to the chosen directory
   if (!Mupen64ConfigDir.isEmpty())
@@ -266,6 +270,7 @@ void MainWindow::UpdateROMsDir()
   {
     // Save the chosen directory in CuteMupen config
     QSettings settings ("CuteMupen", "CuteMupen");
+    settings.setIniCodec("UTF-8");
     settings.setValue("Paths/ROMsDir", ROMsDir);
     // Set the label to the chosen directory
     ui->le_ROMsDir->setText(ROMsDir);
