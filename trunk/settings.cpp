@@ -36,6 +36,7 @@ extern bool doLogVerbose;
 void MainWindow::toggledEmuMode(bool /*checked*/)
 {
   QSettings settings ("CuteMupen", "CuteMupen");
+  settings.setIniCodec("UTF-8");
   if (ui->rb_PureInterpreter->isChecked())
   {
     settings.setValue("Settings/EmuMode", 0);
@@ -72,6 +73,7 @@ void MainWindow::toggledLogging(bool /*checked*/)
 void MainWindow::RestoreSettings ()
 {
   QSettings settings ("CuteMupen", "CuteMupen");
+  settings.setIniCodec("UTF-8");
   // Get settings for the paths. If they're empty, prompt for selection
   Mupen64PluginDir = settings.value ("Paths/Mupen64PluginDir", "").toString();
   chooseMupen64PluginDir(!Mupen64PluginDir.isEmpty());
@@ -128,6 +130,7 @@ void MainWindow::RestoreSettings ()
 void MainWindow::ApplyConfiguration ()
 {
   QSettings settings ("CuteMupen", "CuteMupen");
+  settings.setIniCodec("UTF-8");
 
   int FullScreen;
   ui->cb_Fullscreen->isChecked() ? FullScreen = 1 : FullScreen = 0;
