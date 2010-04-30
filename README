@@ -23,14 +23,22 @@ Building from source code:
   Dependencies:
   - Qt 4.4+ development environment
   - Mupen64Plus 1.99+ Core source code
+  - zlib headers and library
 
-  Building with *NIX:
+  Building with *NIX/Linux:
   - Edit !win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir
   - Run "qmake cutemupen.pro"
   - Run "make"
 
-  Building with MSVC:
+  Building with Windows/MinGW:
   - Edit win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir
+  - Edit windows:LIBS in cutemupen.pro to point to zlib.lib file
+  - Run "qmake cutemupen.pro"
+  - Run "make"
+
+  Building with Windows/MSVC: (untested since 0.1.0)
+  - Edit win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir
+  - Edit windows:LIBS in cutemupen.pro to point to zlib.lib file
   - Run "qmake cutemupen.pro"
   - Run "qmake -tp vc"
   - Open the .vcproj file using MSVC, and generate the solution

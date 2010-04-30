@@ -67,6 +67,7 @@ void MainWindow::UpdateM64Library()
     /* Shut down and release the Core library */
     (*CoreShutdown)();
     DetachCoreLib();
+    isCoreReady = false;
   }
   if (!Mupen64Library.isEmpty())
   {
@@ -278,7 +279,7 @@ void MainWindow::UpdateROMsDir()
     dirModel->setSorting(QDir::DirsFirst);
     dirModel->setFilter(QDir::Files|QDir::AllDirs|QDir::NoDotAndDotDot);
     QStringList filters;
-    filters << "*.n64" << "*.v64" << "*.z64";
+    filters << "*.n64" << "*.v64" << "*.z64" << "*.zip";
     dirModel->setNameFilters(filters);
     QModelIndex idx = dirModel->index(ROMsDir, 0);
     ui->treeView->setModel(dirModel);

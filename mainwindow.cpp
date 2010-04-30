@@ -70,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ROMFile = "";
 
     RestoreSettings();
+    ///ApplyConfiguration();
 }
 
 MainWindow::~MainWindow()
@@ -121,7 +122,7 @@ int MainWindow::clickedRun()
         return 1;
     }
 
-    if (!LoadRom(ROMFile))
+    if (!LoadFile(ROMFile))
     {
         QMessageBox::critical(this, tr("Error loading ROM"),
             tr("Unable to load ROM !"));

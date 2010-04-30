@@ -70,6 +70,42 @@ void MainWindow::toggledLogging(bool /*checked*/)
   }
 }
 
+void MainWindow::toggledOSD(bool checked)
+{
+  QSettings settings ("CuteMupen", "CuteMupen");
+  settings.setIniCodec("UTF-8");
+  settings.setValue("Video/OSD", checked);
+}
+
+void MainWindow::toggledFullscreen(bool checked)
+{
+  QSettings settings ("CuteMupen", "CuteMupen");
+  settings.setIniCodec("UTF-8");
+  settings.setValue("Video/Fullscreen", checked);
+}
+
+void MainWindow::chooseResolution (QString text)
+{
+  QSettings settings ("CuteMupen", "CuteMupen");
+  settings.setIniCodec("UTF-8");
+  QString res = ui->cb_Resolution->currentText();
+  QRegExp resRegex ("^[0-9]{3,4}x[0-9]{3,4}$");
+  if (resRegex.exactMatch(res))
+  {
+    int xres, yres;
+    xres = res.section("x", 0, 0).toInt();   // leftmost field from "x" separator
+    yres = res.section("x", -1, -1).toInt(); // rightmost field from "x" separator
+    (*ConfigSetParameter)(l_ConfigVideo, "ScreenWidth", M64TYPE_INT, &xres);
+    (*ConfigSetParameter)(l_ConfigVideo, "ScreenHeight", M64TYPE_INT, &yres);
+    settings.setValue("Video/Resolution", res);
+}
+  else
+    QMessageBox::warning(this, tr("Invalid resolution"),
+        tr("This resolution is invalid: ") + res);
+
+}
+
+
 void MainWindow::RestoreSettings ()
 {
   QSettings settings ("CuteMupen", "CuteMupen");
@@ -135,27 +171,15 @@ void MainWindow::ApplyConfiguration ()
   int FullScreen;
   ui->cb_Fullscreen->isChecked() ? FullScreen = 1 : FullScreen = 0;
   (*ConfigSetParameter)(l_ConfigVideo, "Fullscreen", M64TYPE_BOOL, &FullScreen);
-  settings.setValue("Video/Fullscreen", ui->cb_Fullscreen->isChecked());
+  //settings.setValue("Video/Fullscreen", ui->cb_Fullscreen->isChecked());
 
   QString res = ui->cb_Resolution->currentText();
-  QRegExp resRegex ("^[0-9]{3,4}x[0-9]{3,4}$");
-  if (resRegex.exactMatch(res))
-  {
-    int xres, yres;
-    xres = res.section("x", 0, 0).toInt();   // leftmost field from "x" separator
-    yres = res.section("x", -1, -1).toInt(); // rightmost field from "x" separator
-    (*ConfigSetParameter)(l_ConfigVideo, "ScreenWidth", M64TYPE_INT, &xres);
-    (*ConfigSetParameter)(l_ConfigVideo, "ScreenHeight", M64TYPE_INT, &yres);
-    settings.setValue("Video/Resolution", res);
-  }
-  else
-    QMessageBox::warning(this, tr("Invalid resolution"),
-        tr("This resolution is invalid: ") + res);
+  //chooseResolution(res);
 
   int Osd;
   ui->cb_OSD->isChecked() ? Osd = 1 : Osd = 0;
   (*ConfigSetParameter)(l_ConfigCore, "OnScreenDisplay", M64TYPE_BOOL, &Osd);
-  settings.setValue("Video/OSD", ui->cb_OSD->isChecked());
+  //settings.setValue("Video/OSD", ui->cb_OSD->isChecked());
 
   int emumode;
   emumode = settings.value("Settings/EmuMode", "2").toInt();

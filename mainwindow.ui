@@ -434,6 +434,9 @@
             <attribute name="headerVisible">
              <bool>false</bool>
             </attribute>
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
            </widget>
           </item>
          </layout>
@@ -584,8 +587,8 @@
    <slot>clickedRun()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>397</y>
+     <x>84</x>
+     <y>400</y>
     </hint>
     <hint type="destinationlabel">
      <x>179</x>
@@ -616,8 +619,8 @@
    <slot>chooseMupen64Library()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>78</y>
+     <x>727</x>
+     <y>64</y>
     </hint>
     <hint type="destinationlabel">
      <x>11</x>
@@ -632,8 +635,8 @@
    <slot>chooseMupen64PluginDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>112</y>
+     <x>727</x>
+     <y>93</y>
     </hint>
     <hint type="destinationlabel">
      <x>11</x>
@@ -648,8 +651,8 @@
    <slot>chooseMupen64DataDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>146</y>
+     <x>727</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
      <x>13</x>
@@ -664,8 +667,8 @@
    <slot>chooseMupen64ConfigDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>180</y>
+     <x>727</x>
+     <y>151</y>
     </hint>
     <hint type="destinationlabel">
      <x>12</x>
@@ -680,8 +683,8 @@
    <slot>chooseROMsDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>214</y>
+     <x>727</x>
+     <y>180</y>
     </hint>
     <hint type="destinationlabel">
      <x>12</x>
@@ -696,8 +699,8 @@
    <slot>toggledEmuMode(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>493</x>
-     <y>275</y>
+     <x>373</x>
+     <y>217</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -712,8 +715,8 @@
    <slot>toggledEmuMode(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>327</x>
-     <y>275</y>
+     <x>252</x>
+     <y>217</y>
     </hint>
     <hint type="destinationlabel">
      <x>-2</x>
@@ -728,8 +731,8 @@
    <slot>toggledEmuMode(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>103</x>
-     <y>275</y>
+     <x>127</x>
+     <y>217</y>
     </hint>
     <hint type="destinationlabel">
      <x>-2</x>
@@ -744,8 +747,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>261</x>
-     <y>339</y>
+     <x>273</x>
+     <y>329</y>
     </hint>
     <hint type="destinationlabel">
      <x>254</x>
@@ -760,8 +763,8 @@
    <slot>selectAll()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>365</x>
-     <y>382</y>
+     <x>377</x>
+     <y>358</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -776,8 +779,8 @@
    <slot>copy()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>370</x>
-     <y>374</y>
+     <x>382</x>
+     <y>358</y>
     </hint>
     <hint type="destinationlabel">
      <x>366</x>
@@ -792,8 +795,8 @@
    <slot>toggledLogging(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>83</x>
-     <y>172</y>
+     <x>95</x>
+     <y>150</y>
     </hint>
     <hint type="destinationlabel">
      <x>-6</x>
@@ -808,8 +811,8 @@
    <slot>toggledLogging(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>208</x>
-     <y>170</y>
+     <x>162</x>
+     <y>150</y>
     </hint>
     <hint type="destinationlabel">
      <x>-2</x>
@@ -824,8 +827,8 @@
    <slot>toggledLogging(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>312</x>
-     <y>165</y>
+     <x>229</x>
+     <y>150</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -840,8 +843,8 @@
    <slot>editedMupen64Library()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>218</x>
-     <y>63</y>
+     <x>347</x>
+     <y>62</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -856,8 +859,8 @@
    <slot>editedMupen64PluginDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>254</x>
-     <y>102</y>
+     <x>383</x>
+     <y>91</y>
     </hint>
     <hint type="destinationlabel">
      <x>-3</x>
@@ -872,8 +875,8 @@
    <slot>editedMupen64DataDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>407</x>
-     <y>137</y>
+     <x>536</x>
+     <y>120</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -888,8 +891,8 @@
    <slot>editedMupen64ConfigDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>310</x>
-     <y>170</y>
+     <x>439</x>
+     <y>149</y>
     </hint>
     <hint type="destinationlabel">
      <x>15</x>
@@ -904,12 +907,60 @@
    <slot>editedROMsDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>274</x>
-     <y>196</y>
+     <x>403</x>
+     <y>178</y>
     </hint>
     <hint type="destinationlabel">
      <x>70</x>
      <y>-10</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_Resolution</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>chooseResolution(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-2</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_OSD</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>toggledOSD(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>297</x>
+     <y>-2</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_Fullscreen</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>toggledFullscreen(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>172</x>
+     <y>79</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>-2</y>
     </hint>
    </hints>
   </connection>
@@ -929,5 +980,8 @@
   <slot>editedMupen64DataDir()</slot>
   <slot>editedMupen64ConfigDir()</slot>
   <slot>editedROMsDir()</slot>
+  <slot>chooseResolution(QString)</slot>
+  <slot>toggledOSD(bool)</slot>
+  <slot>toggledFullscreen(bool)</slot>
  </slots>
 </ui>
