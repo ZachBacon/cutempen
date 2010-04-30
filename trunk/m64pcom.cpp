@@ -28,6 +28,9 @@
 #include <QString>
 #include <QStringList>
 
+#include "quazip/quazip.h"
+#include "quazip/quazipfile.h"
+
 extern "C" {
 #include "osal/osal_preproc.h"
 #include "osal/osal_dynamiclib.h"
@@ -157,7 +160,7 @@ m64p_error MainWindow::InitMupen64()
     return rval;
 }
 
-bool MainWindow::LoadRom(QString & ROMFile)
+bool MainWindow::LoadFile(QString & ROMFile)
 {
     QFile file (ROMFile);
     if (!file.open(QIODevice::ReadOnly))
@@ -167,23 +170,57 @@ bool MainWindow::LoadRom(QString & ROMFile)
         return false;
     }
     qint64 romlength = file.size();
-    unsigned char *ROM_buffer = file.map(0, romlength);
+    /*unsigned*/ char *FILE_buffer = (char*)file.map(0, romlength);
+    /*unsigned*/ char *ROM_buffer = 0;
 
-    // Try to load the ROM image into the core
-    if ((*CoreDoCommand)(M64CMD_ROM_OPEN, (int) romlength, ROM_buffer) != M64ERR_SUCCESS)
+    // Check ZIP file signature
+    if ((FILE_buffer[0] == 'P') && (FILE_buffer[1] == 'K'))
     {
-        logLine->sprintf("Error: core failed to open ROM image file '%s'.",
-            ROMFile.toLocal8Bit().constData());
+        QuaZip zip (ROMFile);
+        zip.open(QuaZip::mdUnzip);
+        QuaZipFile zippedFile (&zip);
+        for (bool more=zip.goToFirstFile(); more; more=zip.goToNextFile())
+        {
+            QString fileName;
+            if (zippedFile.open(QIODevice::ReadOnly))
+                fileName = zippedFile.getActualFileName();
+            else
+                continue;
+
+            if (fileName.endsWith("64"))
+            {
+                QByteArray bArray = zippedFile.readAll();
+                ROM_buffer = (char*)bArray.data();
+                LoadRom (zippedFile.usize(), ROM_buffer);
+            }
+            zippedFile.close();
+        }
+        zip.close();
+    }
+    else
+    {
+        // Not a ZIP file, load it directly
+        ROM_buffer = FILE_buffer;
+        LoadRom (romlength, ROM_buffer);
+    }
+
+    // the core copies the ROM image, so we can release this buffer immediately
+    file.unmap((unsigned char*)ROM_buffer);
+    file.close();
+    return true;
+}
+
+bool MainWindow::LoadRom (qint64 romlength, char* buffer)
+{
+    // Try to load the ROM image into the core
+    if ((*CoreDoCommand)(M64CMD_ROM_OPEN, (int)romlength, buffer) != M64ERR_SUCCESS)
+    {
+        logLine->sprintf("Error: core failed to open ROM image.");
         logList->append(*logLine);
-        file.unmap(ROM_buffer);
-        file.close();
         (*CoreShutdown)();
         DetachCoreLib();
         return false;
     }
-    // the core copies the ROM image, so we can release this buffer immediately
-    file.unmap(ROM_buffer);
-    file.close();
     return true;
 }
 

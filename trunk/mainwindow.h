@@ -57,7 +57,8 @@ private:
     m64p_error InitMupen64();
     void RestoreSettings();
     void ApplyConfiguration();
-    bool LoadRom(QString& ROMFile);
+    bool LoadFile(QString& ROMFile);
+    bool LoadRom (qint64 lentgh, char* buffer);
     m64p_error DetachCoreLib();
     m64p_error OpenConfigurationHandles();
     m64p_error SaveConfigurationOptions();
@@ -90,8 +91,11 @@ public slots:
     void editedROMsDir();
     int clickedROM(const QModelIndex & index);
     int clickedRun();
+    void chooseResolution (QString text);
     void toggledEmuMode(bool checked);
     void toggledLogging(bool checked);
+    void toggledOSD(bool checked);
+    void toggledFullscreen(bool checked);
 };
 
 #endif // MAINWINDOW_H
