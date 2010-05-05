@@ -118,13 +118,6 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="2">
-             <widget class="QPushButton" name="pb_ROMdir">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="0">
              <widget class="QLabel" name="lb_Program">
               <property name="text">
@@ -146,13 +139,6 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="lb_ROMsDirectory">
-              <property name="text">
-               <string>ROMs directory</string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="1">
              <widget class="QLineEdit" name="le_Library"/>
             </item>
@@ -164,9 +150,6 @@
             </item>
             <item row="3" column="1">
              <widget class="QLineEdit" name="le_ConfigDir"/>
-            </item>
-            <item row="4" column="1">
-             <widget class="QLineEdit" name="le_ROMsDir"/>
             </item>
            </layout>
           </item>
@@ -410,34 +393,55 @@
          <attribute name="title">
           <string>ROMs</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QGridLayout" name="gridLayout_12">
           <item row="0" column="0">
-           <widget class="QTreeView" name="treeView">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>1</horstretch>
-              <verstretch>1</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>AlArabiya</family>
-              <pointsize>12</pointsize>
-             </font>
-            </property>
-            <property name="alternatingRowColors">
-             <bool>true</bool>
-            </property>
-            <property name="uniformRowHeights">
-             <bool>true</bool>
-            </property>
-            <attribute name="headerVisible">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="headerVisible">
-             <bool>false</bool>
-            </attribute>
-           </widget>
+           <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,4,0">
+            <item row="0" column="0">
+             <widget class="QLabel" name="lb_ROMsDirectory">
+              <property name="text">
+               <string>ROMs directory</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="le_ROMsDir"/>
+            </item>
+            <item row="0" column="2">
+             <widget class="QPushButton" name="pb_ROMdir">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="3">
+             <widget class="QTreeView" name="treeView">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>1</horstretch>
+                <verstretch>1</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>AlArabiya</family>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="uniformRowHeights">
+               <bool>true</bool>
+              </property>
+              <attribute name="headerVisible">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="headerVisible">
+               <bool>false</bool>
+              </attribute>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -619,8 +623,8 @@
    <slot>chooseMupen64Library()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>727</x>
-     <y>64</y>
+     <x>729</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
      <x>11</x>
@@ -635,8 +639,8 @@
    <slot>chooseMupen64PluginDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>727</x>
-     <y>93</y>
+     <x>729</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
      <x>11</x>
@@ -651,8 +655,8 @@
    <slot>chooseMupen64DataDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>727</x>
-     <y>122</y>
+     <x>729</x>
+     <y>121</y>
     </hint>
     <hint type="destinationlabel">
      <x>13</x>
@@ -667,28 +671,12 @@
    <slot>chooseMupen64ConfigDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>727</x>
-     <y>151</y>
+     <x>729</x>
+     <y>150</y>
     </hint>
     <hint type="destinationlabel">
      <x>12</x>
      <y>213</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pb_ROMdir</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>chooseROMsDir()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>727</x>
-     <y>180</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>12</x>
-     <y>250</y>
     </hint>
    </hints>
   </connection>
@@ -843,8 +831,8 @@
    <slot>editedMupen64Library()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>347</x>
-     <y>62</y>
+     <x>476</x>
+     <y>61</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -859,8 +847,8 @@
    <slot>editedMupen64PluginDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>383</x>
-     <y>91</y>
+     <x>512</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel">
      <x>-3</x>
@@ -875,8 +863,8 @@
    <slot>editedMupen64DataDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>536</x>
-     <y>120</y>
+     <x>648</x>
+     <y>119</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -891,28 +879,12 @@
    <slot>editedMupen64ConfigDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>439</x>
-     <y>149</y>
+     <x>568</x>
+     <y>148</y>
     </hint>
     <hint type="destinationlabel">
      <x>15</x>
      <y>3</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>le_ROMsDir</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>editedROMsDir()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>403</x>
-     <y>178</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>70</x>
-     <y>-10</y>
     </hint>
    </hints>
   </connection>
@@ -961,6 +933,38 @@
     <hint type="destinationlabel">
      <x>149</x>
      <y>-2</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pb_ROMdir</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>chooseROMsDir()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>678</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>657</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>le_ROMsDir</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editedROMsDir()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>535</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>504</x>
+     <y>-6</y>
     </hint>
    </hints>
   </connection>
