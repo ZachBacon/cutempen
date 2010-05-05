@@ -36,12 +36,12 @@ HEADERS += m64p/core_interface.h \
     quazip/zip.h
 
 win32:INCLUDEPATH += C:\dev\mupen64plus-bundle-src-1.99.3\source\mupen64plus-core\src\api \
-    C:\CrystalSpaceLibs\common\include
+    C:\dev\include
 
 !win32:INCLUDEPATH += /usr/include/mupen64plus
 
 unix:LIBS += -lz
-windows:LIBS += C:\CrystalSpaceLibs\common\lib\zlib.lib
+windows:LIBS += C:\dev\lib\zlib.lib
 
 FORMS += mainwindow.ui
 
