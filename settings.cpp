@@ -84,7 +84,7 @@ void MainWindow::toggledFullscreen(bool checked)
   settings.setValue("Video/Fullscreen", checked);
 }
 
-void MainWindow::chooseResolution (QString text)
+void MainWindow::chooseResolution (QString /*text*/)
 {
   QSettings settings ("CuteMupen", "CuteMupen");
   settings.setIniCodec("UTF-8");
