@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   CuteMupen - mainwindow.cpp                                            *
  *   CuteMupen homepage: http://cutemupen.sourceforge.net/                 *
- *   Copyright (C) 2009 Richard42                                          *
+ *   Copyright (C) 2009 Richard Goedeken                                          *
  *   Copyright (C) 2010 Vincent Knecht <vknecht@users.sourceforge.net>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -60,9 +60,9 @@ MainWindow::MainWindow(QWidget *parent) :
     logLine = new QString();
     logList = new QStringList();
 
-    QString title ("CuteMupen ");
-    title.append(CM_VERSION_STR);
+    QString title ("CuteMupen");
     this->setWindowTitle(title);
+    title.append(" " CM_VERSION_STR);
     ui->lb_About_NameVersion->setText(title);
 
     // For the ROM browser

@@ -192,6 +192,10 @@ bool MainWindow::LoadFile(QString & ROMFile)
                 QByteArray bArray = zippedFile.readAll();
                 ROM_buffer = (char*)bArray.data();
                 LoadRom (zippedFile.usize(), ROM_buffer);
+                zippedFile.close();
+                // @TODO : handle more-than-one-ROM-inna-zip more gracefuly ?
+                // For now, just handle the first one...
+                break;
             }
             zippedFile.close();
         }

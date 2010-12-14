@@ -51,3 +51,7 @@ win32:SOURCES += osal/osal_files_win32.cpp \
 !win32:SOURCES += osal/osal_files_unix.c \
     osal/osal_dynamiclib_unix.c
 RESOURCES += resources.qrc
+
+TRANSLATIONS = cutemupen_fr.ts
+
+CODECFORSRC     = UTF-8
