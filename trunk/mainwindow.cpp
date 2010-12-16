@@ -104,11 +104,14 @@ int MainWindow::clickedROM(const QModelIndex & index)
 
 int MainWindow::clickedRun()
 {
+    // Let's disable "Run" button to prevent multiple launches
+    ui->pb_Run->setDisabled(true);
     ui->te_Logs->clear();
     if (!isCoreReady)
     {
         QMessageBox::warning(this, tr("Core library not ready"),
             tr("Did you select M64+ library file in Paths tab ?"));
+        ui->pb_Run->setDisabled(false);
         return 1;
     }
 
@@ -119,6 +122,7 @@ int MainWindow::clickedRun()
         QMessageBox::warning(this, tr("No ROM selected"),
             tr("Please select a ROM file."));
         ui->tab_Paths->setCurrentIndex(2);
+        ui->pb_Run->setDisabled(false);
         return 1;
     }
 
@@ -126,6 +130,7 @@ int MainWindow::clickedRun()
     {
         QMessageBox::critical(this, tr("Error loading ROM"),
             tr("Unable to load ROM !"));
+        ui->pb_Run->setDisabled(false);
         return 2;
     }
 
@@ -139,6 +144,7 @@ int MainWindow::clickedRun()
         (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
         (*CoreShutdown)();
         DetachCoreLib();
+        ui->pb_Run->setDisabled(false);
         return 12;
     }
 
@@ -154,6 +160,7 @@ int MainWindow::clickedRun()
             (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
             (*CoreShutdown)();
             DetachCoreLib();
+            ui->pb_Run->setDisabled(false);
             return 13;
         }
     }
@@ -177,6 +184,7 @@ int MainWindow::clickedRun()
     for (i = 0; i < logList->size(); i++)
         ui->te_Logs->append(logList->at(i));
     logList->clear();
+    ui->pb_Run->setDisabled(false);
     return 0;
 }
 
