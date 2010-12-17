@@ -1,5 +1,8 @@
 <RCC>
-    <qresource prefix="/about" >
+    <qresource prefix="/about">
         <file>resources/about.html</file>
+    </qresource>
+    <qresource prefix="/lang">
+        <file>lang/cutemupen_fr.qm</file>
     </qresource>
 </RCC>
