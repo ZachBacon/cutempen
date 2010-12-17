@@ -78,6 +78,8 @@ private:
 
     bool isCoreReady;
 
+    bool isGfxPlugin (const char*);
+
 public slots:
     void chooseMupen64Library (bool skipDialog = false);
     void editedMupen64Library ();
@@ -96,6 +98,7 @@ public slots:
     void toggledLogging(bool checked);
     void toggledOSD(bool checked);
     void toggledFullscreen(bool checked);
+    void chooseGfxPlugin (QString text);
 };
 
 #endif // MAINWINDOW_H

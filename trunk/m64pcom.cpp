@@ -349,3 +349,31 @@ m64p_error MainWindow::SaveConfigurationOptions(void)
 
     return (*ConfigSaveFile)();
 }
+
+/* ============================================================================= */
+
+bool MainWindow::isGfxPlugin (const char* filepath)
+{
+    /* try to open a shared library at the given filepath */
+    m64p_dynlib_handle handle;
+    m64p_error rval = osal_dynlib_open(&handle, filepath);
+    if (rval != M64ERR_SUCCESS)
+        return false;
+
+    /* call the GetVersion function for the plugin and check compatibility */
+    ptr_PluginGetVersion PluginGetVersion = (ptr_PluginGetVersion) osal_dynlib_getproc(handle, "PluginGetVersion");
+    if (PluginGetVersion == NULL)
+    {
+        //if (g_Verbose)
+        fprintf(stderr, "Error: library '%s' is not a Mupen64Plus library.\n", filepath);
+        osal_dynlib_close(handle);
+        return false;
+    }
+    m64p_plugin_type PluginType = (m64p_plugin_type) 0;
+    int PluginVersion = 0;
+    const char *PluginName = NULL;
+    (*PluginGetVersion)(&PluginType, &PluginVersion, NULL, &PluginName, NULL);
+    osal_dynlib_close(handle);
+    return PluginType == M64PLUGIN_GFX;
+
+}
