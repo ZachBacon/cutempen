@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     a.installTranslator(&qtTranslator);
 
     QTranslator myappTranslator;
-    myappTranslator.load("cutemupen_" + QLocale::system().name());
+    myappTranslator.load(":/lang/lang/cutemupen_" + QLocale::system().name());
     a.installTranslator(&myappTranslator);
 
     MainWindow w;
