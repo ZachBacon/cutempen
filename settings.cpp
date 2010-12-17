@@ -29,6 +29,7 @@
 
 extern "C" {
 #include "m64p/core_interface.h"
+#include "osal/osal_preproc.h"   // for shared lib extension
 }
 extern bool doLog;
 extern bool doLogVerbose;
@@ -144,6 +145,19 @@ void MainWindow::RestoreSettings ()
   // Restore OSD setting
   ui->cb_OSD->setChecked(settings.value("Video/OSD", true).toBool());
 
+  // Find all graphics plugins and fill combo-box
+  QDir pluginDir (Mupen64PluginDir);
+  pluginDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
+  QStringList filters;
+  filters << "*" OSAL_DLL_EXTENSION;
+  pluginDir.setNameFilters(filters);
+  for (int i = 0; i < pluginDir.entryList().count(); i++)
+  {
+      if (isGfxPlugin (
+              pluginDir.absoluteFilePath(pluginDir[i]).toLocal8Bit().constData()))
+          ui->cb_GfxPlugin->addItem(pluginDir[i]);
+  }
+
   // Restore EmuMode setting
   int emuMode = settings.value("Settings/EmuMode", 2).toInt();
   switch (emuMode)
@@ -173,9 +187,6 @@ void MainWindow::ApplyConfiguration ()
   (*ConfigSetParameter)(l_ConfigVideo, "Fullscreen", M64TYPE_BOOL, &FullScreen);
   //settings.setValue("Video/Fullscreen", ui->cb_Fullscreen->isChecked());
 
-  QString res = ui->cb_Resolution->currentText();
-  //chooseResolution(res);
-
   int Osd;
   ui->cb_OSD->isChecked() ? Osd = 1 : Osd = 0;
   (*ConfigSetParameter)(l_ConfigCore, "OnScreenDisplay", M64TYPE_BOOL, &Osd);
@@ -185,4 +196,10 @@ void MainWindow::ApplyConfiguration ()
   emumode = settings.value("Settings/EmuMode", "2").toInt();
   if ((emumode >= 0) && (emumode <= 2))
     (*ConfigSetParameter)(l_ConfigCore, "R4300Emulator", M64TYPE_INT, &emumode);
+}
+
+void MainWindow::chooseGfxPlugin (QString text)
+{
+    (*ConfigSetParameter)(l_ConfigUI, "VideoPlugin", M64TYPE_STRING,
+                          text.toLocal8Bit().constData());
 }
