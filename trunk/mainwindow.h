@@ -78,7 +78,7 @@ private:
 
     bool isCoreReady;
 
-    bool isGfxPlugin (const char*);
+    m64p_plugin_type GetPluginType (const char* filepath);
 
 public slots:
     void chooseMupen64Library (bool skipDialog = false);

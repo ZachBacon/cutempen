@@ -153,10 +153,28 @@ void MainWindow::RestoreSettings ()
   pluginDir.setNameFilters(filters);
   for (int i = 0; i < pluginDir.entryList().count(); i++)
   {
-      if (isGfxPlugin (
-              pluginDir.absoluteFilePath(pluginDir[i]).toLocal8Bit().constData()))
-          ui->cb_GfxPlugin->addItem(pluginDir[i]);
+      m64p_plugin_type pType = GetPluginType (
+          pluginDir.absoluteFilePath(pluginDir[i]).toLocal8Bit().constData());
+      switch (pType)
+      {
+          case M64PLUGIN_GFX:
+              ui->cb_GfxPlugin->addItem (pluginDir[i]);
+              break;
+          case M64PLUGIN_AUDIO:
+              ui->cb_SndPlugin->addItem (pluginDir[i]);
+              break;
+          case M64PLUGIN_INPUT:
+              ui->cb_InpPlugin->addItem (pluginDir[i]);
+              break;
+          case M64PLUGIN_RSP:
+              ui->cb_RspPlugin->addItem (pluginDir[i]);
+              break;
+          default:
+              break;
+      }
   }
+
+
 
   // Restore EmuMode setting
   int emuMode = settings.value("Settings/EmuMode", 2).toInt();

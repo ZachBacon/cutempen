@@ -16,7 +16,7 @@ Features:
  - Fullscreen, resolution and OSD settings
  - Settings save and restore across runs
  - Zipped ROMs support
- - Graphic plugin selection (no access to plugins settings)
+ - Plugin detection & selection (no access to plugins settings)
  
 Not supported yet:
  - Cheats
