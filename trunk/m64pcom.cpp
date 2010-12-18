@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   CuteMupen - m64pcom.cpp                                               *
  *   CuteMupen homepage: http://cutemupen.sourceforge.net/                 *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2010 Vincent Knecht <vknecht@users.sourceforge.net>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
