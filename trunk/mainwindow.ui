@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>608</width>
-    <height>433</height>
+    <height>432</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -617,8 +617,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>741</x>
-     <y>397</y>
+     <x>597</x>
+     <y>398</y>
     </hint>
     <hint type="destinationlabel">
      <x>449</x>
@@ -634,7 +634,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>84</x>
-     <y>400</y>
+     <y>398</y>
     </hint>
     <hint type="destinationlabel">
      <x>179</x>
@@ -649,8 +649,8 @@
    <slot>clickedROM(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>121</x>
-     <y>99</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>247</x>
@@ -665,8 +665,8 @@
    <slot>chooseMupen64Library()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>63</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>11</x>
@@ -681,8 +681,8 @@
    <slot>chooseMupen64PluginDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>92</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>11</x>
@@ -697,8 +697,8 @@
    <slot>chooseMupen64DataDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>121</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>13</x>
@@ -713,8 +713,8 @@
    <slot>chooseMupen64ConfigDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>150</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>12</x>
@@ -729,8 +729,8 @@
    <slot>toggledEmuMode(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>373</x>
-     <y>217</y>
+     <x>492</x>
+     <y>270</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -745,11 +745,11 @@
    <slot>toggledEmuMode(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>252</x>
-     <y>217</y>
+     <x>325</x>
+     <y>270</y>
     </hint>
     <hint type="destinationlabel">
-     <x>-2</x>
+     <x>0</x>
      <y>234</y>
     </hint>
    </hints>
@@ -761,11 +761,11 @@
    <slot>toggledEmuMode(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>127</x>
-     <y>217</y>
+     <x>157</x>
+     <y>270</y>
     </hint>
     <hint type="destinationlabel">
-     <x>-2</x>
+     <x>0</x>
      <y>272</y>
     </hint>
    </hints>
@@ -777,12 +777,12 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>102</x>
-     <y>311</y>
+     <x>114</x>
+     <y>352</y>
     </hint>
     <hint type="destinationlabel">
-     <x>102</x>
-     <y>40</y>
+     <x>114</x>
+     <y>81</y>
     </hint>
    </hints>
   </connection>
@@ -793,12 +793,12 @@
    <slot>selectAll()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>102</x>
-     <y>340</y>
+     <x>114</x>
+     <y>381</y>
     </hint>
     <hint type="destinationlabel">
-     <x>102</x>
-     <y>40</y>
+     <x>114</x>
+     <y>81</y>
     </hint>
    </hints>
   </connection>
@@ -809,12 +809,12 @@
    <slot>copy()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>102</x>
-     <y>340</y>
+     <x>114</x>
+     <y>381</y>
     </hint>
     <hint type="destinationlabel">
-     <x>102</x>
-     <y>40</y>
+     <x>114</x>
+     <y>81</y>
     </hint>
    </hints>
   </connection>
@@ -825,11 +825,11 @@
    <slot>toggledLogging(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>150</y>
+     <x>124</x>
+     <y>335</y>
     </hint>
     <hint type="destinationlabel">
-     <x>-6</x>
+     <x>0</x>
      <y>151</y>
     </hint>
    </hints>
@@ -841,11 +841,11 @@
    <slot>toggledLogging(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>162</x>
-     <y>150</y>
+     <x>210</x>
+     <y>335</y>
     </hint>
     <hint type="destinationlabel">
-     <x>-2</x>
+     <x>0</x>
      <y>136</y>
     </hint>
    </hints>
@@ -857,8 +857,8 @@
    <slot>toggledLogging(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>229</x>
-     <y>150</y>
+     <x>296</x>
+     <y>335</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -873,8 +873,8 @@
    <slot>editedMupen64Library()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>237</x>
-     <y>61</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -889,11 +889,11 @@
    <slot>editedMupen64PluginDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>237</x>
-     <y>90</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
-     <x>-3</x>
+     <x>0</x>
      <y>96</y>
     </hint>
    </hints>
@@ -905,8 +905,8 @@
    <slot>editedMupen64DataDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>237</x>
-     <y>119</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -921,8 +921,8 @@
    <slot>editedMupen64ConfigDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>237</x>
-     <y>148</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>15</x>
@@ -937,11 +937,11 @@
    <slot>chooseResolution(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>60</x>
-     <y>77</y>
+     <x>90</x>
+     <y>206</y>
     </hint>
     <hint type="destinationlabel">
-     <x>-2</x>
+     <x>0</x>
      <y>71</y>
     </hint>
    </hints>
@@ -953,12 +953,12 @@
    <slot>toggledOSD(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>228</x>
-     <y>71</y>
+     <x>395</x>
+     <y>203</y>
     </hint>
     <hint type="destinationlabel">
      <x>297</x>
-     <y>-2</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>
@@ -969,12 +969,12 @@
    <slot>toggledFullscreen(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>172</x>
-     <y>79</y>
+     <x>242</x>
+     <y>203</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
-     <y>-2</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>
@@ -985,11 +985,11 @@
    <slot>chooseROMsDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>713</x>
-     <y>63</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
-     <x>657</x>
+     <x>607</x>
      <y>0</y>
     </hint>
    </hints>
@@ -1001,12 +1001,12 @@
    <slot>editedROMsDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>243</x>
-     <y>61</y>
+     <x>120</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>504</x>
-     <y>-6</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>
@@ -1017,12 +1017,60 @@
    <slot>chooseGfxPlugin(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>386</x>
-     <y>73</y>
+     <x>304</x>
+     <y>103</y>
     </hint>
     <hint type="destinationlabel">
      <x>408</x>
      <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_SndPlugin</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>chooseSndPlugin(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>522</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>602</x>
+     <y>38</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_RspPlugin</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>chooseRspPlugin(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>463</x>
+     <y>126</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>605</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_InpPlugin</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>chooseInpPlugin(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>269</x>
+     <y>124</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>606</x>
+     <y>26</y>
     </hint>
    </hints>
   </connection>
@@ -1046,5 +1094,8 @@
   <slot>toggledOSD(bool)</slot>
   <slot>toggledFullscreen(bool)</slot>
   <slot>chooseGfxPlugin(QString)</slot>
+  <slot>chooseSndPlugin(QString)</slot>
+  <slot>chooseInpPlugin(QString)</slot>
+  <slot>chooseRspPlugin(QString)</slot>
  </slots>
 </ui>

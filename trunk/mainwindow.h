@@ -99,6 +99,9 @@ public slots:
     void toggledOSD(bool checked);
     void toggledFullscreen(bool checked);
     void chooseGfxPlugin (QString text);
+    void chooseSndPlugin (QString text);
+    void chooseInpPlugin (QString text);
+    void chooseRspPlugin (QString text);
 };
 
 #endif // MAINWINDOW_H
