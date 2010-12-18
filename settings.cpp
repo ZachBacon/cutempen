@@ -221,3 +221,21 @@ void MainWindow::chooseGfxPlugin (QString text)
     (*ConfigSetParameter)(l_ConfigUI, "VideoPlugin", M64TYPE_STRING,
                           text.toLocal8Bit().constData());
 }
+
+void MainWindow::chooseSndPlugin (QString text)
+{
+    (*ConfigSetParameter)(l_ConfigUI, "AudioPlugin", M64TYPE_STRING,
+                          text.toLocal8Bit().constData());
+}
+
+void MainWindow::chooseInpPlugin (QString text)
+{
+  (*ConfigSetParameter)(l_ConfigUI, "InputPlugin", M64TYPE_STRING,
+                        text.toLocal8Bit().constData());
+}
+
+void MainWindow::chooseRspPlugin (QString text)
+{
+  (*ConfigSetParameter)(l_ConfigUI, "RspPlugin", M64TYPE_STRING,
+                        text.toLocal8Bit().constData());
+}
