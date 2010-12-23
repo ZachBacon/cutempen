@@ -447,6 +447,47 @@ m64p_error MainWindow::PluginLoadTry(const char *filepath, int MapIndex)
     return M64ERR_SUCCESS;
 }
 
+m64p_error MainWindow::UnloadPlugin (m64p_plugin_type pType)
+{
+    typedef m64p_error (*ptr_PluginShutdown)(void);
+    ptr_PluginShutdown PluginShutdown;
+    int i;
+
+    switch (pType)
+    {
+      case M64PLUGIN_GFX:
+        i = 0;
+        break;
+      case M64PLUGIN_AUDIO:
+        i = 1;
+        break;
+      case M64PLUGIN_INPUT:
+        i = 2;
+        break;
+      case M64PLUGIN_RSP:
+        i = 3;
+        break;
+      default:
+        qDebug () << "Problem: trying to unload unknown plugin type " << pType;
+        break;
+    }
+
+    if (g_PluginMap[i].handle == NULL)
+      return M64ERR_SUCCESS;
+    /* call the destructor function for the plugin and release the library */
+    PluginShutdown = (ptr_PluginShutdown) osal_dynlib_getproc(g_PluginMap[i].handle, "PluginShutdown");
+    if (PluginShutdown != NULL)
+      (*PluginShutdown)();
+    osal_dynlib_close(g_PluginMap[i].handle);
+    /* clear out the plugin map's members */
+    g_PluginMap[i].handle = NULL;
+    g_PluginMap[i].filename[0] = 0;
+    g_PluginMap[i].libname = NULL;
+    g_PluginMap[i].libversion = 0;
+
+    return M64ERR_SUCCESS;
+}
+
 m64p_handle MainWindow::GetSectionHandle (const char* name)
 {
   m64p_handle handle;

@@ -77,9 +77,11 @@ private:
     void AddToEnvVar (QString envVar, QString value);
 
     m64p_error ActivatePlugin (const char* filePath, m64p_plugin_type pType);
-    m64p_error PluginLoadTry(const char *filepath, int MapIndex);
+    m64p_error PluginLoadTry (const char *filepath, int MapIndex);
     m64p_error AttachAllPlugins ();
+    m64p_error UnloadPlugin (m64p_plugin_type pType);
     void DetachAllPlugins ();
+
     void FlushLog ();
 
     bool isCoreReady;
