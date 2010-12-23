@@ -22,6 +22,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QDebug>
 #include <QSettings>
 #include <QRadioButton>
 #include <QMessageBox>
@@ -29,6 +30,8 @@
 
 extern "C" {
 #include "m64p/core_interface.h"
+#include "m64p/plugin.h"
+#include "osal/osal_dynamiclib.h"
 #include "osal/osal_preproc.h"   // for shared lib extension
 }
 extern bool doLog;
@@ -99,11 +102,10 @@ void MainWindow::chooseResolution (QString /*text*/)
     (*ConfigSetParameter)(l_ConfigVideo, "ScreenWidth", M64TYPE_INT, &xres);
     (*ConfigSetParameter)(l_ConfigVideo, "ScreenHeight", M64TYPE_INT, &yres);
     settings.setValue("Video/Resolution", res);
-}
+  }
   else
     QMessageBox::warning(this, tr("Invalid resolution"),
         tr("This resolution is invalid: ") + res);
-
 }
 
 
@@ -145,7 +147,7 @@ void MainWindow::RestoreSettings ()
   // Restore OSD setting
   ui->cb_OSD->setChecked(settings.value("Video/OSD", true).toBool());
 
-  // Find all graphics plugins and fill combo-box
+  // Find all plugins and fill combo-boxes
   QDir pluginDir (Mupen64PluginDir);
   pluginDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
   QStringList filters;
@@ -153,28 +155,28 @@ void MainWindow::RestoreSettings ()
   pluginDir.setNameFilters(filters);
   for (int i = 0; i < pluginDir.entryList().count(); i++)
   {
-      m64p_plugin_type pType = GetPluginType (
-          pluginDir.absoluteFilePath(pluginDir[i]).toLocal8Bit().constData());
-      switch (pType)
-      {
-          case M64PLUGIN_GFX:
-              ui->cb_GfxPlugin->addItem (pluginDir[i]);
-              break;
-          case M64PLUGIN_AUDIO:
-              ui->cb_SndPlugin->addItem (pluginDir[i]);
-              break;
-          case M64PLUGIN_INPUT:
-              ui->cb_InpPlugin->addItem (pluginDir[i]);
-              break;
-          case M64PLUGIN_RSP:
-              ui->cb_RspPlugin->addItem (pluginDir[i]);
-              break;
-          default:
-              break;
-      }
+    m64p_plugin_type pType = GetPluginType (
+        pluginDir.absoluteFilePath(pluginDir[i]).toLocal8Bit().constData());
+    switch (pType)
+    {
+      case M64PLUGIN_GFX:
+        ui->cb_GfxPlugin->addItem (pluginDir[i]);
+        break;
+      case M64PLUGIN_AUDIO:
+        ui->cb_SndPlugin->addItem (pluginDir[i]);
+        break;
+      case M64PLUGIN_INPUT:
+        ui->cb_InpPlugin->addItem (pluginDir[i]);
+        break;
+      case M64PLUGIN_RSP:
+        ui->cb_RspPlugin->addItem (pluginDir[i]);
+        break;
+      default:
+        break;
+    }
   }
 
-
+  //Test (); // Check if we can get some plugin parameters
 
   // Restore EmuMode setting
   int emuMode = settings.value("Settings/EmuMode", 2).toInt();
@@ -220,22 +222,73 @@ void MainWindow::chooseGfxPlugin (QString text)
 {
     (*ConfigSetParameter)(l_ConfigUI, "VideoPlugin", M64TYPE_STRING,
                           text.toLocal8Bit().constData());
+    QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
+    if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_GFX) != M64ERR_SUCCESS)
+      qDebug () << "chooseGfxPlugin failed !";
 }
 
 void MainWindow::chooseSndPlugin (QString text)
 {
     (*ConfigSetParameter)(l_ConfigUI, "AudioPlugin", M64TYPE_STRING,
                           text.toLocal8Bit().constData());
+    QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
+    if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_AUDIO) != M64ERR_SUCCESS)
+      qDebug () << "chooseSndPlugin failed !";
 }
 
 void MainWindow::chooseInpPlugin (QString text)
 {
   (*ConfigSetParameter)(l_ConfigUI, "InputPlugin", M64TYPE_STRING,
                         text.toLocal8Bit().constData());
+  QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
+  if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_INPUT) != M64ERR_SUCCESS)
+    qDebug () << "chooseInpPlugin failed !";
 }
 
 void MainWindow::chooseRspPlugin (QString text)
 {
   (*ConfigSetParameter)(l_ConfigUI, "RspPlugin", M64TYPE_STRING,
                         text.toLocal8Bit().constData());
+  QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
+  if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_RSP) != M64ERR_SUCCESS)
+    qDebug () << "chooseRspPlugin failed !";
+}
+
+m64p_error MainWindow::ActivatePlugin (const char* filePath, m64p_plugin_type pType)
+{
+  m64p_dynlib_handle handle;
+  m64p_error rval;
+  rval = osal_dynlib_open(&handle, filePath);
+  if (rval != M64ERR_SUCCESS)
+  {
+    QMessageBox::information(this, "ActivatePlugin failed", filePath);
+    return rval;
+  }
+
+  switch (pType)
+  {
+    // Kind of ugly, the int argument is the index for g_PluginMap
+    case M64PLUGIN_GFX:
+      rval = PluginLoadTry (filePath, 0);
+      break;
+    case M64PLUGIN_AUDIO:
+      rval = PluginLoadTry (filePath, 1);
+      break;
+    case M64PLUGIN_INPUT:
+      rval = PluginLoadTry (filePath, 2);
+      break;
+    case M64PLUGIN_RSP:
+      rval = PluginLoadTry (filePath, 3);
+      break;
+    default:
+      break;
+  }
+
+  if (rval != M64ERR_SUCCESS)
+  {
+    qDebug () << "PluginLoadTry() failed for " << filePath;
+    return rval;
+  }
+
+  return rval;
 }

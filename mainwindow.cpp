@@ -24,6 +24,7 @@
 #include "ui_mainwindow.h"
 #include "version.h"
 
+#include <QDebug>
 #include <QFileDialog>      // For directory selections
 #include <QMessageBox>
 #include <QFileSystemModel> // for file/rom browser
@@ -70,7 +71,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ROMFile = "";
 
     RestoreSettings();
-    ///ApplyConfiguration();
 }
 
 MainWindow::~MainWindow()
@@ -134,44 +134,20 @@ int MainWindow::clickedRun()
         return 2;
     }
 
-    /* search for and load plugins */
-    m64p_error rval = PluginSearchLoad(
-        l_ConfigUI, Mupen64PluginDir.toLocal8Bit().constData());
-    if (rval != M64ERR_SUCCESS)
+    m64p_error res;
+    res = AttachAllPlugins ();
+    if (res != M64ERR_SUCCESS)
     {
-        QMessageBox::critical(this, tr("Plugin Search"),
-            tr("Error searching for plugins"));
         (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
         (*CoreShutdown)();
         DetachCoreLib();
-        ui->pb_Run->setDisabled(false);
-        return 12;
-    }
-
-    /* attach plugins to core */
-    int i;
-    for (i = 0; i < 4; i++)
-    {
-        if ((*CoreAttachPlugin)(g_PluginMap[i].type, g_PluginMap[i].handle) != M64ERR_SUCCESS)
-        {
-            QString errorString;
-            errorString.sprintf("Error attaching %s plugin !", g_PluginMap[i].name);
-            QMessageBox::critical(this, "Plugins", errorString);
-            (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
-            (*CoreShutdown)();
-            DetachCoreLib();
-            ui->pb_Run->setDisabled(false);
-            return 13;
-        }
+        return res;
     }
 
     /* run the game */
     (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
 
-    /* detach plugins from core and unload them */
-    for (i = 0; i < 4; i++)
-        (*CoreDetachPlugin)(g_PluginMap[i].type);
-    PluginUnload();
+    DetachAllPlugins ();
 
     /* close the ROM image */
     (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
@@ -180,12 +156,44 @@ int MainWindow::clickedRun()
     //if (l_SaveOptions)
     //    SaveConfigurationOptions();
 
-    // Display log in Logs tab
-    for (i = 0; i < logList->size(); i++)
-        ui->te_Logs->append(logList->at(i));
-    logList->clear();
+    FlushLog ();
+
     ui->pb_Run->setDisabled(false);
     return 0;
+}
+
+m64p_error MainWindow::AttachAllPlugins ()
+{
+  /* attach plugins to core */
+  m64p_error res = M64ERR_SUCCESS;
+  for (int i = 0; i < 4; i++)
+  {
+      res = (*CoreAttachPlugin)(g_PluginMap[i].type, g_PluginMap[i].handle);
+      if ( res != M64ERR_SUCCESS)
+      {
+          QString errorString;
+          errorString.sprintf("Error attaching %s plugin !", g_PluginMap[i].name);
+          QMessageBox::critical(this, "Plugins", errorString);
+          ui->pb_Run->setDisabled(false);
+          return res;
+      }
+  }
+  return res;
+}
+
+void MainWindow::DetachAllPlugins ()
+{
+  /* detach plugins from core and unload them */
+  for (int i = 0; i < 4; i++)
+      (*CoreDetachPlugin)(g_PluginMap[i].type);
+}
+
+void MainWindow::FlushLog ()
+{
+  // Display log in Logs tab
+  for (int i = 0; i < logList->size(); i++)
+      ui->te_Logs->append(logList->at(i));
+  logList->clear();
 }
 
 void DebugCallback(void *Context, int level, const char *message)

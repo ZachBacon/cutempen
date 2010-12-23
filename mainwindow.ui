@@ -188,19 +188,25 @@
                    <property name="text">
                     <string>Graphic</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="0" column="1">
                   <widget class="QComboBox" name="cb_GfxPlugin"/>
                  </item>
-                 <item row="0" column="2">
+                 <item row="0" column="3">
                   <widget class="QLabel" name="lb_Sound">
                    <property name="text">
                     <string>Sound</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
                   </widget>
                  </item>
-                 <item row="0" column="3">
+                 <item row="0" column="4">
                   <widget class="QComboBox" name="cb_SndPlugin"/>
                  </item>
                  <item row="1" column="0">
@@ -208,20 +214,52 @@
                    <property name="text">
                     <string>Input</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
                   <widget class="QComboBox" name="cb_InpPlugin"/>
                  </item>
-                 <item row="1" column="2">
+                 <item row="1" column="3">
                   <widget class="QLabel" name="lb_RspPlugin">
                    <property name="text">
                     <string>RSP</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
                   </widget>
                  </item>
-                 <item row="1" column="3">
+                 <item row="1" column="4">
                   <widget class="QComboBox" name="cb_RspPlugin"/>
+                 </item>
+                 <item row="0" column="2">
+                  <spacer name="horizontalSpacer_7">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="1" column="2">
+                  <spacer name="horizontalSpacer_8">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </item>

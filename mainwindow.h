@@ -76,9 +76,17 @@ private:
     void UpdateROMsDir ();
     void AddToEnvVar (QString envVar, QString value);
 
+    m64p_error ActivatePlugin (const char* filePath, m64p_plugin_type pType);
+    m64p_error PluginLoadTry(const char *filepath, int MapIndex);
+    m64p_error AttachAllPlugins ();
+    void DetachAllPlugins ();
+    void FlushLog ();
+
     bool isCoreReady;
 
     m64p_plugin_type GetPluginType (const char* filepath);
+    m64p_handle GetSectionHandle (const char* sectionName);
+    m64p_error Test ();
 
 public slots:
     void chooseMupen64Library (bool skipDialog = false);

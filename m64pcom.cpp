@@ -28,6 +28,7 @@
 #include <QMessageBox>
 #include <QString>
 #include <QStringList>
+#include <QDebug>
 
 #include "quazip/quazip.h"
 #include "quazip/quazipfile.h"
@@ -353,6 +354,15 @@ m64p_error MainWindow::SaveConfigurationOptions(void)
 
 /* ============================================================================= */
 
+void ParameterListCallback(void* sectionHandle, const char* ParamName, m64p_type ParamType)
+{
+    //m64p_handle* section = (m64p_handle*)sectionHandle;
+    (void) sectionHandle;
+    (void) ParamType;
+    //(void) ParamName;
+    qDebug () << ParamName;
+}
+
 m64p_plugin_type MainWindow::GetPluginType (const char* filepath)
 {
     /* try to open a shared library at the given filepath */
@@ -370,10 +380,91 @@ m64p_plugin_type MainWindow::GetPluginType (const char* filepath)
         osal_dynlib_close(handle);
         return (m64p_plugin_type) 0;
     }
+
     m64p_plugin_type PluginType = (m64p_plugin_type) 0;
     int PluginVersion = 0;
     const char *PluginName = NULL;
     (*PluginGetVersion)(&PluginType, &PluginVersion, NULL, &PluginName, NULL);
+
     osal_dynlib_close(handle);
     return PluginType;
+}
+
+m64p_error MainWindow::PluginLoadTry(const char *filepath, int MapIndex)
+{
+    /* try to open a shared library at the given filepath */
+    m64p_dynlib_handle handle;
+    m64p_error rval = osal_dynlib_open(&handle, filepath);
+    if (rval != M64ERR_SUCCESS)
+        return rval;
+
+    /* call the GetVersion function for the plugin and check compatibility */
+    ptr_PluginGetVersion PluginGetVersion = (ptr_PluginGetVersion) osal_dynlib_getproc(handle, "PluginGetVersion");
+    if (PluginGetVersion == NULL)
+    {
+        //if (g_Verbose)
+        fprintf(stderr, "Error: library '%s' is not a Mupen64Plus library.\n", filepath);
+        osal_dynlib_close(handle);
+        return M64ERR_INCOMPATIBLE;
+    }
+
+    m64p_plugin_type PluginType = (m64p_plugin_type) 0;
+    int PluginVersion = 0;
+    const char *PluginName = NULL;
+    (*PluginGetVersion)(&PluginType, &PluginVersion, NULL, &PluginName, NULL);
+    if (PluginType != g_PluginMap[MapIndex].type)
+    {
+        /* the type of this plugin doesn't match with the type that was requested by the caller */
+        osal_dynlib_close(handle);
+        return M64ERR_INCOMPATIBLE;
+    }
+
+    /* the front-end doesn't talk to the plugins, so we don't care about the plugin version or api version */
+
+    /* call the plugin's initialization function and make sure it starts okay */
+    ptr_PluginStartup PluginStartup = (ptr_PluginStartup) osal_dynlib_getproc(handle, "PluginStartup");
+    if (PluginStartup == NULL)
+    {
+        fprintf(stderr, "Error: library '%s' broken.  No PluginStartup() function found.\n", filepath);
+        osal_dynlib_close(handle);
+        return M64ERR_INCOMPATIBLE;
+    }
+
+    rval = (*PluginStartup)(CoreHandle, g_PluginMap[MapIndex].name, DebugCallback);  /* DebugCallback is in main.c */
+    if (rval != M64ERR_SUCCESS)
+    {
+        fprintf(stderr, "Error: %s plugin library '%s' failed to start.\n", g_PluginMap[MapIndex].name, filepath);
+        osal_dynlib_close(handle);
+        return rval;
+    }
+
+    /* plugin loaded successfully, so set the plugin map's members */
+    g_PluginMap[MapIndex].handle = handle;
+    strcpy(g_PluginMap[MapIndex].filename, filepath);
+    g_PluginMap[MapIndex].libname = PluginName;
+    g_PluginMap[MapIndex].libversion = PluginVersion;
+
+    return M64ERR_SUCCESS;
+}
+
+m64p_handle MainWindow::GetSectionHandle (const char* name)
+{
+  m64p_handle handle;
+  m64p_error result = (*ConfigOpenSection)(name, &handle);
+  (void) result;
+  return handle;
+}
+
+m64p_error MainWindow::Test ()
+{
+  m64p_handle sHandle = GetSectionHandle ("Audio-SDL");
+  //m64p_handle sHandle = GetSectionHandle ("Video-Rice");
+
+  m64p_error res = (*ConfigListParameters)(sHandle, &sHandle, ParameterListCallback);
+  if (res != M64ERR_SUCCESS)
+  {
+      qDebug () << "ConfigListParameters failed, return code = " << res;
+  }
+
+  return res;
 }
