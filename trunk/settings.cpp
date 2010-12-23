@@ -265,6 +265,10 @@ m64p_error MainWindow::ActivatePlugin (const char* filePath, m64p_plugin_type pT
     return rval;
   }
 
+  rval = UnloadPlugin (pType);
+  if (rval != M64ERR_SUCCESS)
+    qDebug () << "Unable to unload plugin type " << pType;
+
   switch (pType)
   {
     // Kind of ugly, the int argument is the index for g_PluginMap
