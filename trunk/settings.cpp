@@ -147,6 +147,12 @@ void MainWindow::RestoreSettings ()
   // Restore OSD setting
   ui->cb_OSD->setChecked(settings.value("Video/OSD", true).toBool());
 
+  // Get selected plugins from configuration settings before they're overwritten by discovery
+  QString GfxPlugin = settings.value("Settings/GfxPlugin").toString();
+  QString SndPlugin = settings.value("Settings/SndPlugin").toString();
+  QString InpPlugin = settings.value("Settings/InpPlugin").toString();
+  QString RspPlugin = settings.value("Settings/RspPlugin").toString();
+
   // Find all plugins and fill combo-boxes
   QDir pluginDir (Mupen64PluginDir);
   pluginDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
@@ -175,6 +181,20 @@ void MainWindow::RestoreSettings ()
         break;
     }
   }
+
+  int idx;
+  idx = ui->cb_GfxPlugin->findText (GfxPlugin);
+  if (idx != -1)
+    ui->cb_GfxPlugin->setCurrentIndex (idx);
+  idx = ui->cb_SndPlugin->findText (SndPlugin);
+  if (idx != -1)
+    ui->cb_SndPlugin->setCurrentIndex (idx);
+  idx = ui->cb_InpPlugin->findText (InpPlugin);
+  if (idx != -1)
+    ui->cb_InpPlugin->setCurrentIndex (idx);
+  idx = ui->cb_RspPlugin->findText (RspPlugin);
+  if (idx != -1)
+    ui->cb_RspPlugin->setCurrentIndex (idx);
 
   //Test (); // Check if we can get some plugin parameters
 
@@ -224,7 +244,13 @@ void MainWindow::chooseGfxPlugin (QString text)
                           text.toLocal8Bit().constData());
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
     if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_GFX) != M64ERR_SUCCESS)
+    {
       qDebug () << "chooseGfxPlugin failed !";
+      return;
+    }
+    QSettings settings ("CuteMupen", "CuteMupen");
+    settings.setIniCodec("UTF-8");
+    settings.setValue("Settings/GfxPlugin", text.toLocal8Bit().constData());
 }
 
 void MainWindow::chooseSndPlugin (QString text)
@@ -233,7 +259,13 @@ void MainWindow::chooseSndPlugin (QString text)
                           text.toLocal8Bit().constData());
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
     if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_AUDIO) != M64ERR_SUCCESS)
+    {
       qDebug () << "chooseSndPlugin failed !";
+      return;
+    }
+    QSettings settings ("CuteMupen", "CuteMupen");
+    settings.setIniCodec("UTF-8");
+    settings.setValue("Settings/SndPlugin", text.toLocal8Bit().constData());
 }
 
 void MainWindow::chooseInpPlugin (QString text)
@@ -242,7 +274,13 @@ void MainWindow::chooseInpPlugin (QString text)
                         text.toLocal8Bit().constData());
   QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
   if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_INPUT) != M64ERR_SUCCESS)
+  {
     qDebug () << "chooseInpPlugin failed !";
+    return;
+  }
+  QSettings settings ("CuteMupen", "CuteMupen");
+  settings.setIniCodec("UTF-8");
+  settings.setValue("Settings/InpPlugin", text.toLocal8Bit().constData());
 }
 
 void MainWindow::chooseRspPlugin (QString text)
@@ -251,7 +289,13 @@ void MainWindow::chooseRspPlugin (QString text)
                         text.toLocal8Bit().constData());
   QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
   if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_RSP) != M64ERR_SUCCESS)
+  {
     qDebug () << "chooseRspPlugin failed !";
+    return;
+  }
+  QSettings settings ("CuteMupen", "CuteMupen");
+  settings.setIniCodec("UTF-8");
+  settings.setValue("Settings/RspPlugin", text.toLocal8Bit().constData());
 }
 
 m64p_error MainWindow::ActivatePlugin (const char* filePath, m64p_plugin_type pType)
