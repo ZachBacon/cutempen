@@ -22,6 +22,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "plugindialog.h"
+#include "ui_plugindialog.h"
+
 #include <QDebug>
 #include <QSettings>
 #include <QRadioButton>
@@ -36,6 +39,8 @@ extern "C" {
 }
 extern bool doLog;
 extern bool doLogVerbose;
+//extern QStringList parameterList;
+extern PluginDialog* pDialog;
 
 void MainWindow::toggledEmuMode(bool /*checked*/)
 {
@@ -339,4 +344,124 @@ m64p_error MainWindow::ActivatePlugin (const char* filePath, m64p_plugin_type pT
   }
 
   return rval;
+}
+
+void MainWindow::clickedGfx ()
+{
+  qDebug () << "In clickedGfx()..." ;
+  GetConfigurationSections ();
+  // Extract plugin name from plugin file name
+  QString pluginName = ui->cb_GfxPlugin->currentText();
+  pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
+  // Suppress the filename extension
+  pluginName.chop(pluginName.length() - pluginName.lastIndexOf('.'));
+  pluginName[0] = pluginName[0].toUpper();
+  QString sectionName;
+  sectionName.sprintf("Video-%s", pluginName.toLocal8Bit().constData());
+  pDialog = NULL;
+  QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
+  if (subset.count() == 1)
+  {
+      pDialog = new PluginDialog (this);
+      GetSectionParameters (sectionName.toLocal8Bit().constData());
+      pDialog->exec();
+  }
+  else
+  {
+    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
+    QMessageBox::information (this, "Nothing to configure",
+        "Couldn't find parameters in " + sectionName + " section.");
+    return;
+  }
+}
+
+void MainWindow::clickedSnd ()
+{
+  qDebug () << "In clickedSnd()..." ;
+  GetConfigurationSections ();
+  // Extract plugin name from plugin file name
+  QString pluginName = ui->cb_SndPlugin->currentText();
+  pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
+  // Suppress the filename extension
+  pluginName.chop(pluginName.length() - pluginName.lastIndexOf('.'));
+  pluginName[0] = pluginName[0].toUpper();
+  QString sectionName;
+  sectionName.sprintf("Audio-%s", pluginName.toLocal8Bit().constData());
+  pDialog = NULL;
+  QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
+  if (subset.count() == 1)
+  {
+      pDialog = new PluginDialog (this);
+      GetSectionParameters (sectionName.toLocal8Bit().constData());
+      pDialog->exec();
+  }
+  else
+  {
+    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
+    for (int i = 0; i < subset.count(); i++)
+      qDebug () << subset[i];
+    QMessageBox::information (this, "Nothing to configure",
+        "Couldn't find parameters in " + sectionName + " section.");
+    return;
+  }
+}
+
+void MainWindow::clickedInp ()
+{
+  qDebug () << "In clickedInp()..." ;
+  GetConfigurationSections ();
+  // Extract plugin name from plugin file name
+  QString pluginName = ui->cb_InpPlugin->currentText();
+  pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
+  // Suppress the filename extension
+  pluginName.chop(pluginName.length() - pluginName.lastIndexOf('.'));
+  pluginName[0] = pluginName[0].toUpper();
+  QString sectionName;
+  sectionName.sprintf("Input-%s", pluginName.toLocal8Bit().constData());
+  pDialog = NULL;
+  QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
+  if (subset.count() == 1)
+  {
+      pDialog = new PluginDialog (this);
+      GetSectionParameters (sectionName.toLocal8Bit().constData());
+      pDialog->exec();
+  }
+  else
+  {
+    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
+    QMessageBox::information (this, "Nothing to configure",
+        "Couldn't find parameters in " + sectionName + " section.");
+    return;
+  }
+
+}
+
+void MainWindow::clickedRsp ()
+{
+  qDebug () << "In clickedRsp()..." ;
+  GetConfigurationSections ();
+  // Extract plugin name from plugin file name
+  QString pluginName = ui->cb_RspPlugin->currentText();
+  pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
+  // Suppress the filename extension
+  pluginName.chop(pluginName.length() - pluginName.lastIndexOf('.'));
+  pluginName[0] = pluginName[0].toUpper();
+  QString sectionName;
+  sectionName.sprintf("Rsp-%s", pluginName.toLocal8Bit().constData());
+  pDialog = NULL;
+  QStringList subset = configSections.filter(pluginName, Qt::CaseInsensitive);
+  if (subset.count() == 1)
+  {
+      pDialog = new PluginDialog (this);
+      GetSectionParameters (sectionName.toLocal8Bit().constData());
+      pDialog->exec();
+  }
+  else
+  {
+    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
+    QMessageBox::information (this, "Nothing to configure",
+        "Couldn't find parameters in " + sectionName + " section.");
+    return;
+  }
+
 }

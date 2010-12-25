@@ -1,11 +1,23 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-02-26T16:25:43
 # -------------------------------------------------
+#
+### The settings you have to adapt to your configuration:
+# On Windows, the paths to Mupen64Plus API and ZLib include files
+win32:INCLUDEPATH += C:\dev\mupen64plus-bundle-src-1.99.4\source\mupen64plus-core\src\api \
+                     C:\dev\include
+# On Windows, the path to ZLib library
+windows:LIBS += C:\dev\lib\zlib.lib
+
+# On other systems (GNU/Linux, OSX, ...), the path to Mupen64Plus API files
+!win32:INCLUDEPATH += /usr/include/mupen64plus
+# -------------------------------------------------
+
 CONFIG += release
 TARGET = cutemupen
 TEMPLATE = app
-
-SOURCES += m64pcom.cpp \
+SOURCES += plugindialog.cpp \
+    m64pcom.cpp \
     settings.cpp \
     m64p/core_interface.c \
     m64p/plugin.cpp \
@@ -18,8 +30,8 @@ SOURCES += m64pcom.cpp \
     quazip/quazipnewinfo.cpp \
     quazip/unzip.c \
     quazip/zip.c
-
-HEADERS += m64p/core_interface.h \
+HEADERS += plugindialog.h \
+    m64p/core_interface.h \
     m64p/plugin.h \
     mainwindow.h \
     osal/osal_dynamiclib.h \
@@ -35,23 +47,15 @@ HEADERS += m64p/core_interface.h \
     quazip/unzip.h \
     quazip/zip.h
 
-win32:INCLUDEPATH += C:\dev\mupen64plus-bundle-src-1.99.3\source\mupen64plus-core\src\api \
-    C:\dev\include
+unix:LIBS += -lz -ldl
 
-!win32:INCLUDEPATH += /usr/include/mupen64plus
-
-unix:LIBS += -lz
-windows:LIBS += C:\dev\lib\zlib.lib
-
-FORMS += mainwindow.ui
-
+FORMS += plugindialog.ui \
+    mainwindow.ui
 win32:CONFIG += embed_manifest_exe
 win32:SOURCES += osal/osal_files_win32.cpp \
     osal/osal_dynamiclib_win32.c
 !win32:SOURCES += osal/osal_files_unix.c \
     osal/osal_dynamiclib_unix.c
 RESOURCES += resources.qrc
-
 TRANSLATIONS = lang/cutemupen_fr.ts
-
-CODECFORSRC     = UTF-8
+CODECFORSRC = UTF-8

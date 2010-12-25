@@ -23,6 +23,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "version.h"
+#include "plugindialog.h"
 
 #include <QDebug>
 #include <QFileDialog>      // For directory selections
@@ -50,6 +51,9 @@ QStringList* logList;
 bool doLog;
 bool doLogVerbose;
 
+QStringList parameterList;
+PluginDialog* pDialog;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -60,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     doLogVerbose = false;
     logLine = new QString();
     logList = new QStringList();
+    pDialog = NULL;
 
     QString title ("CuteMupen");
     this->setWindowTitle(title);

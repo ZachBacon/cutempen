@@ -183,54 +183,14 @@
               <layout class="QGridLayout" name="gridLayout_13">
                <item row="0" column="0">
                 <layout class="QGridLayout" name="gridLayout_11">
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="lb_GfxPlugin">
-                   <property name="text">
-                    <string>Graphic</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="0" column="1">
                   <widget class="QComboBox" name="cb_GfxPlugin"/>
-                 </item>
-                 <item row="0" column="3">
-                  <widget class="QLabel" name="lb_Sound">
-                   <property name="text">
-                    <string>Sound</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
                  </item>
                  <item row="0" column="4">
                   <widget class="QComboBox" name="cb_SndPlugin"/>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="lb_Input">
-                   <property name="text">
-                    <string>Input</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="1" column="1">
                   <widget class="QComboBox" name="cb_InpPlugin"/>
-                 </item>
-                 <item row="1" column="3">
-                  <widget class="QLabel" name="lb_RspPlugin">
-                   <property name="text">
-                    <string>RSP</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
                  </item>
                  <item row="1" column="4">
                   <widget class="QComboBox" name="cb_RspPlugin"/>
@@ -260,6 +220,34 @@
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QPushButton" name="pb_Gfx">
+                   <property name="text">
+                    <string>Video</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QPushButton" name="pb_Inp">
+                   <property name="text">
+                    <string>Input</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="3">
+                  <widget class="QPushButton" name="pb_Snd">
+                   <property name="text">
+                    <string>Audio</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="3">
+                  <widget class="QPushButton" name="pb_Rsp">
+                   <property name="text">
+                    <string>RSP</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </item>
@@ -815,8 +803,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>114</x>
-     <y>352</y>
+     <x>138</x>
+     <y>358</y>
     </hint>
     <hint type="destinationlabel">
      <x>114</x>
@@ -831,8 +819,8 @@
    <slot>selectAll()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>114</x>
-     <y>381</y>
+     <x>138</x>
+     <y>391</y>
     </hint>
     <hint type="destinationlabel">
      <x>114</x>
@@ -847,8 +835,8 @@
    <slot>copy()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>114</x>
-     <y>381</y>
+     <x>138</x>
+     <y>391</y>
     </hint>
     <hint type="destinationlabel">
      <x>114</x>
@@ -1055,7 +1043,7 @@
    <slot>chooseGfxPlugin(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>304</x>
+     <x>215</x>
      <y>103</y>
     </hint>
     <hint type="destinationlabel">
@@ -1087,8 +1075,8 @@
    <slot>chooseRspPlugin(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>463</x>
-     <y>126</y>
+     <x>575</x>
+     <y>136</y>
     </hint>
     <hint type="destinationlabel">
      <x>605</x>
@@ -1103,12 +1091,76 @@
    <slot>chooseInpPlugin(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>269</x>
-     <y>124</y>
+     <x>215</x>
+     <y>136</y>
     </hint>
     <hint type="destinationlabel">
      <x>606</x>
      <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pb_Inp</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clickedInp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>169</x>
+     <y>-12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pb_Snd</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clickedSnd()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>458</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>604</x>
+     <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pb_Rsp</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clickedRsp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>436</x>
+     <y>126</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>602</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pb_Gfx</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clickedGfx()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>98</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>6</x>
+     <y>62</y>
     </hint>
    </hints>
   </connection>
@@ -1135,5 +1187,9 @@
   <slot>chooseSndPlugin(QString)</slot>
   <slot>chooseInpPlugin(QString)</slot>
   <slot>chooseRspPlugin(QString)</slot>
+  <slot>clickedGfx()</slot>
+  <slot>clickedSnd()</slot>
+  <slot>clickedInp()</slot>
+  <slot>clickedRsp()</slot>
  </slots>
 </ui>
