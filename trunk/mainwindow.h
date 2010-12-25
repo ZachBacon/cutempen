@@ -53,6 +53,7 @@ private:
     QString ROMsDir;
     QString ROMFile;
     QDirModel *dirModel;
+    QStringList configSections;
 
     m64p_error InitMupen64();
     void RestoreSettings();
@@ -88,7 +89,8 @@ private:
 
     m64p_plugin_type GetPluginType (const char* filepath);
     m64p_handle GetSectionHandle (const char* sectionName);
-    m64p_error Test ();
+    void GetConfigurationSections ();
+    m64p_error GetSectionParameters (const char* sectionName);
 
 public slots:
     void chooseMupen64Library (bool skipDialog = false);
@@ -112,6 +114,10 @@ public slots:
     void chooseSndPlugin (QString text);
     void chooseInpPlugin (QString text);
     void chooseRspPlugin (QString text);
+    void clickedGfx ();
+    void clickedSnd ();
+    void clickedInp ();
+    void clickedRsp ();
 };
 
 #endif // MAINWINDOW_H

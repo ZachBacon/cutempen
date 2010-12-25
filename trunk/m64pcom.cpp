@@ -24,6 +24,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "version.h"
+#include "plugindialog.h"
 
 #include <QMessageBox>
 #include <QString>
@@ -45,6 +46,8 @@ void DebugCallback(void *Context, int level, const char *message);
 
 extern QString* logLine;
 extern QStringList* logList;
+//extern QStringList parameterList;
+extern PluginDialog* pDialog;
 
 #include "m64p/plugin.h"
 
@@ -356,11 +359,45 @@ m64p_error MainWindow::SaveConfigurationOptions(void)
 
 void ParameterListCallback(void* sectionHandle, const char* ParamName, m64p_type ParamType)
 {
-    //m64p_handle* section = (m64p_handle*)sectionHandle;
-    (void) sectionHandle;
-    (void) ParamType;
-    //(void) ParamName;
-    qDebug () << ParamName;
+    m64p_handle* section = (m64p_handle*)sectionHandle;
+    //parameterList.append (ParamName);
+    bool boolValue = true;
+    int intValue = -1;
+    float floatValue = -1.0f;
+    char* stringValue;
+    //m64p_error rval;
+    switch (ParamType)
+    {
+      case M64TYPE_BOOL:
+        boolValue = (*ConfigGetParamBool)(section, ParamName);
+        qDebug () << "Boolean" << ParamName << "is" << (boolValue ? "true" : "false");
+        pDialog->AddParameter(ParamName, ParamType, &boolValue);
+        break;
+      case M64TYPE_FLOAT:
+        floatValue = (*ConfigGetParamFloat)(section, ParamName);
+        qDebug () << "Float" << ParamName << "equals" << floatValue;
+        pDialog->AddParameter(ParamName, ParamType, &floatValue);
+        break;
+      case M64TYPE_INT:
+        intValue = (*ConfigGetParamInt)(section, ParamName);
+        qDebug () << "Int" << ParamName << "equals" << intValue;
+        pDialog->AddParameter(ParamName, ParamType, &intValue);
+        break;
+      case M64TYPE_STRING:
+        stringValue = (char*)(*ConfigGetParamString)(&section, ParamName);
+        qDebug () << "String" << ParamName << " set to " << stringValue;
+        pDialog->AddParameter(ParamName, ParamType, &stringValue);
+        break;
+    }
+}
+
+void SectionListCallback(void* context, const char* section)
+{
+    //(void)context;
+    QStringList* configSections;
+    configSections = (QStringList*)context;
+    //qDebug () << section;
+    configSections->append (section);
 }
 
 m64p_plugin_type MainWindow::GetPluginType (const char* filepath)
@@ -496,10 +533,19 @@ m64p_handle MainWindow::GetSectionHandle (const char* name)
   return handle;
 }
 
-m64p_error MainWindow::Test ()
+void MainWindow::GetConfigurationSections ()
 {
-  m64p_handle sHandle = GetSectionHandle ("Audio-SDL");
-  //m64p_handle sHandle = GetSectionHandle ("Video-Rice");
+  configSections.clear();
+  m64p_error err;
+  err = (*ConfigListSections)((void*)&configSections, SectionListCallback);
+
+}
+
+m64p_error MainWindow::GetSectionParameters (const char* sectionName)
+{
+  //parameterList.clear();
+
+  m64p_handle sHandle = GetSectionHandle (sectionName);
 
   m64p_error res = (*ConfigListParameters)(sHandle, &sHandle, ParameterListCallback);
   if (res != M64ERR_SUCCESS)
