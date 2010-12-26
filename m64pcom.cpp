@@ -360,32 +360,26 @@ m64p_error MainWindow::SaveConfigurationOptions(void)
 void ParameterListCallback(void* sectionHandle, const char* ParamName, m64p_type ParamType)
 {
     m64p_handle* section = (m64p_handle*)sectionHandle;
-    //parameterList.append (ParamName);
     bool boolValue = true;
     int intValue = -1;
     float floatValue = -1.0f;
     char* stringValue;
-    //m64p_error rval;
     switch (ParamType)
     {
       case M64TYPE_BOOL:
         boolValue = (*ConfigGetParamBool)(section, ParamName);
-        qDebug () << "Boolean" << ParamName << "is" << (boolValue ? "true" : "false");
         pDialog->AddParameter(ParamName, ParamType, &boolValue);
         break;
       case M64TYPE_FLOAT:
         floatValue = (*ConfigGetParamFloat)(section, ParamName);
-        qDebug () << "Float" << ParamName << "equals" << floatValue;
         pDialog->AddParameter(ParamName, ParamType, &floatValue);
         break;
       case M64TYPE_INT:
         intValue = (*ConfigGetParamInt)(section, ParamName);
-        qDebug () << "Int" << ParamName << "equals" << intValue;
         pDialog->AddParameter(ParamName, ParamType, &intValue);
         break;
       case M64TYPE_STRING:
         stringValue = (char*)(*ConfigGetParamString)(&section, ParamName);
-        qDebug () << "String" << ParamName << " set to " << stringValue;
         pDialog->AddParameter(ParamName, ParamType, &stringValue);
         break;
     }
@@ -529,7 +523,9 @@ m64p_handle MainWindow::GetSectionHandle (const char* name)
 {
   m64p_handle handle;
   m64p_error result = (*ConfigOpenSection)(name, &handle);
-  (void) result;
+  if (result != M64ERR_SUCCESS)
+    qDebug () << "GetSectionHandle: unable to get" << name << "section !";
+
   return handle;
 }
 
@@ -538,20 +534,16 @@ void MainWindow::GetConfigurationSections ()
   configSections.clear();
   m64p_error err;
   err = (*ConfigListSections)((void*)&configSections, SectionListCallback);
-
+  if (err != M64ERR_SUCCESS)
+    qDebug () << "GetConfigurationSections: unable to list sections !";
 }
 
 m64p_error MainWindow::GetSectionParameters (const char* sectionName)
 {
-  //parameterList.clear();
-
   m64p_handle sHandle = GetSectionHandle (sectionName);
-
-  m64p_error res = (*ConfigListParameters)(sHandle, &sHandle, ParameterListCallback);
+  m64p_error res = (*ConfigListParameters)(sHandle, sHandle, ParameterListCallback);
   if (res != M64ERR_SUCCESS)
-  {
-      qDebug () << "ConfigListParameters failed, return code = " << res;
-  }
+    qDebug () << "ConfigListParameters failed, return code = " << res;
 
   return res;
 }
