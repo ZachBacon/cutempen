@@ -379,8 +379,8 @@ void ParameterListCallback(void* sectionHandle, const char* ParamName, m64p_type
         pDialog->AddParameter(ParamName, ParamType, &intValue);
         break;
       case M64TYPE_STRING:
-        stringValue = (char*)(*ConfigGetParamString)(&section, ParamName);
-        pDialog->AddParameter(ParamName, ParamType, &stringValue);
+        stringValue = (char*)(*ConfigGetParamString)(section, ParamName);
+        pDialog->AddParameter(ParamName, ParamType, stringValue);
         break;
     }
 }

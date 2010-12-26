@@ -27,12 +27,6 @@ public slots:
     void changedFloatSetting (double value);
     void changedIntSetting (int value);
     void changedStringSetting ();
-
-signals:
-    void boolValueChanged ();
-    void floatValueChanged ();
-    void intValueChanged ();
-    void stringValueChanged ();
 };
 
 #endif // PLUGINDIALOG_H
