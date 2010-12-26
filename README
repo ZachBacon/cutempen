@@ -4,6 +4,7 @@ Written using Qt and MupenPlus64 v2.0 API.
 
 Website: http://cutemupen.sourceforge.net/
 License: GNU GPLv2
+
 Authors:
  - Vincent Knecht <vknecht@users.sourceforge.net>
  - Richard Goedeken & other contributors to Mupen64Plus
@@ -11,12 +12,14 @@ Authors:
    See http://code.google.com/p/mupen64plus/
  - Sergey A. Tachenov for the QuaZIP - Qt/C++ wrapper.
    See quazip/ subdirectory and http://quazip.sourceforge.net/
+
 Features:
  - ROM browser
  - Fullscreen, resolution and OSD settings
  - Settings save and restore across runs
  - Zipped ROMs support
- - Plugin detection & selection (no access to plugins settings)
+ - Plugin detection and selection
+ - Changing plugins settings (those are not saved nor restored yet)
  
 Not supported yet:
  - Cheats
@@ -56,6 +59,3 @@ Usage:
 
   On first run, CuteMupen will ask you to set the paths to several Mupen64+
   files and directories.
-
- 
- 
