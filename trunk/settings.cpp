@@ -348,7 +348,6 @@ m64p_error MainWindow::ActivatePlugin (const char* filePath, m64p_plugin_type pT
 
 void MainWindow::clickedGfx ()
 {
-  qDebug () << "In clickedGfx()..." ;
   GetConfigurationSections ();
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_GfxPlugin->currentText();
@@ -362,7 +361,7 @@ void MainWindow::clickedGfx ()
   QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
   if (subset.count() == 1)
   {
-      pDialog = new PluginDialog (this);
+      pDialog = new PluginDialog (this, sectionName.toLocal8Bit().constData());
       GetSectionParameters (sectionName.toLocal8Bit().constData());
       pDialog->exec();
   }
@@ -377,7 +376,6 @@ void MainWindow::clickedGfx ()
 
 void MainWindow::clickedSnd ()
 {
-  qDebug () << "In clickedSnd()..." ;
   GetConfigurationSections ();
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_SndPlugin->currentText();
@@ -391,7 +389,7 @@ void MainWindow::clickedSnd ()
   QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
   if (subset.count() == 1)
   {
-      pDialog = new PluginDialog (this);
+      pDialog = new PluginDialog (this, sectionName.toLocal8Bit().constData());
       GetSectionParameters (sectionName.toLocal8Bit().constData());
       pDialog->exec();
   }
@@ -408,7 +406,6 @@ void MainWindow::clickedSnd ()
 
 void MainWindow::clickedInp ()
 {
-  qDebug () << "In clickedInp()..." ;
   GetConfigurationSections ();
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_InpPlugin->currentText();
@@ -422,7 +419,7 @@ void MainWindow::clickedInp ()
   QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
   if (subset.count() == 1)
   {
-      pDialog = new PluginDialog (this);
+      pDialog = new PluginDialog (this, sectionName.toLocal8Bit().constData());
       GetSectionParameters (sectionName.toLocal8Bit().constData());
       pDialog->exec();
   }
@@ -438,7 +435,6 @@ void MainWindow::clickedInp ()
 
 void MainWindow::clickedRsp ()
 {
-  qDebug () << "In clickedRsp()..." ;
   GetConfigurationSections ();
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_RspPlugin->currentText();
@@ -452,7 +448,7 @@ void MainWindow::clickedRsp ()
   QStringList subset = configSections.filter(pluginName, Qt::CaseInsensitive);
   if (subset.count() == 1)
   {
-      pDialog = new PluginDialog (this);
+      pDialog = new PluginDialog (this, sectionName.toLocal8Bit().constData());
       GetSectionParameters (sectionName.toLocal8Bit().constData());
       pDialog->exec();
   }

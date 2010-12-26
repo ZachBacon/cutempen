@@ -9,12 +9,14 @@
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 
-PluginDialog::PluginDialog(QWidget *parent)
+PluginDialog::PluginDialog(QWidget *parent, const char* pluginName)
     : QDialog(parent)
 {
 	ui.setupUi(this);
+	this->setWindowTitle(pluginName);
 	line = 0;
 	column = 0;
+
 }
 
 PluginDialog::~PluginDialog()
@@ -24,9 +26,8 @@ PluginDialog::~PluginDialog()
 
 void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValue)
 {
-  QHBoxLayout* hbox = new QHBoxLayout ();
   QLabel* label = new QLabel (pName);
-  hbox->addWidget(label, 0, Qt::AlignRight|Qt::AlignVCenter);
+  ui.gl_PluginParams->addWidget(label, line, column, Qt::AlignRight|Qt::AlignVCenter);
   QComboBox* cbox;
   QLineEdit* ledit;
   QDoubleSpinBox* dspbox;
@@ -47,40 +48,32 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
         cbox->setCurrentIndex(cbox->findText("true"));
       else
         cbox->setCurrentIndex(cbox->findText("false"));
-      hbox->addWidget(cbox);
+      ui.gl_PluginParams->addWidget(cbox, line, column + 1);
       break;
     case M64TYPE_FLOAT:
-      //ledit = new QLineEdit (QString((float)pValue));
-      //hbox->addWidget(ledit);
       dspbox = new QDoubleSpinBox ();
+      dspbox->setMaximum(16000000);
       fval = (float*)pValue;
       dspbox->setValue (*fval);
-      hbox->addWidget (dspbox);
+      ui.gl_PluginParams->addWidget(dspbox, line, column + 1);
       break;
     case M64TYPE_INT:
       spbox = new QSpinBox ();
+      spbox->setMaximum(65535);
       ival = (int*)pValue;
       spbox->setValue (*ival);
-      hbox->addWidget (spbox);
+      ui.gl_PluginParams->addWidget(spbox, line, column + 1);
       break;
-
     case M64TYPE_STRING:
       ledit = new QLineEdit ((const char*)pValue);
-      //ledit->setText((const char*)(pValue));
-      hbox->addWidget(ledit);
+      ui.gl_PluginParams->addWidget(ledit, line, column + 1);
   }
 
-
-  hbox->insertSpacing(1, 100);
-  ui.gl_PluginParams->addLayout(hbox, line, column);
-  //ui.gl_PluginParams->
-
-  //qDebug () << "PluginDialog::AddParameter(" << pName << ")";
-  if (line < 10)
+  if (line < 12)
     line++;
   else
   {
     line = 0;
-    column ++;
+    column += 2;
   }
 }

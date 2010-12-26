@@ -11,7 +11,7 @@ class PluginDialog : public QDialog
     Q_OBJECT
 
 public:
-    PluginDialog(QWidget *parent = 0);
+    PluginDialog(QWidget *parent = 0, const char* pluginName = 0);
     ~PluginDialog();
 
     void AddParameter (const char* pName, m64p_type pType, void* pValue);
