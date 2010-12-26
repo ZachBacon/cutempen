@@ -66,7 +66,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
       fval = (float*)pValue;
       dspbox->setValue (*fval);
       ui.gl_PluginParams->addWidget(dspbox, line, column + 1);
-      connect(dspbox, SIGNAL(valueChanged(double)), this, SLOT(changedFloatSetting(float)));
+      connect(dspbox, SIGNAL(valueChanged(double)), this, SLOT(changedFloatSetting(double)));
       break;
     case M64TYPE_INT:
       spbox = new QSpinBox ();
@@ -78,9 +78,11 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
       connect(spbox, SIGNAL(valueChanged(int)), this, SLOT(changedIntSetting(int)));
       break;
     case M64TYPE_STRING:
-      ledit = new QLineEdit ((const char*)pValue);
+      QString tmp ((const char*)pValue);
+      ledit = new QLineEdit (tmp.toLocal8Bit().constData());
       ledit->setObjectName(pName);
       ui.gl_PluginParams->addWidget(ledit, line, column + 1);
+      connect(ledit, SIGNAL(editingFinished()), this, SLOT(changedStringSetting()));
   }
 
   if (line < 12)
@@ -128,5 +130,10 @@ void PluginDialog::changedIntSetting (int value)
 
 void PluginDialog::changedStringSetting ()
 {
-
+  QLineEdit* ledit = (QLineEdit*)sender();
+  qDebug () << "String param" << sender()->objectName().toLocal8Bit().constData() << "=" << ledit->text();
+  (*ConfigSetParameter)(cfgHandle,
+      sender()->objectName().toLocal8Bit().constData(),
+      M64TYPE_STRING,
+      ledit->text().toLocal8Bit().constData());
 }
