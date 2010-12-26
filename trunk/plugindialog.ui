@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>249</height>
+    <height>289</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,9 +27,33 @@
      </property>
     </layout>
    </item>
+   <item row="1" column="0">
+    <widget class="QPushButton" name="pb_Close">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pb_Close</sender>
+   <signal>clicked()</signal>
+   <receiver>PluginDialogClass</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>314</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>396</x>
+     <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
