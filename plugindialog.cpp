@@ -14,6 +14,7 @@ extern "C" {
 }
 
 extern ptr_ConfigSetParameter ConfigSetParameter;
+extern ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
 
 PluginDialog::PluginDialog(QWidget *parent, m64p_handle handle, const char* pluginName)
     : QDialog(parent)
@@ -33,6 +34,7 @@ PluginDialog::~PluginDialog()
 void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValue)
 {
   QLabel* label = new QLabel (pName);
+  label->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
   ui.gl_PluginParams->addWidget(label, line, column, Qt::AlignRight|Qt::AlignVCenter);
   QComboBox* cbox;
   QLineEdit* ledit;
@@ -48,6 +50,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
     case M64TYPE_BOOL:
       cbox = new QComboBox ();
       cbox->setObjectName(pName);
+      cbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
       cbox->addItem("true");
       cbox->addItem("false");
       bval = (bool*)pValue;
@@ -62,6 +65,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
     case M64TYPE_FLOAT:
       dspbox = new QDoubleSpinBox ();
       dspbox->setObjectName(pName);
+      dspbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
       dspbox->setMaximum(16000000);
       fval = (float*)pValue;
       dspbox->setValue (*fval);
@@ -71,6 +75,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
     case M64TYPE_INT:
       spbox = new QSpinBox ();
       spbox->setObjectName(pName);
+      spbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
       spbox->setMaximum(65535);
       ival = (int*)pValue;
       spbox->setValue (*ival);
@@ -81,6 +86,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
       QString tmp ((const char*)pValue);
       ledit = new QLineEdit (tmp.toLocal8Bit().constData());
       ledit->setObjectName(pName);
+      ledit->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
       ui.gl_PluginParams->addWidget(ledit, line, column + 1);
       connect(ledit, SIGNAL(editingFinished()), this, SLOT(changedStringSetting()));
   }
