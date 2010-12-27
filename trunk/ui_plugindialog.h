@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'plugindialog.ui'
 **
-** Created: Sat Dec 25 18:53:43 2010
+** Created: Sun Dec 26 20:41:29 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -17,6 +17,7 @@
 #include <QtGui/QDialog>
 #include <QtGui/QGridLayout>
 #include <QtGui/QHeaderView>
+#include <QtGui/QPushButton>
 
 QT_BEGIN_NAMESPACE
 
@@ -25,13 +26,14 @@ class Ui_PluginDialogClass
 public:
     QGridLayout *gridLayout;
     QGridLayout *gl_PluginParams;
+    QPushButton *pb_Close;
 
     void setupUi(QDialog *PluginDialogClass)
     {
         if (PluginDialogClass->objectName().isEmpty())
             PluginDialogClass->setObjectName(QString::fromUtf8("PluginDialogClass"));
         PluginDialogClass->setWindowModality(Qt::ApplicationModal);
-        PluginDialogClass->resize(400, 249);
+        PluginDialogClass->resize(400, 289);
         PluginDialogClass->setModal(true);
         gridLayout = new QGridLayout(PluginDialogClass);
         gridLayout->setSpacing(6);
@@ -44,8 +46,14 @@ public:
 
         gridLayout->addLayout(gl_PluginParams, 0, 0, 1, 1);
 
+        pb_Close = new QPushButton(PluginDialogClass);
+        pb_Close->setObjectName(QString::fromUtf8("pb_Close"));
+
+        gridLayout->addWidget(pb_Close, 1, 0, 1, 1);
+
 
         retranslateUi(PluginDialogClass);
+        QObject::connect(pb_Close, SIGNAL(clicked()), PluginDialogClass, SLOT(accept()));
 
         QMetaObject::connectSlotsByName(PluginDialogClass);
     } // setupUi
@@ -53,6 +61,7 @@ public:
     void retranslateUi(QDialog *PluginDialogClass)
     {
         PluginDialogClass->setWindowTitle(QApplication::translate("PluginDialogClass", "Plugin Settings", 0, QApplication::UnicodeUTF8));
+        pb_Close->setText(QApplication::translate("PluginDialogClass", "Close", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
