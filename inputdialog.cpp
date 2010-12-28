@@ -1,4 +1,4 @@
-#include "plugindialog.h"
+#include "inputdialog.h"
 
 #include <QDebug>
 
@@ -7,6 +7,8 @@
 #include <QLineEdit>
 #include <QDoubleSpinBox>
 #include <QSpinBox>
+#include <QWidget>
+#include <QGridLayout>
 
 extern "C" {
 #include "m64p_config.h"
@@ -15,26 +17,46 @@ extern "C" {
 extern ptr_ConfigSetParameter ConfigSetParameter;
 extern ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
 
-PluginDialog::PluginDialog(QWidget *parent, m64p_handle handle, const char* pluginName)
+InputDialog::InputDialog(QWidget *parent, m64p_handle handle[], QStringList pluginName)
     : QDialog(parent)
 {
 	ui.setupUi(this);
-	this->setWindowTitle(pluginName);
-	cfgHandle = handle;
+	pluginName[0].chop(pluginName[0].length() - pluginName[0].lastIndexOf('-'));
+	this->setWindowTitle(pluginName[0]);
+	cfgHandle[0] = &handle[0];
 	line = 0;
 	column = 0;
+	tabIndex = 0;
+	QString glName;
+	glName.sprintf("gl_Tab%d", tabIndex + 1);
+        qgl = ui.tabWidget->findChild<QGridLayout*>(glName);
 }
 
-PluginDialog::~PluginDialog()
+InputDialog::~InputDialog()
 {
-
 }
 
-void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValue)
+void InputDialog::SetCurrentTab (int index)
 {
+  ui.tabWidget->setCurrentIndex(index);
+}
+
+void InputDialog::NextTab ()
+{
+  tabIndex++;
+  ui.tabWidget->setCurrentIndex(tabIndex);
+  QString glName;
+  glName.sprintf("gl_Tab%d", tabIndex + 1);
+  qgl = ui.tabWidget->findChild<QGridLayout*>(glName);
+}
+
+void InputDialog::AddParameter (const char* pName, m64p_type pType, void* pValue)
+{
+  ui.tabWidget->setCurrentIndex(tabIndex);
   QLabel* label = new QLabel (pName);
-  label->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
-  ui.gl_PluginParams->addWidget(label, line, column, Qt::AlignRight|Qt::AlignVCenter);
+  label->setToolTip((*ConfigGetParameterHelp)(cfgHandle[tabIndex], pName));
+  qgl->addWidget(label, line, column, Qt::AlignRight|Qt::AlignVCenter);
+
   QComboBox* cbox;
   QLineEdit* ledit;
   QDoubleSpinBox* dspbox;
@@ -49,7 +71,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
     case M64TYPE_BOOL:
       cbox = new QComboBox ();
       cbox->setObjectName(pName);
-      cbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+      cbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle[tabIndex], pName));
       cbox->addItem("true");
       cbox->addItem("false");
       bval = (bool*)pValue;
@@ -57,40 +79,40 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
         cbox->setCurrentIndex(cbox->findText("true"));
       else
         cbox->setCurrentIndex(cbox->findText("false"));
-      ui.gl_PluginParams->addWidget(cbox, line, column + 1);
+      qgl->addWidget(cbox, line, column + 1);
       connect(cbox, SIGNAL(currentIndexChanged(int)), this, SLOT(changedBoolSetting(int)));
-
       break;
     case M64TYPE_FLOAT:
       dspbox = new QDoubleSpinBox ();
       dspbox->setObjectName(pName);
-      dspbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+      dspbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle[tabIndex], pName));
       dspbox->setMaximum(16000000);
       fval = (float*)pValue;
       dspbox->setValue (*fval);
-      ui.gl_PluginParams->addWidget(dspbox, line, column + 1);
+      qgl->addWidget(dspbox, line, column + 1);
       connect(dspbox, SIGNAL(valueChanged(double)), this, SLOT(changedFloatSetting(double)));
       break;
     case M64TYPE_INT:
       spbox = new QSpinBox ();
       spbox->setObjectName(pName);
-      spbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
-      spbox->setMaximum(65535);
+      spbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle[tabIndex], pName));
+      spbox->setMaximum(32767);
+      spbox->setMinimum(-32768);
       ival = (int*)pValue;
       spbox->setValue (*ival);
-      ui.gl_PluginParams->addWidget(spbox, line, column + 1);
+      qgl->addWidget(spbox, line, column + 1);
       connect(spbox, SIGNAL(valueChanged(int)), this, SLOT(changedIntSetting(int)));
       break;
     case M64TYPE_STRING:
       QString tmp ((const char*)pValue);
       ledit = new QLineEdit (tmp.toLocal8Bit().constData());
       ledit->setObjectName(pName);
-      ledit->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
-      ui.gl_PluginParams->addWidget(ledit, line, column + 1);
+      ledit->setToolTip((*ConfigGetParameterHelp)(cfgHandle[tabIndex], pName));
+      qgl->addWidget(ledit, line, column + 1);
       connect(ledit, SIGNAL(editingFinished()), this, SLOT(changedStringSetting()));
   }
 
-  if (line < 12)
+  if (line < 11)
     line++;
   else
   {
@@ -99,7 +121,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
   }
 }
 
-void PluginDialog::changedBoolSetting (int index)
+void InputDialog::changedBoolSetting (int index)
 {
   bool newValue;
   QComboBox* cb = (QComboBox*)sender();
@@ -108,36 +130,36 @@ void PluginDialog::changedBoolSetting (int index)
   else
     newValue = false;
   //qDebug () << sender()->objectName() << "=" << (newValue ? "true" : "false");
-  (*ConfigSetParameter)(cfgHandle,
+  (*ConfigSetParameter)(cfgHandle[ui.tabWidget->currentIndex()],
       sender()->objectName().toLocal8Bit().constData(),
       M64TYPE_BOOL,
       &newValue);
 }
 
-void PluginDialog::changedFloatSetting (double value)
+void InputDialog::changedFloatSetting (double value)
 {
   float newValue = (float) value;
   //qDebug () << "Float param" << sender()->objectName().toLocal8Bit().constData() << "=" << newValue;
-  (*ConfigSetParameter)(cfgHandle,
+  (*ConfigSetParameter)(cfgHandle[ui.tabWidget->currentIndex()],
       sender()->objectName().toLocal8Bit().constData(),
       M64TYPE_FLOAT,
       &newValue);
 }
 
-void PluginDialog::changedIntSetting (int value)
+void InputDialog::changedIntSetting (int value)
 {
   //qDebug () << "Int param" << sender()->objectName().toLocal8Bit().constData() << "=" << value;
-  (*ConfigSetParameter)(cfgHandle,
+  (*ConfigSetParameter)(cfgHandle[ui.tabWidget->currentIndex()],
       sender()->objectName().toLocal8Bit().constData(),
       M64TYPE_INT,
       &value);
 }
 
-void PluginDialog::changedStringSetting ()
+void InputDialog::changedStringSetting ()
 {
   QLineEdit* ledit = (QLineEdit*)sender();
   //qDebug () << "String param" << sender()->objectName().toLocal8Bit().constData() << "=" << ledit->text();
-  (*ConfigSetParameter)(cfgHandle,
+  (*ConfigSetParameter)(cfgHandle[ui.tabWidget->currentIndex()],
       sender()->objectName().toLocal8Bit().constData(),
       M64TYPE_STRING,
       ledit->text().toLocal8Bit().constData());

@@ -88,7 +88,6 @@ private:
     bool isCoreReady;
 
     m64p_plugin_type GetPluginType (const char* filepath);
-    m64p_handle GetSectionHandle (const char* sectionName);
     void GetConfigurationSections ();
     m64p_error GetSectionParameters (const char* sectionName);
 

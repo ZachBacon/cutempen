@@ -24,12 +24,14 @@
 
 #include "plugindialog.h"
 #include "ui_plugindialog.h"
+#include "inputdialog.h"
 
 #include <QDebug>
 #include <QSettings>
 #include <QRadioButton>
 #include <QMessageBox>
 #include <QDesktopWidget>   // to get screen geometry
+#include <QChar>
 
 extern "C" {
 #include "m64p/core_interface.h"
@@ -41,6 +43,8 @@ extern bool doLog;
 extern bool doLogVerbose;
 //extern QStringList parameterList;
 extern PluginDialog* pDialog;
+extern InputDialog* inputDialog;
+extern m64p_handle GetSectionHandle (const char* name);
 
 void MainWindow::toggledEmuMode(bool /*checked*/)
 {
@@ -411,6 +415,14 @@ void MainWindow::clickedSnd ()
 void MainWindow::clickedInp ()
 {
   GetConfigurationSections ();
+  // Delete any section not finishing with a number, since Input-Sdl-Control
+  // gets created on query...
+  for (int i = 0; i < configSections.count(); i++)
+  {
+      QChar ch = configSections[i].at(configSections[i].length() -1);
+      if (ch.isLetter ())
+          configSections.removeAt(i);
+  }
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_InpPlugin->currentText();
   pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
@@ -418,23 +430,38 @@ void MainWindow::clickedInp ()
   pluginName.chop(pluginName.length() - pluginName.lastIndexOf('.'));
   pluginName[0] = pluginName[0].toUpper();
   QString sectionName;
-  sectionName.sprintf("Input-%s", pluginName.toLocal8Bit().constData());
-  pDialog = NULL;
+  sectionName.sprintf("Input-%s-Control", pluginName.toLocal8Bit().constData());
+  inputDialog = NULL;
   QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
-  if (subset.count() == 1)
+  subset.sort();
+  if (subset.count() == 4)
   {
-      pDialog = new PluginDialog (this,
-          GetSectionHandle (sectionName.toLocal8Bit().constData()),
-          sectionName.toLocal8Bit().constData());
-      GetSectionParameters (sectionName.toLocal8Bit().constData());
-      pDialog->exec();
+      m64p_handle cfgHandle[4];
+      for (int i = 0; i< 4; i++)
+      {
+        cfgHandle[i] = GetSectionHandle (subset[i].toLocal8Bit().constData());
+      }
+
+      inputDialog = new InputDialog (this, cfgHandle, subset);
+
+      for (int i = 0; i < 4; i++)
+      {
+        //qDebug () << "Getting section parameters for" << subset[i].toLocal8Bit().constData();
+        GetSectionParameters (subset[i].toLocal8Bit().constData());
+        if (i < 3)
+          inputDialog->NextTab ();
+      }
+      inputDialog->SetCurrentTab (0);
+      inputDialog->exec();
+      delete inputDialog;
   }
   else
   {
-    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
+    qDebug () << "Found an unexpected number (" << subset.count () << ") of matching elements:";
+    for (int i = 0; i < subset.count(); i++)
+      qDebug () << subset[i];
     QMessageBox::information (this, "Nothing to configure",
-        "Couldn't find parameters in " + sectionName + " section.");
-    return;
+        "Couldn't find parameters for " + sectionName + " section.");
   }
 
 }
