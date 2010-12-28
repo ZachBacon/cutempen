@@ -25,6 +25,7 @@
 #include "ui_mainwindow.h"
 #include "version.h"
 #include "plugindialog.h"
+#include "inputdialog.h"
 
 #include <QMessageBox>
 #include <QString>
@@ -48,6 +49,7 @@ extern QString* logLine;
 extern QStringList* logList;
 //extern QStringList parameterList;
 extern PluginDialog* pDialog;
+extern InputDialog* inputDialog;
 
 #include "m64p/plugin.h"
 
@@ -357,9 +359,28 @@ m64p_error MainWindow::SaveConfigurationOptions(void)
 
 /* ============================================================================= */
 
+m64p_handle GetSectionHandle (const char* name)
+{
+  m64p_handle handle;
+  m64p_error result = (*ConfigOpenSection)(name, &handle);
+  if (result != M64ERR_SUCCESS)
+    qDebug () << "GetSectionHandle: unable to get" << name << "section !";
+
+  return handle;
+}
+
 void ParameterListCallback(void* sectionHandle, const char* ParamName, m64p_type ParamType)
 {
     m64p_handle* section = (m64p_handle*)sectionHandle;
+
+    bool isInput = false;
+    m64p_handle inpH1 = GetSectionHandle ("Input-SDL-Control1");
+    m64p_handle inpH2 = GetSectionHandle ("Input-SDL-Control2");
+    m64p_handle inpH3 = GetSectionHandle ("Input-SDL-Control3");
+    m64p_handle inpH4 = GetSectionHandle ("Input-SDL-Control4");
+    if ((inpH1 == section) || (inpH2 == section) || (inpH3 == section) || (inpH4 == section))
+      isInput = true;
+
     bool boolValue = true;
     int intValue = -1;
     float floatValue = -1.0f;
@@ -368,19 +389,31 @@ void ParameterListCallback(void* sectionHandle, const char* ParamName, m64p_type
     {
       case M64TYPE_BOOL:
         boolValue = (*ConfigGetParamBool)(section, ParamName);
-        pDialog->AddParameter(ParamName, ParamType, &boolValue);
+        if (isInput)
+          inputDialog->AddParameter(ParamName, ParamType, &boolValue);
+        else
+          pDialog->AddParameter(ParamName, ParamType, &boolValue);
         break;
       case M64TYPE_FLOAT:
         floatValue = (*ConfigGetParamFloat)(section, ParamName);
-        pDialog->AddParameter(ParamName, ParamType, &floatValue);
+        if (isInput)
+          inputDialog->AddParameter(ParamName, ParamType, &floatValue);
+        else
+          pDialog->AddParameter(ParamName, ParamType, &floatValue);
         break;
       case M64TYPE_INT:
         intValue = (*ConfigGetParamInt)(section, ParamName);
-        pDialog->AddParameter(ParamName, ParamType, &intValue);
+        if (isInput)
+          inputDialog->AddParameter(ParamName, ParamType, &floatValue);
+        else
+          pDialog->AddParameter(ParamName, ParamType, &intValue);
         break;
       case M64TYPE_STRING:
         stringValue = (char*)(*ConfigGetParamString)(section, ParamName);
-        pDialog->AddParameter(ParamName, ParamType, stringValue);
+        if (isInput)
+          inputDialog->AddParameter(ParamName, ParamType, &floatValue);
+        else
+          pDialog->AddParameter(ParamName, ParamType, stringValue);
         break;
     }
 }
@@ -517,16 +550,6 @@ m64p_error MainWindow::UnloadPlugin (m64p_plugin_type pType)
     g_PluginMap[i].libversion = 0;
 
     return M64ERR_SUCCESS;
-}
-
-m64p_handle MainWindow::GetSectionHandle (const char* name)
-{
-  m64p_handle handle;
-  m64p_error result = (*ConfigOpenSection)(name, &handle);
-  if (result != M64ERR_SUCCESS)
-    qDebug () << "GetSectionHandle: unable to get" << name << "section !";
-
-  return handle;
 }
 
 void MainWindow::GetConfigurationSections ()
