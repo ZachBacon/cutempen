@@ -515,7 +515,7 @@ m64p_error MainWindow::UnloadPlugin (m64p_plugin_type pType)
 {
     typedef m64p_error (*ptr_PluginShutdown)(void);
     ptr_PluginShutdown PluginShutdown;
-    int i;
+    int i = 4;
 
     switch (pType)
     {
@@ -533,6 +533,7 @@ m64p_error MainWindow::UnloadPlugin (m64p_plugin_type pType)
         break;
       default:
         qDebug () << "Problem: trying to unload unknown plugin type " << pType;
+        return M64ERR_INCOMPATIBLE;
         break;
     }
 
