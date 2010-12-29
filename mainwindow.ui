@@ -230,6 +230,12 @@
                  </item>
                  <item row="1" column="0">
                   <widget class="QPushButton" name="pb_Inp">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="toolTip">
+                    <string>Input settings are not supported yet.</string>
+                   </property>
                    <property name="text">
                     <string>Input</string>
                    </property>
