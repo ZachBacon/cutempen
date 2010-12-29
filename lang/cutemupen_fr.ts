@@ -2,6 +2,39 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="fr_FR">
 <context>
+    <name>InputDialogClass</name>
+    <message>
+        <location filename="../inputdialog.ui" line="17"/>
+        <source>InputDialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../inputdialog.ui" line="29"/>
+        <source>Controler 1</source>
+        <translation>Contrôleur 1</translation>
+    </message>
+    <message>
+        <location filename="../inputdialog.ui" line="45"/>
+        <source>Controler 2</source>
+        <translation>Contrôleur 2</translation>
+    </message>
+    <message>
+        <location filename="../inputdialog.ui" line="61"/>
+        <source>Controler 3</source>
+        <translation>Contrôleur 3</translation>
+    </message>
+    <message>
+        <location filename="../inputdialog.ui" line="77"/>
+        <source>Controler 4</source>
+        <translation>Contrôleur 4</translation>
+    </message>
+    <message>
+        <location filename="../inputdialog.ui" line="98"/>
+        <source>Close</source>
+        <translation>Fermer</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.ui" line="20"/>
@@ -28,7 +61,7 @@
         <location filename="../mainwindow.ui" line="103"/>
         <location filename="../mainwindow.ui" line="110"/>
         <location filename="../mainwindow.ui" line="117"/>
-        <location filename="../mainwindow.ui" line="454"/>
+        <location filename="../mainwindow.ui" line="486"/>
         <source>Browse...</source>
         <translation>Parcourir...</translation>
     </message>
@@ -63,216 +96,223 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="189"/>
         <source>Graphic</source>
-        <translation>Graphique</translation>
+        <translation type="obsolete">Graphique</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="199"/>
         <source>Sound</source>
-        <translation>Son</translation>
+        <translation type="obsolete">Son</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="209"/>
+        <location filename="../mainwindow.ui" line="240"/>
         <source>Input</source>
         <translation>Entrées (input)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="219"/>
+        <location filename="../mainwindow.ui" line="247"/>
+        <source>Audio</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="254"/>
         <source>RSP</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="315"/>
+        <location filename="../mainwindow.ui" line="347"/>
         <source>Emulator Mode</source>
         <translation>Mode d&apos;émulation</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="321"/>
+        <location filename="../mainwindow.ui" line="353"/>
         <source>Pure interpreter</source>
         <translation>Interprèteur pur</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="328"/>
+        <location filename="../mainwindow.ui" line="360"/>
         <source>Cached interpreter</source>
         <translation>Interprèteur &quot;caché&quot;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="335"/>
+        <location filename="../mainwindow.ui" line="367"/>
         <source>Dynamic recompiler</source>
         <translation>Recompilateur dynamique</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="367"/>
+        <location filename="../mainwindow.ui" line="399"/>
         <source>Logging</source>
         <translation>Journalisation</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="375"/>
+        <location filename="../mainwindow.ui" line="407"/>
         <source>Disabled</source>
         <translation>Désactivé</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="385"/>
+        <location filename="../mainwindow.ui" line="417"/>
         <source>Enabled</source>
         <translation>Activé</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="395"/>
+        <location filename="../mainwindow.ui" line="427"/>
         <source>Verbose</source>
         <translation>Verbeux</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="240"/>
+        <location filename="../mainwindow.ui" line="272"/>
         <source>Graphics</source>
         <translation>Graphisme
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="256"/>
+        <location filename="../mainwindow.ui" line="288"/>
         <source>640x480</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="261"/>
+        <location filename="../mainwindow.ui" line="293"/>
         <source>720x480</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="266"/>
+        <location filename="../mainwindow.ui" line="298"/>
         <source>800x600</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="271"/>
+        <location filename="../mainwindow.ui" line="303"/>
         <source>1024x768</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="286"/>
+        <location filename="../mainwindow.ui" line="318"/>
         <source>On Screen Display</source>
         <translation>Affichage en incrustation</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="279"/>
+        <location filename="../mainwindow.ui" line="311"/>
         <source>Fullscreen</source>
         <translation>Plein-écran</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="436"/>
+        <location filename="../mainwindow.ui" line="227"/>
+        <source>Video</source>
+        <translation>Vidéo</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="237"/>
+        <source>Input settings are not supported yet.</source>
+        <translation>Le règlage des entrées ne fonctionne pas encore.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="468"/>
         <source>ROMs</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="444"/>
+        <location filename="../mainwindow.ui" line="476"/>
         <source>ROMs directory</source>
         <translation>Répertoire de ROMs</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="492"/>
+        <location filename="../mainwindow.ui" line="524"/>
         <source>Logs</source>
         <translation>Journal</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="498"/>
+        <location filename="../mainwindow.ui" line="530"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="505"/>
+        <location filename="../mainwindow.ui" line="537"/>
         <source>Clear</source>
         <translation>Effacer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="529"/>
+        <location filename="../mainwindow.ui" line="561"/>
         <source>About</source>
         <translation>A propos</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="590"/>
+        <location filename="../mainwindow.ui" line="622"/>
         <source>qrc:/about/resources/about.html</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../m64pcom.cpp" line="70"/>
+        <location filename="../m64pcom.cpp" line="77"/>
         <source>PluginGetVersion</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../m64pcom.cpp" line="71"/>
+        <location filename="../m64pcom.cpp" line="78"/>
         <source>Couldn&apos;t find PluginGetVersion()</source>
         <translation>Impossible de trouver PluginGetVersion()</translation>
     </message>
     <message>
-        <location filename="../m64pcom.cpp" line="143"/>
+        <location filename="../m64pcom.cpp" line="150"/>
         <source>Calling CoreStartup()</source>
         <translation>Appel de CoreStartup()</translation>
     </message>
     <message>
-        <location filename="../m64pcom.cpp" line="144"/>
+        <location filename="../m64pcom.cpp" line="151"/>
         <source>Error starting Mupen64Plus core library.</source>
         <translation>Erreur lors du démarrage de la bibliothèque Mupen64Plus core.</translation>
     </message>
     <message>
-        <location filename="../m64pcom.cpp" line="153"/>
+        <location filename="../m64pcom.cpp" line="160"/>
         <source>Loading Configuration</source>
         <translation>Chargement de la configuration</translation>
     </message>
     <message>
-        <location filename="../m64pcom.cpp" line="154"/>
+        <location filename="../m64pcom.cpp" line="161"/>
         <source>Problem while loading configuration !</source>
         <translation>Problême lors du chargement de la configuration !</translation>
     </message>
     <message>
-        <location filename="../m64pcom.cpp" line="168"/>
+        <location filename="../m64pcom.cpp" line="175"/>
         <source>Error opening ROM file</source>
         <translation>Erreur lors de l&apos;ouverture du fichier ROM</translation>
     </message>
     <message>
-        <location filename="../m64pcom.cpp" line="169"/>
+        <location filename="../m64pcom.cpp" line="176"/>
         <source>Error while trying to load ROM file:
 </source>
         <translation>Erreur lors de la tentative d echargement du fichier ROM :</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="112"/>
+        <location filename="../mainwindow.cpp" line="120"/>
         <source>Core library not ready</source>
         <translation>Bibliothèque core non prete</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="113"/>
+        <location filename="../mainwindow.cpp" line="121"/>
         <source>Did you select M64+ library file in Paths tab ?</source>
         <translation>Avez-vous sélectionné le fichier bibliothèque M64+ dans l&apos;onglet Chemins ?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="122"/>
+        <location filename="../mainwindow.cpp" line="130"/>
         <source>No ROM selected</source>
         <translation>Pas de ROM sélectionnée</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="123"/>
+        <location filename="../mainwindow.cpp" line="131"/>
         <source>Please select a ROM file.</source>
         <translation>Veuillez sélectionner un fichier ROM.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="131"/>
+        <location filename="../mainwindow.cpp" line="139"/>
         <source>Error loading ROM</source>
         <translation>Erreur de chargement de la ROM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="132"/>
+        <location filename="../mainwindow.cpp" line="140"/>
         <source>Unable to load ROM !</source>
         <translation>Impossible de charge la ROM !</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="142"/>
-        <source>Plugin Search</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="143"/>
         <source>Error searching for plugins</source>
-        <translation>Erreur lors de la recherche de plugins</translation>
+        <translation type="obsolete">Erreur lors de la recherche de plugins</translation>
     </message>
     <message>
         <location filename="../paths.cpp" line="43"/>
@@ -338,24 +378,37 @@
         <translation>Veuillez choisir un répertoire de ROMs valide.</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="104"/>
+        <location filename="../settings.cpp" line="116"/>
         <source>Invalid resolution</source>
         <translation>Résolution invalide</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="105"/>
+        <location filename="../settings.cpp" line="117"/>
         <source>This resolution is invalid: </source>
         <translation>Cette résolution est invalide : </translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="193"/>
+        <location filename="../settings.cpp" line="224"/>
         <source>Unknown EmuMode setting</source>
         <translation>Règlage EmuMode inconnu</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="194"/>
+        <location filename="../settings.cpp" line="225"/>
         <source>Invalid value for EmuMode</source>
         <translation>Valeur pour EmuMode invalide</translation>
+    </message>
+</context>
+<context>
+    <name>PluginDialogClass</name>
+    <message>
+        <location filename="../plugindialog.ui" line="17"/>
+        <source>Plugin Settings</source>
+        <translation>Règlages des plugins</translation>
+    </message>
+    <message>
+        <location filename="../plugindialog.ui" line="33"/>
+        <source>Close</source>
+        <translation>Fermer</translation>
     </message>
 </context>
 <context>
