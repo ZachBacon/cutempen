@@ -143,7 +143,7 @@ m64p_error MainWindow::InitMupen64()
     rval = M64ERR_INTERNAL;
     // @TODO Straighten versioning stuff
     //rval = (*CoreStartup)(0x10000, (const char*)l_ConfigDirPath, (const char*)l_DataDirPath, (void*)"Core", DebugCallback, NULL, NULL);
-    rval = (*CoreStartup)(0x10000, NULL, NULL, (void*)"Core", DebugCallback, NULL, NULL);
+    rval = (*CoreStartup)(CORE_API_VERSION, NULL, NULL, (void*)"Core", DebugCallback, NULL, NULL);
 
     if (rval != M64ERR_SUCCESS)
     {
