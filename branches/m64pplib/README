@@ -1,0 +1,61 @@
+CuteMupen
+A GUI front-end for the cross-platform Mupen64Plus N64 emulator.
+Written using Qt and MupenPlus64 v2.0 API.
+
+Website: http://cutemupen.sourceforge.net/
+License: GNU GPLv2
+
+Authors:
+ - Vincent Knecht <vknecht@users.sourceforge.net>
+ - Richard Goedeken & other contributors to Mupen64Plus
+   Some parts of CuteMupen are taken from mupen64-ui-console
+   See http://code.google.com/p/mupen64plus/
+ - Sergey A. Tachenov for the QuaZIP - Qt/C++ wrapper.
+   See quazip/ subdirectory and http://quazip.sourceforge.net/
+
+Features:
+ - ROM browser
+ - Fullscreen, resolution and OSD settings
+ - Settings save and restore across runs
+ - Zipped ROMs support
+ - Plugin detection and selection
+ - Changing plugins settings (those are not saved nor restored yet)
+ 
+Not supported yet:
+ - Cheats
+ - Input configuration (keyboard, gamepad, etc.)
+ - ...
+
+Building from source code:
+-------------------------
+  Dependencies:
+  - Qt 4.4+ development environment
+  - Mupen64Plus 1.99.3+ Core source code
+  - zlib headers and library
+
+  Building with *NIX/Linux:
+  - Edit !win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir
+  - Run "qmake cutemupen.pro"
+  - Run "make"
+
+  Building with Windows/MinGW:
+  - Edit win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir
+  - Edit windows:LIBS in cutemupen.pro to point to zlib.lib file
+  - Run "qmake cutemupen.pro"
+  - Run "make"
+
+  Building with Windows/MSVC: (untested since 0.1.0)
+  - Edit win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir
+  - Edit windows:LIBS in cutemupen.pro to point to zlib.lib file
+  - Run "qmake cutemupen.pro"
+  - Run "qmake -tp vc"
+  - Open the .vcproj file using MSVC, and generate the solution
+
+Usage:
+-----
+  CuteMupen configuration settings are stored, depending on the OS, in 
+  - $HOME/.config/CuteMupen/CuteMupen.cfg file on *NIX
+  - HKEY_CURRENT_USER\Software\CuteMupen\CuteMupen registry entry on Windows
+
+  On first run, CuteMupen will ask you to set the paths to several Mupen64+
+  files and directories.
