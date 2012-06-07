@@ -33,19 +33,6 @@
 #include <QTreeView>        // for file/rom browser
 #include <QRegExp>          // for resolution input validation
 #include <QFile>
-/*
-extern "C" {
-#include "osal/osal_preproc.h"
-#include "osal/osal_dynamiclib.h"
-#include "m64p_common.h"
-#include "m64p_frontend.h"
-#include "m64p_config.h"
-#include "m64p/core_interface.h"
-void DebugCallback(void *Context, int level, const char *message);
-}
-
-#include "m64p/plugin.h"
-*/
 
 #include "mupen64plusplus/MupenAPIpp.h"
 
@@ -83,10 +70,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     RestoreSettings();
 
-    qDebug() << "got it !";
-
-
-
 }
 
 MainWindow::~MainWindow()
@@ -115,6 +98,8 @@ void MainWindow::changeEvent(QEvent *e)
 int MainWindow::clickedROM(const QModelIndex & index)
 {
   ROMFile = dirModel->filePath(index);
+  Mupen64PlusPlus::RomInfo info = m_api->getRomInfo(ROMFile);
+  ui->statusBar->showMessage(info.country);
   return 0;
 }
 
@@ -144,7 +129,6 @@ int MainWindow::clickedRun()
 
     m_api->loadRom(ROMFile.toLocal8Bit().constData());
     m_api->runEmulation();
-    m_api->stopEmulation();
     m_api->closeRom();
     /* save the configuration file again if --saveoptions was specified, to keep any updated parameters from the core/plugins */
     //if (l_SaveOptions)

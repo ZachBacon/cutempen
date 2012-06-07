@@ -135,7 +135,7 @@ bool MainWindow::LoadRom (qint64 romlength, char* buffer)
 
 m64p_error MainWindow::DetachCoreLib()
 {
-  return DetachCoreLib();
+  return ::DetachCoreLib();
 }
 
 m64p_error MainWindow::OpenConfigurationHandles(void)
