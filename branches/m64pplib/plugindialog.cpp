@@ -29,12 +29,10 @@
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 
-extern "C" {
-#include "m64p_config.h"
-}
+#include "mupen64plusplus/MupenAPI.h"
 
-extern ptr_ConfigSetParameter ConfigSetParameter;
-extern ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
+extern ptr_ConfigSetParameter PtrConfigSetParameter;
+extern ptr_ConfigGetParameterHelp PtrConfigGetParameterHelp;
 
 PluginDialog::PluginDialog(QWidget *parent, m64p_handle handle, const char* pluginName)
     : QDialog(parent)
@@ -54,7 +52,7 @@ PluginDialog::~PluginDialog()
 void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValue)
 {
   QLabel* label = new QLabel (pName);
-  label->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+  label->setToolTip((*PtrConfigGetParameterHelp)(cfgHandle, pName));
   ui.gl_PluginParams->addWidget(label, line, column, Qt::AlignRight|Qt::AlignVCenter);
   QComboBox* cbox;
   QLineEdit* ledit;
@@ -70,7 +68,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
     case M64TYPE_BOOL:
       cbox = new QComboBox ();
       cbox->setObjectName(pName);
-      cbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+      cbox->setToolTip((*PtrConfigGetParameterHelp)(cfgHandle, pName));
       cbox->addItem("true");
       cbox->addItem("false");
       bval = (bool*)pValue;
@@ -85,7 +83,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
     case M64TYPE_FLOAT:
       dspbox = new QDoubleSpinBox ();
       dspbox->setObjectName(pName);
-      dspbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+      dspbox->setToolTip((*PtrConfigGetParameterHelp)(cfgHandle, pName));
       dspbox->setMaximum(16000000);
       fval = (float*)pValue;
       dspbox->setValue (*fval);
@@ -95,7 +93,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
     case M64TYPE_INT:
       spbox = new QSpinBox ();
       spbox->setObjectName(pName);
-      spbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+      spbox->setToolTip((*PtrConfigGetParameterHelp)(cfgHandle, pName));
       spbox->setMaximum(65535);
       ival = (int*)pValue;
       spbox->setValue (*ival);
@@ -106,7 +104,7 @@ void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValu
       QString tmp ((const char*)pValue);
       ledit = new QLineEdit (tmp.toLocal8Bit().constData());
       ledit->setObjectName(pName);
-      ledit->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+      ledit->setToolTip((*PtrConfigGetParameterHelp)(cfgHandle, pName));
       ui.gl_PluginParams->addWidget(ledit, line, column + 1);
       connect(ledit, SIGNAL(editingFinished()), this, SLOT(changedStringSetting()));
   }
@@ -129,7 +127,7 @@ void PluginDialog::changedBoolSetting (int index)
   else
     newValue = false;
   //qDebug () << sender()->objectName() << "=" << (newValue ? "true" : "false");
-  (*ConfigSetParameter)(cfgHandle,
+  (*PtrConfigSetParameter)(cfgHandle,
       sender()->objectName().toLocal8Bit().constData(),
       M64TYPE_BOOL,
       &newValue);
@@ -139,7 +137,7 @@ void PluginDialog::changedFloatSetting (double value)
 {
   float newValue = (float) value;
   //qDebug () << "Float param" << sender()->objectName().toLocal8Bit().constData() << "=" << newValue;
-  (*ConfigSetParameter)(cfgHandle,
+  (*PtrConfigSetParameter)(cfgHandle,
       sender()->objectName().toLocal8Bit().constData(),
       M64TYPE_FLOAT,
       &newValue);
@@ -148,7 +146,7 @@ void PluginDialog::changedFloatSetting (double value)
 void PluginDialog::changedIntSetting (int value)
 {
   //qDebug () << "Int param" << sender()->objectName().toLocal8Bit().constData() << "=" << value;
-  (*ConfigSetParameter)(cfgHandle,
+  (*PtrConfigSetParameter)(cfgHandle,
       sender()->objectName().toLocal8Bit().constData(),
       M64TYPE_INT,
       &value);
@@ -158,7 +156,7 @@ void PluginDialog::changedStringSetting ()
 {
   QLineEdit* ledit = (QLineEdit*)sender();
   //qDebug () << "String param" << sender()->objectName().toLocal8Bit().constData() << "=" << ledit->text();
-  (*ConfigSetParameter)(cfgHandle,
+  (*PtrConfigSetParameter)(cfgHandle,
       sender()->objectName().toLocal8Bit().constData(),
       M64TYPE_STRING,
       ledit->text().toLocal8Bit().constData());

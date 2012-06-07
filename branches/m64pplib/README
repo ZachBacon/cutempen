@@ -12,6 +12,9 @@ Authors:
    See http://code.google.com/p/mupen64plus/
  - Sergey A. Tachenov for the QuaZIP - Qt/C++ wrapper.
    See quazip/ subdirectory and http://quazip.sourceforge.net/
+ - Marianne Gagnon for the M64+ wrapper.
+   See mupen64plusplus/ and wxMupen64Plus front-end at
+   https://bitbucket.org/auria/wxmupen64plus/wiki/Home
 
 Features:
  - ROM browser
@@ -30,8 +33,9 @@ Building from source code:
 -------------------------
   Dependencies:
   - Qt 4.4+ development environment
-  - Mupen64Plus 1.99.3+ Core source code
+  - Mupen64Plus 1.99.4+ Core source code
   - zlib headers and library
+  - SDL headers and library
 
   Building with *NIX/Linux:
   - Edit !win32:INCLUDEPATH in cutemupen.pro to point on Mupen64Plus api/ subdir

@@ -22,8 +22,8 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define CM_VERSION 0.1.1
-#define CM_VERSION_STR "0.1.1"
+#define CM_VERSION 0.2.0
+#define CM_VERSION_STR "0.2.0"
 
 // The required M64+ core version
 #define CORE_API_VERSION 0x20001

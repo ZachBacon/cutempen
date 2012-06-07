@@ -23,22 +23,18 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <QString>
-
-extern "C" {
 #include "m64p_types.h"
 #include "m64p_common.h"
-#include "core_interface.h"
-#include "osal/osal_dynamiclib.h"
-#include "osal/osal_files.h"
-}
+#include "MupenAPI.h"
+//#include "core_interface.h"
+#include "mupen64plusplus/osal_dynamiclib.h"
+#include "mupen64plusplus/osal_files.h"
+#include "mupen64plusplus/plugin.h"
+//#include "main/main.h"  /* for the debug callback function */
 
-#include "plugin.h"
+#include "version.h"
 
-//#include "main.h"  /* for the debug callback function */
-//#include "version.h"
-
-extern "C" void DebugCallback(void *Context, int level, const char *message);
+int g_Verbose = 1;
 
 /* global variables */
 const char *g_PluginDir = NULL;
@@ -51,7 +47,6 @@ plugin_map_node g_PluginMap[] = {{M64PLUGIN_GFX,   "Video", NULL, "", NULL, 0 },
                                  {M64PLUGIN_AUDIO, "Audio", NULL, "", NULL, 0 },
                                  {M64PLUGIN_INPUT, "Input", NULL, "", NULL, 0 },
                                  {M64PLUGIN_RSP,   "RSP",   NULL, "", NULL, 0 } };
-
 
 /* local functions */
 static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
@@ -66,8 +61,8 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
     ptr_PluginGetVersion PluginGetVersion = (ptr_PluginGetVersion) osal_dynlib_getproc(handle, "PluginGetVersion");
     if (PluginGetVersion == NULL)
     {
-        //if (g_Verbose)
-        fprintf(stderr, "Error: library '%s' is not a Mupen64Plus library.\n", filepath);
+        if (g_Verbose)
+            fprintf(stderr, "Error: library '%s' is not a Mupen64Plus library.\n", filepath);
         osal_dynlib_close(handle);
         return M64ERR_INCOMPATIBLE;
     }
@@ -91,7 +86,6 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
         osal_dynlib_close(handle);
         return M64ERR_INCOMPATIBLE;
     }
-
     rval = (*PluginStartup)(CoreHandle, g_PluginMap[MapIndex].name, DebugCallback);  /* DebugCallback is in main.c */
     if (rval != M64ERR_SUCCESS)
     {
@@ -110,12 +104,8 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
 }
 
 /* global functions */
-m64p_error PluginSearchLoad(m64p_handle ConfigUI, const char* path)
+m64p_error PluginSearchLoad(m64p_handle ConfigPlugins)
 {
-    // (vk) allow to set plugin dir
-    if (path != NULL)
-      g_PluginDir = path;
-
     osal_lib_search *lib_filelist = NULL;
     int i;
 
@@ -125,15 +115,15 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI, const char* path)
         lib_filelist = osal_library_search(g_PluginDir);
         if (lib_filelist == NULL)
         {
-            fprintf(stderr, "Error: No plugins found in --plugindir path: %s\n", g_PluginDir);
+            fprintf(stderr, "Error: No plugins found in plugindir path: %s\n", g_PluginDir);
             return M64ERR_INPUT_NOT_FOUND;
         }
     }
 
-    /* if no plugins found, search the PluginDir in the UI-console section of the config file */
+    /* if no plugins found, search the PluginDir in the UI-cm section of the config file */
     if (lib_filelist == NULL)
     {
-        const char *plugindir = (*ConfigGetParamString)(ConfigUI, "PluginDir");
+        const char *plugindir = (*PtrConfigGetParamString)(ConfigPlugins, "PluginDir");
         lib_filelist = osal_library_search(plugindir);
     }
 
@@ -195,7 +185,7 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI, const char* path)
         }
         else /* otherwise search for a plugin specified in the config file */
         {
-            const char *config_path = (*ConfigGetParamString)(ConfigUI, config_var);
+            const char *config_path = (*PtrConfigGetParamString)(ConfigPlugins, config_var);
             if (config_path != NULL && strlen(config_path) > 0)
             {
                 /* if full path was given, try loading exactly this file */
@@ -232,18 +222,14 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI, const char* path)
         /* print out the particular plugin used */
         if (g_PluginMap[i].handle == NULL)
         {
-            QString logLine;
-            logLine.sprintf("using %s plugin: <dummy>", g_PluginMap[i].name);
-            DebugCallback((void*)"CuteMupen", 3, logLine.toLocal8Bit().constData());
+            printf("CuteMupen: using %s plugin: <dummy>\n", g_PluginMap[i].name);
         }
         else
         {
-            //printf("UI-console: using %s plugin: '%s' v%i.%i.%i\n", g_PluginMap[i].name,
-            //       g_PluginMap[i].libname, VERSION_PRINTF_SPLIT(g_PluginMap[i].libversion));
-            //if (g_Verbose)
-            QString logLine;
-            logLine.sprintf("%s plugin library: %s", g_PluginMap[i].name, g_PluginMap[i].filename);
-            DebugCallback((void*)"CuteMupen", 3, logLine.toLocal8Bit().constData());
+            printf("CuteMupen: using %s plugin: '%s' v%i.%i.%i\n", g_PluginMap[i].name,
+                   g_PluginMap[i].libname, VERSION_PRINTF_SPLIT(g_PluginMap[i].libversion));
+            if (g_Verbose)
+                printf("CuteMupen: %s plugin library: %s\n", g_PluginMap[i].name, g_PluginMap[i].filename);
         }
     }
 
@@ -278,3 +264,29 @@ m64p_error PluginUnload(void)
     return M64ERR_SUCCESS;
 }
 
+m64p_plugin_type GetPluginType (const char* filepath)
+{
+    /* try to open a shared library at the given filepath */
+    m64p_dynlib_handle handle;
+    m64p_error rval = osal_dynlib_open(&handle, filepath);
+    if (rval != M64ERR_SUCCESS)
+        return (m64p_plugin_type) 0;
+    /* call the GetVersion function for the plugin and check compatibility */
+    ptr_PluginGetVersion PluginGetVersion =
+        (ptr_PluginGetVersion) osal_dynlib_getproc(handle, "PluginGetVersion");
+    if (PluginGetVersion == NULL)
+    {
+        //if (g_Verbose)
+        fprintf(stderr, "Error: library '%s' is not a Mupen64Plus plugin.\n", filepath);
+        osal_dynlib_close(handle);
+        return (m64p_plugin_type) 0;
+    }
+
+    m64p_plugin_type PluginType = (m64p_plugin_type) 0;
+    int PluginVersion = 0;
+    const char *PluginName = NULL;
+    (*PluginGetVersion)(&PluginType, &PluginVersion, NULL, &PluginName, NULL);
+
+    osal_dynlib_close(handle);
+    return PluginType;
+}

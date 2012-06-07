@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-console - osal_files.h                                 *
+ *   Mupen64plus-ui-console - osal_dynamiclib_unix.c                       *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
@@ -19,31 +19,53 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* This header file is for all kinds of system-dependent file handling
- *
- */
-
-#if !defined(OSAL_FILES_H)
-#define OSAL_FILES_H
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <dlfcn.h>
 
 #include "m64p_types.h"
-#include "osal/osal_preproc.h"
 
-/* data structure for linked list of shared libraries found in a directory */
-typedef struct _osal_lib_search {
-  char                     filepath[PATH_MAX];
-  char                    *filename;
-  m64p_plugin_type         plugin_type;
-  struct _osal_lib_search *next;
-  } osal_lib_search;
+#include "mupen64plusplus/osal_dynamiclib.h"
 
-/* const definitions for system directories to search when looking for mupen64plus plugins */
-extern const int   osal_libsearchdirs;
-extern const char *osal_libsearchpath[];
+m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath)
+{
+    if (pLibHandle == NULL || pccLibraryPath == NULL)
+        return M64ERR_INPUT_ASSERT;
 
-/* functions for searching for shared libraries in a given directory */
-extern osal_lib_search *osal_library_search(const char *searchpath);
-extern void             osal_free_lib_list(osal_lib_search *head);
+    *pLibHandle = dlopen(pccLibraryPath, RTLD_NOW);
 
-#endif /* #define OSAL_FILES_H */
+    if (*pLibHandle == NULL)
+    {
+        /* only print an error message if there is a directory separator (/) in the pathname */
+        /* this prevents us from throwing an error for the use case where Mupen64Plus is not installed */
+        if (strchr(pccLibraryPath, '/') != NULL)
+            fprintf(stderr, "dlopen('%s') error: %s\n", pccLibraryPath, dlerror());
+        return M64ERR_INPUT_NOT_FOUND;
+    }
+
+    return M64ERR_SUCCESS;
+}
+
+void * osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName)
+{
+    if (pccProcedureName == NULL)
+        return NULL;
+
+    return dlsym(LibHandle, pccProcedureName);
+}
+
+m64p_error osal_dynlib_close(m64p_dynlib_handle LibHandle)
+{
+    int rval = dlclose(LibHandle);
+
+    if (rval != 0)
+    {
+        fprintf(stderr, "dlclose() error: %s\n", dlerror());
+        return M64ERR_INTERNAL;
+    }
+
+    return M64ERR_SUCCESS;
+}
+
 

@@ -26,11 +26,13 @@
 #include <QMessageBox>
 #include <QDir>
 
-#include "osal/osal_preproc.h" // For default core library filename
-
+#include "mupen64plusplus/osal_preproc.h" // For default core library filename
+/*
 extern "C" {
 #include "m64p/core_interface.h"
 }
+*/
+#include "mupen64plusplus/MupenAPI.h"
 
 void MainWindow::chooseMupen64Library(bool skipDialog)
 {

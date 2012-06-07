@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-console - osal_preproc.h                               *
+ *   Mupen64plus-ui-console - plugin.h                                     *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2009 Richard Goedeken                                   *
+ *   Copyright (C) 2009 Richard42                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,42 +19,42 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* This header file is for OS-specific #includes and #defines
- *
- */
+#if !defined(PLUGIN_H)
+#define PLUGIN_H
 
-#if !defined(OSAL_PREPROC_H)
-#define OSAL_PREPROC_H
-
-#if defined(WIN32)
-
-#include <windows.h>
-#define PATH_MAX 2048
-#define OSAL_DEFAULT_DYNLIB_FILENAME "mupen64plus.dll"
-#define OSAL_DIR_SEPARATOR           '\\'
-#define OSAL_CURRENT_DIR             ".\\"
-#define OSAL_DLL_EXTENSION           ".dll"
-#define osal_insensitive_strcmp(x, y) _stricmp(x, y)
-
-#elif defined(__APPLE__)
-
-  #include <limits.h>  // for PATH_MAX
-  #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.dylib"
-  #define OSAL_DIR_SEPARATOR           '/'
-  #define OSAL_CURRENT_DIR             "./"
-  #define OSAL_DLL_EXTENSION           ".dylib"
-  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
-
-#else  /* Linux-like UNIX */
-
-  #include <limits.h>  // for PATH_MAX
-  #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.so.2"
-  #define OSAL_DIR_SEPARATOR           '/'
-  #define OSAL_CURRENT_DIR             "./"
-  #define OSAL_DLL_EXTENSION           ".so"
-  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
-
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#endif /* #define OSAL_PREPROC_H */
+#include "m64p_types.h"
+#include "mupen64plusplus/osal_preproc.h"
+
+extern m64p_error PluginSearchLoad(m64p_handle ConfigUI);
+extern m64p_error PluginUnload(void);
+extern m64p_plugin_type GetPluginType (const char* filepath);
+
+
+extern const char *g_PluginDir;        // directory to search for plugins
+extern const char *g_GfxPlugin;        // graphics plugin specified at commandline (if any)
+extern const char *g_AudioPlugin;      // audio plugin specified at commandline (if any)
+extern const char *g_InputPlugin;      // input plugin specified at commandline (if any)
+extern const char *g_RspPlugin;        // rsp plugin specified at commandline (if any)
+
+typedef struct {
+  m64p_plugin_type    type;
+  char                name[8];
+  m64p_dynlib_handle  handle;
+  char                filename[PATH_MAX];
+  const char         *libname;
+  int                 libversion;
+  } plugin_map_node;
+
+extern plugin_map_node g_PluginMap[4];
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* #define PLUGIN_H */
+
 

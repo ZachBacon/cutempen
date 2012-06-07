@@ -28,7 +28,8 @@
 #include <QDirModel>
 #include <QString>
 
-#include "m64p_types.h"
+#include "mupen64plusplus/MupenAPI.h"
+#include "mupen64plusplus/MupenAPIpp.h"
 
 namespace Ui {
     class MainWindow;
@@ -45,6 +46,8 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+
+    Mupen64PlusPlus* m_api;
 
     QString Mupen64Library;
     QString Mupen64PluginDir;
@@ -77,17 +80,10 @@ private:
     void UpdateROMsDir ();
     void AddToEnvVar (QString envVar, QString value);
 
-    m64p_error ActivatePlugin (const char* filePath, m64p_plugin_type pType);
-    m64p_error PluginLoadTry (const char *filepath, int MapIndex);
-    m64p_error AttachAllPlugins ();
-    m64p_error UnloadPlugin (m64p_plugin_type pType);
-    void DetachAllPlugins ();
-
     void FlushLog ();
 
     bool isCoreReady;
 
-    m64p_plugin_type GetPluginType (const char* filepath);
     void GetConfigurationSections ();
     m64p_error GetSectionParameters (const char* sectionName);
 

@@ -33,7 +33,7 @@
 #include <QTreeView>        // for file/rom browser
 #include <QRegExp>          // for resolution input validation
 #include <QFile>
-
+/*
 extern "C" {
 #include "osal/osal_preproc.h"
 #include "osal/osal_dynamiclib.h"
@@ -45,6 +45,9 @@ void DebugCallback(void *Context, int level, const char *message);
 }
 
 #include "m64p/plugin.h"
+*/
+
+#include "mupen64plusplus/MupenAPIpp.h"
 
 // For log text
 QString* logLine;
@@ -79,6 +82,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ROMFile = "";
 
     RestoreSettings();
+
+    qDebug() << "got it !";
+
+
+
 }
 
 MainWindow::~MainWindow()
@@ -134,32 +142,10 @@ int MainWindow::clickedRun()
         return 1;
     }
 
-    if (!LoadFile(ROMFile))
-    {
-        QMessageBox::critical(this, tr("Error loading ROM"),
-            tr("Unable to load ROM !"));
-        ui->pb_Run->setDisabled(false);
-        return 2;
-    }
-
-    m64p_error res;
-    res = AttachAllPlugins ();
-    if (res != M64ERR_SUCCESS)
-    {
-        (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
-        (*CoreShutdown)();
-        DetachCoreLib();
-        return res;
-    }
-
-    /* run the game */
-    (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-
-    DetachAllPlugins ();
-
-    /* close the ROM image */
-    (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
-
+    m_api->loadRom(ROMFile.toLocal8Bit().constData());
+    m_api->runEmulation();
+    m_api->stopEmulation();
+    m_api->closeRom();
     /* save the configuration file again if --saveoptions was specified, to keep any updated parameters from the core/plugins */
     //if (l_SaveOptions)
     //    SaveConfigurationOptions();
@@ -168,32 +154,6 @@ int MainWindow::clickedRun()
 
     ui->pb_Run->setDisabled(false);
     return 0;
-}
-
-m64p_error MainWindow::AttachAllPlugins ()
-{
-  /* attach plugins to core */
-  m64p_error res = M64ERR_SUCCESS;
-  for (int i = 0; i < 4; i++)
-  {
-      res = (*CoreAttachPlugin)(g_PluginMap[i].type, g_PluginMap[i].handle);
-      if ( res != M64ERR_SUCCESS)
-      {
-          QString errorString;
-          errorString.sprintf("Error attaching %s plugin !", g_PluginMap[i].name);
-          QMessageBox::critical(this, "Plugins", errorString);
-          ui->pb_Run->setDisabled(false);
-          return res;
-      }
-  }
-  return res;
-}
-
-void MainWindow::DetachAllPlugins ()
-{
-  /* detach plugins from core and unload them */
-  for (int i = 0; i < 4; i++)
-      (*CoreDetachPlugin)(g_PluginMap[i].type);
 }
 
 void MainWindow::FlushLog ()

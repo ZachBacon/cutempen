@@ -24,22 +24,22 @@
 #include <stdio.h>
 
 #include "m64p_types.h"
-#include "osal_dynamiclib.h"
+#include "mupen64plusplus/osal_dynamiclib.h"
 
 m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath)
 {
     if (pLibHandle == NULL || pccLibraryPath == NULL)
         return M64ERR_INPUT_ASSERT;
 
-	*pLibHandle = LoadLibraryA((LPCSTR)pccLibraryPath);
+    *pLibHandle = LoadLibrary(pccLibraryPath);
+
     if (*pLibHandle == NULL)
     {
-        LPVOID pchErrMsg;
-        DWORD dwErr = GetLastError();
-        printf("LoadLibrary returned error code %lu\n", dwErr);
+        char *pchErrMsg;
+        DWORD dwErr = GetLastError(); 
         FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwErr,
                       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &pchErrMsg, 0, NULL);
-        fprintf(stderr, "LoadLibrary('%s') error: %s\n", pccLibraryPath, (char*)pchErrMsg);
+        fprintf(stderr, "LoadLibrary('%s') error: %s\n", pccLibraryPath, pchErrMsg);
         LocalFree(pchErrMsg);
         return M64ERR_INPUT_NOT_FOUND;
     }

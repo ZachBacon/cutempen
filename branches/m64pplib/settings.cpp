@@ -33,18 +33,20 @@
 #include <QDesktopWidget>   // to get screen geometry
 #include <QChar>
 
-extern "C" {
-#include "m64p/core_interface.h"
-#include "m64p/plugin.h"
-#include "osal/osal_dynamiclib.h"
-#include "osal/osal_preproc.h"   // for shared lib extension
-}
+#include "mupen64plusplus/osal_preproc.h"
+#include "mupen64plusplus/MupenAPI.h"
+#include "mupen64plusplus/MupenAPIpp.h"
+#include "mupen64plusplus/plugin.h"
+extern ptr_ConfigSetParameter PtrConfigSetParameter;
+
 extern bool doLog;
 extern bool doLogVerbose;
 //extern QStringList parameterList;
 extern PluginDialog* pDialog;
 extern InputDialog* inputDialog;
 extern m64p_handle GetSectionHandle (const char* name);
+
+extern m64p_plugin_type GetPluginType (const char* filepath);
 
 void MainWindow::toggledEmuMode(bool /*checked*/)
 {
@@ -108,8 +110,8 @@ void MainWindow::chooseResolution (QString /*text*/)
     int xres, yres;
     xres = res.section("x", 0, 0).toInt();   // leftmost field from "x" separator
     yres = res.section("x", -1, -1).toInt(); // rightmost field from "x" separator
-    (*ConfigSetParameter)(l_ConfigVideo, "ScreenWidth", M64TYPE_INT, &xres);
-    (*ConfigSetParameter)(l_ConfigVideo, "ScreenHeight", M64TYPE_INT, &yres);
+    (*PtrConfigSetParameter)(l_ConfigVideo, "ScreenWidth", M64TYPE_INT, &xres);
+    (*PtrConfigSetParameter)(l_ConfigVideo, "ScreenHeight", M64TYPE_INT, &yres);
     settings.setValue("Video/Resolution", res);
   }
   else
@@ -170,7 +172,7 @@ void MainWindow::RestoreSettings ()
   pluginDir.setNameFilters(filters);
   for (int i = 0; i < pluginDir.entryList().count(); i++)
   {
-    m64p_plugin_type pType = GetPluginType (
+    m64p_plugin_type pType = ::GetPluginType (
         pluginDir.absoluteFilePath(pluginDir[i]).toLocal8Bit().constData());
     switch (pType)
     {
@@ -233,23 +235,24 @@ void MainWindow::ApplyConfiguration ()
 
   int FullScreen;
   ui->cb_Fullscreen->isChecked() ? FullScreen = 1 : FullScreen = 0;
-  (*ConfigSetParameter)(l_ConfigVideo, "Fullscreen", M64TYPE_BOOL, &FullScreen);
+  (*PtrConfigSetParameter)(l_ConfigVideo, "Fullscreen", M64TYPE_BOOL, &FullScreen);
   //settings.setValue("Video/Fullscreen", ui->cb_Fullscreen->isChecked());
 
   int Osd;
   ui->cb_OSD->isChecked() ? Osd = 1 : Osd = 0;
-  (*ConfigSetParameter)(l_ConfigCore, "OnScreenDisplay", M64TYPE_BOOL, &Osd);
+  (*PtrConfigSetParameter)(l_ConfigCore, "OnScreenDisplay", M64TYPE_BOOL, &Osd);
   //settings.setValue("Video/OSD", ui->cb_OSD->isChecked());
 
   int emumode;
   emumode = settings.value("Settings/EmuMode", "2").toInt();
   if ((emumode >= 0) && (emumode <= 2))
-    (*ConfigSetParameter)(l_ConfigCore, "R4300Emulator", M64TYPE_INT, &emumode);
+    (*PtrConfigSetParameter)(l_ConfigCore, "R4300Emulator", M64TYPE_INT, &emumode);
 }
 
 void MainWindow::chooseGfxPlugin (QString text)
 {
-    (*ConfigSetParameter)(l_ConfigUI, "VideoPlugin", M64TYPE_STRING,
+#if 0
+    (*PtrConfigSetParameter)(l_ConfigUI, "VideoPlugin", M64TYPE_STRING,
                           text.toLocal8Bit().constData());
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
     if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_GFX) != M64ERR_SUCCESS)
@@ -260,11 +263,13 @@ void MainWindow::chooseGfxPlugin (QString text)
     QSettings settings ("CuteMupen", "CuteMupen");
     settings.setIniCodec("UTF-8");
     settings.setValue("Settings/GfxPlugin", text.toLocal8Bit().constData());
+#endif
 }
 
 void MainWindow::chooseSndPlugin (QString text)
 {
-    (*ConfigSetParameter)(l_ConfigUI, "AudioPlugin", M64TYPE_STRING,
+#if 0
+    (*PtrConfigSetParameter)(l_ConfigUI, "AudioPlugin", M64TYPE_STRING,
                           text.toLocal8Bit().constData());
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
     if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_AUDIO) != M64ERR_SUCCESS)
@@ -275,11 +280,13 @@ void MainWindow::chooseSndPlugin (QString text)
     QSettings settings ("CuteMupen", "CuteMupen");
     settings.setIniCodec("UTF-8");
     settings.setValue("Settings/SndPlugin", text.toLocal8Bit().constData());
+#endif
 }
 
 void MainWindow::chooseInpPlugin (QString text)
 {
-  (*ConfigSetParameter)(l_ConfigUI, "InputPlugin", M64TYPE_STRING,
+#if 0
+  (*PtrConfigSetParameter)(l_ConfigUI, "InputPlugin", M64TYPE_STRING,
                         text.toLocal8Bit().constData());
   QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
   if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_INPUT) != M64ERR_SUCCESS)
@@ -290,11 +297,13 @@ void MainWindow::chooseInpPlugin (QString text)
   QSettings settings ("CuteMupen", "CuteMupen");
   settings.setIniCodec("UTF-8");
   settings.setValue("Settings/InpPlugin", text.toLocal8Bit().constData());
+#endif
 }
 
 void MainWindow::chooseRspPlugin (QString text)
 {
-  (*ConfigSetParameter)(l_ConfigUI, "RspPlugin", M64TYPE_STRING,
+#if 0
+  (*PtrConfigSetParameter)(l_ConfigUI, "RspPlugin", M64TYPE_STRING,
                         text.toLocal8Bit().constData());
   QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
   if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_RSP) != M64ERR_SUCCESS)
@@ -305,50 +314,9 @@ void MainWindow::chooseRspPlugin (QString text)
   QSettings settings ("CuteMupen", "CuteMupen");
   settings.setIniCodec("UTF-8");
   settings.setValue("Settings/RspPlugin", text.toLocal8Bit().constData());
+#endif
 }
 
-m64p_error MainWindow::ActivatePlugin (const char* filePath, m64p_plugin_type pType)
-{
-  m64p_dynlib_handle handle;
-  m64p_error rval;
-  rval = osal_dynlib_open(&handle, filePath);
-  if (rval != M64ERR_SUCCESS)
-  {
-    QMessageBox::information(this, "ActivatePlugin failed", filePath);
-    return rval;
-  }
-
-  rval = UnloadPlugin (pType);
-  if (rval != M64ERR_SUCCESS)
-    qDebug () << "Unable to unload plugin type " << pType;
-
-  switch (pType)
-  {
-    // Kind of ugly, the int argument is the index for g_PluginMap
-    case M64PLUGIN_GFX:
-      rval = PluginLoadTry (filePath, 0);
-      break;
-    case M64PLUGIN_AUDIO:
-      rval = PluginLoadTry (filePath, 1);
-      break;
-    case M64PLUGIN_INPUT:
-      rval = PluginLoadTry (filePath, 2);
-      break;
-    case M64PLUGIN_RSP:
-      rval = PluginLoadTry (filePath, 3);
-      break;
-    default:
-      break;
-  }
-
-  if (rval != M64ERR_SUCCESS)
-  {
-    qDebug () << "PluginLoadTry() failed for " << filePath;
-    return rval;
-  }
-
-  return rval;
-}
 
 void MainWindow::clickedGfx ()
 {
