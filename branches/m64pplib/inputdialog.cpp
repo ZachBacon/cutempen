@@ -31,11 +31,6 @@
 #include <QWidget>
 #include <QGridLayout>
 
-/*
-extern "C" {
-#include "m64p_config.h"
-}
-*/
 #include "mupen64plusplus/MupenAPI.h"
 
 extern ptr_ConfigSetParameter PtrConfigSetParameter;

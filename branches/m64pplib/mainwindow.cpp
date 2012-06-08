@@ -127,7 +127,7 @@ int MainWindow::clickedRun()
         return 1;
     }
 
-    m_api->loadRom(ROMFile.toLocal8Bit().constData());
+    LoadFile(ROMFile);
     m_api->runEmulation();
     m_api->closeRom();
     /* save the configuration file again if --saveoptions was specified, to keep any updated parameters from the core/plugins */
