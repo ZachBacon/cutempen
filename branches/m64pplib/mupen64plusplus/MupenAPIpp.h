@@ -145,8 +145,8 @@ public:
      *  This is not an absolute test */
     bool equals(ConfigParam* other) const
     {
-        return (m_param_type == other->m_param_type) and
-               (m_param_name == other->m_param_name) and
+        return (m_param_type == other->m_param_type) &&
+               (m_param_name == other->m_param_name) &&
                (m_special_type == other->m_special_type);
     }
 

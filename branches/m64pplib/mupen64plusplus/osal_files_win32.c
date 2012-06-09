@@ -49,7 +49,10 @@ osal_lib_search *osal_library_search(const char *searchpath)
         return NULL;
     }
     sprintf(pchSearchPath, "%s\\*.dll", searchpath);
-    hDir = FindFirstFile(pchSearchPath, &entry);
+    //hDir = FindFirstFile(pchSearchPath, &entry);
+    WCHAR sp[PATH_MAX];
+    MultiByteToWideChar(CP_ACP, 0, pchSearchPath, -1, sp, PATH_MAX);
+    hDir = FindFirstFile(sp, &entry);
     free(pchSearchPath);
     if (hDir == INVALID_HANDLE_VALUE)
         return NULL;

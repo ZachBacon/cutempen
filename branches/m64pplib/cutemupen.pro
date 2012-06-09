@@ -2,12 +2,14 @@
 # Project created by QtCreator 2010-02-26T16:25:43
 # -------------------------------------------------
 # ## The settings you have to adapt to your configuration:
-# On Windows, the paths to Mupen64Plus API and ZLib include files
+# On Windows, the paths to Mupen64Plus, Zlib  and SDL include files
 win32:INCLUDEPATH += C:\dev\mupen64plus-bundle-src-1.99.4\source\mupen64plus-core\src\api \
-    C:\dev\include
+    C:\dev\include \
+    C:\dev\SDL-1.2.15\include
 
-# On Windows, the path to ZLib library
-windows:LIBS += C:\dev\lib\zlib.lib
+# On Windows, the path to Zlib and SDL libraries
+windows:LIBS += C:\dev\lib\zlib.lib \
+    C:\dev\SDL-1.2.15\lib\libSDL.dll.a
 
 # On other systems (GNU/Linux, Mac OS X, ...), the path to Mupen64Plus API files
 !win32:INCLUDEPATH += /usr/include/mupen64plus
@@ -58,7 +60,7 @@ FORMS += inputdialog.ui \
     plugindialog.ui \
     mainwindow.ui
 win32:CONFIG += embed_manifest_exe
-win32:SOURCES += mupen64plusplus/osal_files_win32.cpp \
+win32:SOURCES += mupen64plusplus/osal_files_win32.c \
     mupen64plusplus/osal_dynamiclib_win32.c
 !win32:SOURCES += mupen64plusplus/osal_files_unix.c \
     mupen64plusplus/osal_dynamiclib_unix.c
