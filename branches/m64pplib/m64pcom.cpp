@@ -49,14 +49,18 @@ m64p_error MainWindow::InitMupen64()
 {
     m_api = new Mupen64PlusPlus(Mupen64Library.toLocal8Bit().constData(),
                                 Mupen64PluginDir.toLocal8Bit().constData(),
-                                ui->cb_GfxPlugin->currentText().toLocal8Bit().constData(),
+                                //ui->cb_GfxPlugin->currentText().toLocal8Bit().constData(),
+                                //"mupen64plus-video-rice",
+                                "mupen64plus-video-arachnoid",
                                 ui->cb_SndPlugin->currentText().toLocal8Bit().constData(),
                                 ui->cb_InpPlugin->currentText().toLocal8Bit().constData(),
                                 ui->cb_RspPlugin->currentText().toLocal8Bit().constData());
     if (m_api)
+    {
+        m_api->getConfigContents();
         return M64ERR_SUCCESS;
-    else
-        return M64ERR_NOT_INIT;
+    }
+    return M64ERR_NOT_INIT;
 }
 
 bool MainWindow::LoadFile(QString & ROMFile)

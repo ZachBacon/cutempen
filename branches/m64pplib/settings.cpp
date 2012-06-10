@@ -251,6 +251,7 @@ void MainWindow::ApplyConfiguration ()
 
 void MainWindow::chooseGfxPlugin (QString text)
 {
+    qDebug () << "chooseGfxPlugin start !";
 #if 0
     (*PtrConfigSetParameter)(l_ConfigUI, "VideoPlugin", M64TYPE_STRING,
                           text.toLocal8Bit().constData());
