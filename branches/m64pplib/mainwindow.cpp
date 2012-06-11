@@ -68,7 +68,8 @@ MainWindow::MainWindow(QWidget *parent) :
     dirModel = new QDirModel();
     ROMFile = "";
 
-    RestoreSettings();
+    //deplacé dans InitMupen64()
+    //RestoreSettings();
 
 }
 

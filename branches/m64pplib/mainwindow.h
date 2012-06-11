@@ -27,6 +27,7 @@
 #include <QModelIndex>
 #include <QDirModel>
 #include <QString>
+#include <QVector>
 
 #include "mupen64plusplus/MupenAPI.h"
 #include "mupen64plusplus/MupenAPIpp.h"
@@ -56,7 +57,9 @@ private:
     QString ROMsDir;
     QString ROMFile;
     QDirModel *dirModel;
-    QStringList configSections;
+    //QStringList configSections;
+    //QVector<ConfigSection> configSections;
+    std::vector<ConfigSection> configSections;
 
     m64p_error InitMupen64();
     void RestoreSettings();

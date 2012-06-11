@@ -68,9 +68,9 @@ void MainWindow::UpdateM64Library()
   if (!Mupen64Library.isEmpty())
   {
     // Save the chosen directory in CuteMupen config
-    QSettings settings ("CuteMupen", "CuteMupen");
+    QSettings settings ("mupen64plus", "UI-CuteMupen");
     settings.setIniCodec("UTF-8");
-    settings.setValue("Paths/Mupen64Library", Mupen64Library);
+    settings.setValue("Library", Mupen64Library);
     // Set label to the chosen directory
     ui->le_Library->setText(Mupen64Library);
 #if defined(Q_WS_WIN)
@@ -119,9 +119,9 @@ void MainWindow::UpdateM64PluginDir()
   if (!Mupen64PluginDir.isEmpty())
   {
     // Save the chosen directory in CuteMupen config
-    QSettings settings ("CuteMupen", "CuteMupen");
+    QSettings settings ("mupen64plus", "UI-CuteMupen");
     settings.setIniCodec("UTF-8");
-    settings.setValue("Paths/Mupen64PluginDir", Mupen64PluginDir);
+    settings.setValue("PluginDir", Mupen64PluginDir);
     // Set label to the chosen directory
     ui->le_PluginsDir->setText(Mupen64PluginDir);
     // Tweak PATH or LD_LIBRARY depending on OS
@@ -266,9 +266,9 @@ void MainWindow::UpdateROMsDir()
   if (!ROMsDir.isEmpty())
   {
     // Save the chosen directory in CuteMupen config
-    QSettings settings ("CuteMupen", "CuteMupen");
+      QSettings settings ("mupen64plus", "UI-CuteMupen");
     settings.setIniCodec("UTF-8");
-    settings.setValue("Paths/ROMsDir", ROMsDir);
+    settings.setValue("GamesPath", ROMsDir);
     // Set the label to the chosen directory
     ui->le_ROMsDir->setText(ROMsDir);
     // Update the ROM browser view

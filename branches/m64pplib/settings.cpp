@@ -122,6 +122,7 @@ void MainWindow::chooseResolution (QString /*text*/)
 
 void MainWindow::RestoreSettings ()
 {
+#if 0
   QSettings settings ("CuteMupen", "CuteMupen");
   settings.setIniCodec("UTF-8");
   // Get settings for the paths. If they're empty, prompt for selection
@@ -157,12 +158,36 @@ void MainWindow::RestoreSettings ()
 
   // Restore OSD setting
   ui->cb_OSD->setChecked(settings.value("Video/OSD", true).toBool());
+#endif
+
+  l_ConfigUI = ::getConfigUI();
+  char M64PluginDir[1024];
+  if (getStringConfigParam(l_ConfigUI, "PluginDir", M64PluginDir, 1000)
+          != M64ERR_SUCCESS)
+      printf("Problem getting PluginDir from conf !!!\n");(stdout);
+  Mupen64PluginDir = QString::fromAscii(M64PluginDir);
+  QString Library = Mupen64PluginDir;
+  ui->le_PluginsDir->setText(Library);
+  Library.append(OSAL_DIR_SEPARATOR);
+  Library.append(OSAL_DEFAULT_DYNLIB_FILENAME);
+  setStringConfigParam(l_ConfigUI, "Library",
+                       Library.toLocal8Bit().constData());
+  ui->le_Library->setText(Library);
 
   // Get selected plugins from configuration settings before they're overwritten by discovery
-  QString GfxPlugin = settings.value("Settings/GfxPlugin").toString();
-  QString SndPlugin = settings.value("Settings/SndPlugin").toString();
-  QString InpPlugin = settings.value("Settings/InpPlugin").toString();
-  QString RspPlugin = settings.value("Settings/RspPlugin").toString();
+  char GfxPlugin[1024];// = settings.value("Settings/GfxPlugin").toString();
+  char SndPlugin[1024];// = settings.value("Settings/SndPlugin").toString();
+  char InpPlugin[1024];// = settings.value("Settings/InpPlugin").toString();
+  char RspPlugin[1024];// = settings.value("Settings/RspPlugin").toString();
+  if (getStringConfigParam(l_ConfigUI, "VideoPlugin", GfxPlugin, 1024) != M64ERR_SUCCESS)
+      printf("Problem getting VideoPlugin from conf !!!\n");
+  if (getStringConfigParam(l_ConfigUI, "AudioPlugin", SndPlugin, 1024) != M64ERR_SUCCESS)
+      printf("Problem getting AudioPlugin from conf !!!\n");
+  if (getStringConfigParam(l_ConfigUI, "InputPlugin", InpPlugin, 1024) != M64ERR_SUCCESS)
+      printf("Problem getting InputPlugin from conf !!!\n");
+  if (getStringConfigParam(l_ConfigUI, "RspPlugin", RspPlugin, 1024) != M64ERR_SUCCESS)
+      printf("Problem getting RspPlugin from conf !!!\n");
+  fflush(stdout);
 
   // Find all plugins and fill combo-boxes
   QDir pluginDir (Mupen64PluginDir);
@@ -210,7 +235,8 @@ void MainWindow::RestoreSettings ()
   //Test (); // Check if we can get some plugin parameters
 
   // Restore EmuMode setting
-  int emuMode = settings.value("Settings/EmuMode", 2).toInt();
+  //int emuMode = settings.value("Settings/EmuMode", 2).toInt();
+  int emuMode = 2;
   switch (emuMode)
   {
     case 2:
@@ -230,6 +256,7 @@ void MainWindow::RestoreSettings ()
 
 void MainWindow::ApplyConfiguration ()
 {
+#if 0
   QSettings settings ("CuteMupen", "CuteMupen");
   settings.setIniCodec("UTF-8");
 
@@ -247,11 +274,32 @@ void MainWindow::ApplyConfiguration ()
   emumode = settings.value("Settings/EmuMode", "2").toInt();
   if ((emumode >= 0) && (emumode <= 2))
     (*PtrConfigSetParameter)(l_ConfigCore, "R4300Emulator", M64TYPE_INT, &emumode);
+#endif
 }
 
 void MainWindow::chooseGfxPlugin (QString text)
 {
-    qDebug () << "chooseGfxPlugin start !";
+    GetConfigurationSections();
+    printf("chooseGfxPlugin (%s)\n\t%d sections\n", text.toLocal8Bit().constData(), configSections.size());
+    fflush(stdout);
+    for (int idx = 0; idx < configSections.size(); idx++)
+    {
+        if (!strcmp(configSections[idx].m_section_name.c_str(), "UI-CuteMupen")
+                && (configSections[idx].hasChildNamed("VideoPlugin")))
+        {
+            printf("chooseGfxPlugin : idx = %d for section %s\n", idx, configSections[idx].m_section_name.c_str());
+            ConfigSection cfggfx = configSections[idx];
+            cfggfx.getParamWithName("VideoPlugin")->setStringValue(text.toStdString());
+            saveConfig();
+            printf("UI-CuteMupen: set VideoPlugin = %s\n", text.toLocal8Bit().constData());
+            fflush(stdout);
+            //m_api->loadPlugins();
+            QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
+            //::PluginLoadTry (filePath.toLocal8Bit().constData(), M64PLUGIN_GFX);
+            ::attachPlugins();
+        }
+    }
+
 #if 0
     (*PtrConfigSetParameter)(l_ConfigUI, "VideoPlugin", M64TYPE_STRING,
                           text.toLocal8Bit().constData());
@@ -261,9 +309,9 @@ void MainWindow::chooseGfxPlugin (QString text)
       qDebug () << "chooseGfxPlugin failed !";
       return;
     }
-    QSettings settings ("CuteMupen", "CuteMupen");
-    settings.setIniCodec("UTF-8");
-    settings.setValue("Settings/GfxPlugin", text.toLocal8Bit().constData());
+    //QSettings settings ("CuteMupen", "CuteMupen");
+    //settings.setIniCodec("UTF-8");
+    //settings.setValue("Settings/GfxPlugin", text.toLocal8Bit().constData());
 #endif
 }
 
@@ -331,7 +379,9 @@ void MainWindow::clickedGfx ()
   QString sectionName;
   sectionName.sprintf("Video-%s", pluginName.toLocal8Bit().constData());
   pDialog = NULL;
-  QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
+  //QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
+  //ConfigSection cfgVideo = configSections[0];
+#if 0
   if (subset.count() == 1)
   {
       pDialog = new PluginDialog (this,
@@ -347,6 +397,7 @@ void MainWindow::clickedGfx ()
         "Couldn't find parameters in " + sectionName + " section.");
     return;
   }
+#endif
 }
 
 void MainWindow::clickedSnd ()
@@ -361,6 +412,7 @@ void MainWindow::clickedSnd ()
   QString sectionName;
   sectionName.sprintf("Audio-%s", pluginName.toLocal8Bit().constData());
   pDialog = NULL;
+#if 0
   QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
   if (subset.count() == 1)
   {
@@ -379,10 +431,12 @@ void MainWindow::clickedSnd ()
         "Couldn't find parameters in " + sectionName + " section.");
     return;
   }
+#endif
 }
 
 void MainWindow::clickedInp ()
 {
+#if 0
   GetConfigurationSections ();
   // Delete any section not finishing with a number, since Input-Sdl-Control
   // gets created on query...
@@ -432,11 +486,12 @@ void MainWindow::clickedInp ()
     QMessageBox::information (this, "Nothing to configure",
         "Couldn't find parameters for " + sectionName + " section.");
   }
-
+#endif
 }
 
 void MainWindow::clickedRsp ()
 {
+#if 0
   GetConfigurationSections ();
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_RspPlugin->currentText();
@@ -463,5 +518,5 @@ void MainWindow::clickedRsp ()
         "Couldn't find parameters in " + sectionName + " section.");
     return;
   }
-
+#endif
 }
