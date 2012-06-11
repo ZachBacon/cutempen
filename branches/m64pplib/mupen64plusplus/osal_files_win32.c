@@ -86,7 +86,12 @@ osal_lib_search *osal_library_search(const char *searchpath)
             strcat(curr->filepath, "\\");
         int pathlen = (int) strlen(curr->filepath);
         curr->filename = curr->filepath + pathlen;
-        strncat(curr->filepath, entry.cFileName, PATH_MAX - pathlen - 1);
+        char CFName[PATH_MAX];
+        int lenCFN = wcslen(entry.cFileName);
+        WideCharToMultiByte(CP_ACP, 0, entry.cFileName, -1, CFName, lenCFN, NULL, NULL);
+        CFName[lenCFN] = '\0';
+        strncat(curr->filepath, CFName, PATH_MAX - pathlen - 1);
+        //strncat(curr->filepath, entry.cFileName, PATH_MAX - pathlen - 1);
         curr->filepath[PATH_MAX-1] = 0;
         /* set plugin_type and next pointer */
         curr->plugin_type = (m64p_plugin_type) 0;
