@@ -391,10 +391,10 @@ m64p_error OpenConfigurationHandles(const char* defaultPluginDir,
         return rval;
     }
 
-    rval = (*PtrConfigOpenSection)("UI-cm", &l_ConfigPlugins);
+    rval = (*PtrConfigOpenSection)("UI-CuteMupen", &l_ConfigPlugins);
     if (rval != M64ERR_SUCCESS)
     {
-        fprintf(stderr, "Error (%s:%i): failed to open 'UI-cm' configuration section\n", __FILE__, __LINE__);
+        fprintf(stderr, "Error (%s:%i): failed to open 'UI-CuteMupen' configuration section\n", __FILE__, __LINE__);
         return rval;
     }
 
