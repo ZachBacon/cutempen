@@ -63,11 +63,9 @@ private:
 
     m64p_error InitMupen64();
     void RestoreSettings();
-    void ApplyConfiguration();
     bool LoadFile(QString& ROMFile);
     bool LoadRom (qint64 lentgh, char* buffer);
     m64p_error DetachCoreLib();
-    m64p_error OpenConfigurationHandles();
     m64p_error SaveConfigurationOptions();
 
     m64p_handle l_ConfigCore;
@@ -87,8 +85,8 @@ private:
 
     bool isCoreReady;
 
-    void GetConfigurationSections ();
     m64p_error GetSectionParameters (const char* sectionName);
+    ConfigSection* GetSection (const char* name);
 
 public slots:
     void chooseMupen64Library (bool skipDialog = false);

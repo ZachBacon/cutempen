@@ -68,9 +68,11 @@ MainWindow::MainWindow(QWidget *parent) :
     dirModel = new QDirModel();
     ROMFile = "";
 
-    //deplacé dans InitMupen64()
-    //RestoreSettings();
-
+    QSettings settings ("CuteMupen", "CuteMupen");
+    settings.setIniCodec("UTF-8");
+    Mupen64Library = settings.value ("Paths/Mupen64Library", "").toString();
+    if ((!Mupen64Library.isEmpty()) && QFile::exists(Mupen64Library))
+        chooseMupen64Library(true); // don't show the dialog
 }
 
 MainWindow::~MainWindow()
@@ -99,8 +101,12 @@ void MainWindow::changeEvent(QEvent *e)
 int MainWindow::clickedROM(const QModelIndex & index)
 {
   ROMFile = dirModel->filePath(index);
-  Mupen64PlusPlus::RomInfo info = m_api->getRomInfo(ROMFile);
-  ui->statusBar->showMessage(info.country);
+  if (m_api)
+  {
+      Mupen64PlusPlus::RomInfo info = m_api->getRomInfo(ROMFile);
+      ui->statusBar->showMessage(info.name);
+  }
+
   return 0;
 }
 
@@ -116,8 +122,6 @@ int MainWindow::clickedRun()
         ui->pb_Run->setDisabled(false);
         return 1;
     }
-
-    ApplyConfiguration();
 
     if (ROMFile.isEmpty())
     {

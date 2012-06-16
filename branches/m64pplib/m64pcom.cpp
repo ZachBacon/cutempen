@@ -55,8 +55,9 @@ m64p_error MainWindow::InitMupen64()
                                 ui->cb_RspPlugin->currentText().toLocal8Bit().constData());
     if (m_api)
     {
-        GetConfigurationSections();
+        configSections = m_api->getConfigContents();
         RestoreSettings();
+        qDebug() << "Initialized M64+ and restored settings.";
         return M64ERR_SUCCESS;
     }
     return M64ERR_NOT_INIT;
@@ -134,11 +135,6 @@ bool MainWindow::LoadRom (qint64 romlength, char* buffer)
 m64p_error MainWindow::DetachCoreLib()
 {
   return ::DetachCoreLib();
-}
-
-m64p_error MainWindow::OpenConfigurationHandles(void)
-{
-
 }
 
 m64p_error MainWindow::SaveConfigurationOptions(void)
@@ -239,20 +235,16 @@ void SectionListCallback(void* context, const char* section)
 }
 #endif
 
-void MainWindow::GetConfigurationSections ()
+ConfigSection* MainWindow::GetSection (const char* name)
 {
-    configSections = m_api->getConfigContents();
     for (int idx = 0; idx < configSections.size(); idx++)
     {
-        //printf("Index %d name is '%s'\n", idx, configSections[idx].m_section_name.c_str());
+        if (!strcmp(configSections[idx].m_section_name.c_str(), name))
+            return &configSections[idx];
     }
-#if 0
-  configSections.clear();
-  m64p_error err;
-  err = (*ConfigListSections)((void*)&configSections, SectionListCallback);
-  if (err != M64ERR_SUCCESS)
-    qDebug () << "GetConfigurationSections: unable to list sections !";
-#endif
+    printf("CuteMupen: couldn't find section %s\n", name);
+    fflush(stdout);
+    return 0;
 }
 
 m64p_error MainWindow::GetSectionParameters (const char* sectionName)

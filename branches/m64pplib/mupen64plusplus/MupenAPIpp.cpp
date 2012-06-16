@@ -394,7 +394,6 @@ Mupen64PlusPlus::RomInfo Mupen64PlusPlus::getRomInfo(QString path)
 void Mupen64PlusPlus::runEmulation()
 {
     SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO);
-    
     m64p_error result = ::runEmulation();
     if (result != M64ERR_SUCCESS)
     {

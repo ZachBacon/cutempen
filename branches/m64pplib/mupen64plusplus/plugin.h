@@ -32,6 +32,8 @@ extern "C" {
 extern m64p_error PluginSearchLoad(m64p_handle ConfigUI);
 extern m64p_error PluginUnload(void);
 extern m64p_plugin_type GetPluginType (const char* filepath);
+extern m64p_error ActivatePlugin (const char* filePath, m64p_plugin_type pType);
+extern m64p_error UnloadPluginType (m64p_plugin_type pType);
 
 
 extern const char *g_PluginDir;        // directory to search for plugins

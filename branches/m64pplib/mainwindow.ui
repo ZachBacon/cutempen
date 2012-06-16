@@ -71,7 +71,7 @@
          <enum>QTabWidget::North</enum>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>4</number>
         </property>
         <property name="elideMode">
          <enum>Qt::ElideNone</enum>
@@ -139,9 +139,6 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="le_Library"/>
-            </item>
             <item row="1" column="1">
              <widget class="QLineEdit" name="le_PluginsDir"/>
             </item>
@@ -150,6 +147,13 @@
             </item>
             <item row="3" column="1">
              <widget class="QLineEdit" name="le_ConfigDir"/>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="lb_Library_Path">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -926,22 +930,6 @@
     <hint type="destinationlabel">
      <x>6</x>
      <y>112</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>le_Library</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>editedMupen64Library()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>79</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>0</x>
-     <y>34</y>
     </hint>
    </hints>
   </connection>

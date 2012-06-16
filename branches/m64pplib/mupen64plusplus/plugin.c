@@ -231,6 +231,7 @@ m64p_error PluginSearchLoad(m64p_handle ConfigPlugins)
             if (g_Verbose)
                 printf("CuteMupen: %s plugin library: %s\n", g_PluginMap[i].name, g_PluginMap[i].filename);
         }
+        fflush(stdout);
     }
 
     /* free up the list of library files in the plugin search directory */
@@ -289,4 +290,94 @@ m64p_plugin_type GetPluginType (const char* filepath)
 
     osal_dynlib_close(handle);
     return PluginType;
+}
+
+m64p_error ActivatePlugin (const char* filepath, m64p_plugin_type pType)
+{
+  m64p_dynlib_handle handle;
+  m64p_error rval;
+  rval = osal_dynlib_open(&handle, filepath);
+  if (rval != M64ERR_SUCCESS)
+  {
+    fprintf(stderr, "Error: '%s' activation failed.\n", filepath);
+    osal_dynlib_close(handle);
+    return rval;
+  }
+
+  rval = UnloadPluginType (pType);
+  if (rval != M64ERR_SUCCESS)
+    fprintf(stderr, "Error: unable to unload plugin type %d.\n", pType);
+
+  switch (pType)
+  {
+    // Kind of ugly, the int argument is the index for g_PluginMap
+    case M64PLUGIN_GFX:
+      rval = PluginLoadTry (filepath, 0);
+      break;
+    case M64PLUGIN_AUDIO:
+      rval = PluginLoadTry (filepath, 1);
+      break;
+    case M64PLUGIN_INPUT:
+      rval = PluginLoadTry (filepath, 2);
+      break;
+    case M64PLUGIN_RSP:
+      rval = PluginLoadTry (filepath, 3);
+      break;
+    default:
+      break;
+  }
+
+  if (rval != M64ERR_SUCCESS)
+  {
+    fprintf(stderr, "Error: PluginLoadTry failed for '%s'.\n", filepath);
+    osal_dynlib_close(handle);
+    return rval;
+  }
+
+  osal_dynlib_close(handle);
+  return rval;
+}
+
+m64p_error UnloadPluginType (m64p_plugin_type pType)
+{
+    typedef m64p_error (*ptr_PluginShutdown)(void);
+    ptr_PluginShutdown PluginShutdown;
+    int i = 4;
+
+    switch (pType)
+    {
+      case M64PLUGIN_GFX:
+        i = 0;
+        break;
+      case M64PLUGIN_AUDIO:
+        i = 1;
+        break;
+      case M64PLUGIN_INPUT:
+        i = 2;
+        break;
+      case M64PLUGIN_RSP:
+        i = 3;
+        break;
+      default:
+        fprintf(stderr, "Error: trying to unload unknown plugin type %d.\n", pType);
+        return M64ERR_INCOMPATIBLE;
+        break;
+    }
+
+    if (g_PluginMap[i].handle == NULL)
+      return M64ERR_SUCCESS;
+    /* call the destructor function for the plugin and release the library */
+    PluginShutdown = (ptr_PluginShutdown) osal_dynlib_getproc(g_PluginMap[i].handle, "PluginShutdown");
+    if (PluginShutdown != NULL)
+      (*PluginShutdown)();
+    else
+        fprintf(stderr, "Error: unable to get PluginShutDown handle.\n");
+    osal_dynlib_close(g_PluginMap[i].handle);
+    /* clear out the plugin map's members */
+    g_PluginMap[i].handle = NULL;
+    g_PluginMap[i].filename[0] = 0;
+    g_PluginMap[i].libname = NULL;
+    g_PluginMap[i].libversion = 0;
+
+    return M64ERR_SUCCESS;
 }

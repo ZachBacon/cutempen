@@ -44,12 +44,12 @@ void MainWindow::chooseMupen64Library(bool skipDialog)
 void MainWindow::editedMupen64Library()
 {
   QString path;
-  path = ui->le_Library->text();
+  path = ui->lb_Library_Path->text();
   if (!QFile::exists(path))
   {
     QMessageBox::warning(this, tr("File does not exist"),
         tr("Please set the library file to a valid file."));
-    ui->le_Library->setText(QDir::currentPath());
+    ui->lb_Library_Path->setText(QDir::currentPath());
     return;
   }
   Mupen64Library = path;
@@ -68,11 +68,14 @@ void MainWindow::UpdateM64Library()
   if (!Mupen64Library.isEmpty())
   {
     // Save the chosen directory in CuteMupen config
-    QSettings settings ("mupen64plus", "UI-CuteMupen");
+    QSettings settings ("CuteMupen", "CuteMupen");
     settings.setIniCodec("UTF-8");
-    settings.setValue("Library", Mupen64Library);
-    // Set label to the chosen directory
-    ui->le_Library->setText(Mupen64Library);
+    settings.setValue("Paths/Mupen64Library", Mupen64Library);
+    // Set line edit to the chosen directory
+    //ui->le_Library->setText(Mupen64Library);
+    ui->lb_Library_Path->setText(
+                Mupen64Library.mid(Mupen64Library.lastIndexOf(OSAL_DIR_SEPARATOR) + 1));
+
 #if defined(Q_WS_WIN)
     {
       Mupen64Library.replace("/", "\\");
@@ -88,7 +91,6 @@ void MainWindow::UpdateM64Library()
     return;
   }
   isCoreReady = true;
-  ApplyConfiguration();
 }
 
 void MainWindow::chooseMupen64PluginDir(bool skipDialog)
@@ -119,9 +121,10 @@ void MainWindow::UpdateM64PluginDir()
   if (!Mupen64PluginDir.isEmpty())
   {
     // Save the chosen directory in CuteMupen config
-    QSettings settings ("mupen64plus", "UI-CuteMupen");
-    settings.setIniCodec("UTF-8");
-    settings.setValue("PluginDir", Mupen64PluginDir);
+    ConfigSection* cfg = GetSection("UI-CuteMupen");
+    if (cfg)
+        cfg->getParamWithName("PluginDir")->setStringValue(Mupen64PluginDir.toStdString());
+    saveConfig();
     // Set label to the chosen directory
     ui->le_PluginsDir->setText(Mupen64PluginDir);
     // Tweak PATH or LD_LIBRARY depending on OS
@@ -154,9 +157,6 @@ void MainWindow::UpdateM64PluginDir()
 
     // Set environment variable
     AddToEnvVar(envLD, Mupen64PluginDir);
-
-    //QString currentEnv (getenv(envLD.toLocal8Bit().constData()));
-    //QMessageBox::information(this, "Now is Current " + envLD, currentEnv);
   }
 }
 
@@ -188,6 +188,7 @@ void MainWindow::editedMupen64DataDir()
 
 void MainWindow::UpdateM64DataDir()
 {
+#if 0
   // Save the chosen directory in CuteMupen config
   QSettings settings ("CuteMupen", "CuteMupen");
   settings.setIniCodec("UTF-8");
@@ -195,6 +196,7 @@ void MainWindow::UpdateM64DataDir()
   // Set label to the chosen directory
   if (!Mupen64DataDir.isEmpty())
     ui->le_DataDir->setText(Mupen64DataDir);
+#endif
 }
 
 void MainWindow::chooseMupen64ConfigDir(bool skipDialog)
@@ -225,6 +227,7 @@ void MainWindow::editedMupen64ConfigDir()
 
 void MainWindow::UpdateM64ConfigDir()
 {
+#if 0
   // Save the chosen directory in CuteMupen config
   QSettings settings ("CuteMupen", "CuteMupen");
   settings.setIniCodec("UTF-8");
@@ -232,6 +235,7 @@ void MainWindow::UpdateM64ConfigDir()
   // Set label to the chosen directory
   if (!Mupen64ConfigDir.isEmpty())
     ui->le_ConfigDir->setText(Mupen64ConfigDir);
+#endif
 }
 
 void MainWindow::chooseROMsDir(bool skipDialog)
@@ -263,12 +267,15 @@ void MainWindow::editedROMsDir()
 
 void MainWindow::UpdateROMsDir()
 {
-  if (!ROMsDir.isEmpty())
+  if (!ROMsDir.isEmpty() && QFile::exists(ROMsDir))
   {
     // Save the chosen directory in CuteMupen config
-      QSettings settings ("mupen64plus", "UI-CuteMupen");
-    settings.setIniCodec("UTF-8");
-    settings.setValue("GamesPath", ROMsDir);
+    ConfigSection* cfg = GetSection("UI-CuteMupen");
+    if (cfg)
+    {
+        cfg->getParamWithName("GamesPath")->setStringValue(ROMsDir.toStdString());
+        saveConfig();
+    }
     // Set the label to the chosen directory
     ui->le_ROMsDir->setText(ROMsDir);
     // Update the ROM browser view
