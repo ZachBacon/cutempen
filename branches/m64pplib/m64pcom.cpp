@@ -40,7 +40,6 @@
 
 extern QString* logLine;
 extern QStringList* logList;
-//extern QStringList parameterList;
 extern PluginDialog* pDialog;
 extern InputDialog* inputDialog;
 
@@ -48,11 +47,12 @@ extern InputDialog* inputDialog;
 m64p_error MainWindow::InitMupen64()
 {
     m_api = new Mupen64PlusPlus(Mupen64Library.toLocal8Bit().constData(),
-                                Mupen64PluginDir.toLocal8Bit().constData(),
-                                ui->cb_GfxPlugin->currentText().toLocal8Bit().constData(),
-                                ui->cb_SndPlugin->currentText().toLocal8Bit().constData(),
-                                ui->cb_InpPlugin->currentText().toLocal8Bit().constData(),
-                                ui->cb_RspPlugin->currentText().toLocal8Bit().constData());
+                                Mupen64Library.left(
+                                    Mupen64Library.lastIndexOf(OSAL_DIR_SEPARATOR)).toLocal8Bit().constData(),
+                                "mupen64plus-video-rice",
+                                "mupen64plus-audio-sdl",
+                                "mupen64plus-input-sdl",
+                                "mupen64plus-rsp-hle");
     if (m_api)
     {
         configSections = m_api->getConfigContents();
@@ -162,19 +162,6 @@ m64p_error MainWindow::SaveConfigurationOptions(void)
 
 /* ============================================================================= */
 
-m64p_handle GetSectionHandle (const char* name)
-{
-
-  m64p_handle handle;
-  handle = 0;
-#if 0
-  m64p_error result = (*ConfigOpenSection)(name, &handle);
-  if (result != M64ERR_SUCCESS)
-    qDebug () << "GetSectionHandle: unable to get" << name << "section !";
-#endif
-  return handle;
-}
-
 #if 0
 void ParameterListCallback(void* sectionHandle, const char* ParamName, m64p_type ParamType)
 {
@@ -245,16 +232,4 @@ ConfigSection* MainWindow::GetSection (const char* name)
     printf("CuteMupen: couldn't find section %s\n", name);
     fflush(stdout);
     return 0;
-}
-
-m64p_error MainWindow::GetSectionParameters (const char* sectionName)
-{
-#if 0
-  m64p_handle sHandle = GetSectionHandle (sectionName);
-  m64p_error res = (*ConfigListParameters)(sHandle, sHandle, ParameterListCallback);
-  if (res != M64ERR_SUCCESS)
-    qDebug () << "ConfigListParameters failed, return code = " << res;
-
-  return res;
-#endif
 }

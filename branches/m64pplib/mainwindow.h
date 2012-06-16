@@ -57,9 +57,9 @@ private:
     QString ROMsDir;
     QString ROMFile;
     QDirModel *dirModel;
-    //QStringList configSections;
-    //QVector<ConfigSection> configSections;
+
     std::vector<ConfigSection> configSections;
+    ConfigSection* GetSection (const char* name);
 
     m64p_error InitMupen64();
     void RestoreSettings();
@@ -67,12 +67,6 @@ private:
     bool LoadRom (qint64 lentgh, char* buffer);
     m64p_error DetachCoreLib();
     m64p_error SaveConfigurationOptions();
-
-    m64p_handle l_ConfigCore;
-    m64p_handle l_ConfigUI;
-    m64p_handle l_ConfigVideo;
-    m64p_handle l_DataDirPath;
-    m64p_handle l_ConfigDirPath;
 
     void UpdateM64Library ();
     void UpdateM64PluginDir ();
@@ -84,9 +78,6 @@ private:
     void FlushLog ();
 
     bool isCoreReady;
-
-    m64p_error GetSectionParameters (const char* sectionName);
-    ConfigSection* GetSection (const char* name);
 
 public slots:
     void chooseMupen64Library (bool skipDialog = false);

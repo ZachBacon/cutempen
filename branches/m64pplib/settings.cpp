@@ -44,7 +44,6 @@ extern bool doLogVerbose;
 //extern QStringList parameterList;
 extern PluginDialog* pDialog;
 extern InputDialog* inputDialog;
-extern m64p_handle GetSectionHandle (const char* name);
 
 extern m64p_plugin_type GetPluginType (const char* filepath);
 
@@ -237,6 +236,8 @@ void MainWindow::RestoreSettings ()
   idx = ui->cb_GfxPlugin->findText (GfxPlugin);
   if (idx != -1)
     ui->cb_GfxPlugin->setCurrentIndex (idx);
+  else
+      ui->cb_GfxPlugin->setCurrentIndex(0);
   idx = ui->cb_SndPlugin->findText (SndPlugin);
   if (idx != -1)
     ui->cb_SndPlugin->setCurrentIndex (idx);
