@@ -158,6 +158,7 @@ m64p_error MainWindow::SaveConfigurationOptions(void)
 
     return (*ConfigSaveFile)();
 #endif
+    return M64ERR_SUCCESS;
 }
 
 /* ============================================================================= */
@@ -224,7 +225,7 @@ void SectionListCallback(void* context, const char* section)
 
 ConfigSection* MainWindow::GetSection (const char* name)
 {
-    for (int idx = 0; idx < configSections.size(); idx++)
+    for (size_t idx = 0; idx < configSections.size(); idx++)
     {
         if (!strcmp(configSections[idx].m_section_name.c_str(), name))
             return &configSections[idx];
