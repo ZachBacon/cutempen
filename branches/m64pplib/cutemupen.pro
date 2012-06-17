@@ -3,13 +3,13 @@
 # -------------------------------------------------
 # ## The settings you have to adapt to your configuration:
 # On Windows, the paths to Mupen64Plus, Zlib  and SDL include files
-win32:INCLUDEPATH += C:\dev\mupen64plus-bundle-src-1.99.4\source\mupen64plus-core\src\api \
-    C:\dev\include \
-    C:\dev\SDL-1.2.15\include
+win32:INCLUDEPATH += C:\\dev\\mupen64plus-bundle-src-1.99.5\\source\\mupen64plus-core\\src\\api \
+    C:\\dev\\include \
+    C:\\dev\\SDL-1.2.15\\include
 
 # On Windows, the path to Zlib and SDL libraries
-windows:LIBS += C:\dev\lib\zlib.lib \
-    C:\dev\SDL-1.2.15\lib\libSDL.dll.a
+windows:LIBS += C:\\dev\\lib\\zlib.lib \
+    C:\\dev\\SDL-1.2.15\\lib\\libSDL.dll.a
 
 # On other systems (GNU/Linux, Mac OS X, ...), the path to Mupen64Plus API files
 !win32:INCLUDEPATH += /usr/include/mupen64plus
