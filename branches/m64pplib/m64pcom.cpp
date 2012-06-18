@@ -46,9 +46,12 @@ extern InputDialog* inputDialog;
 
 m64p_error MainWindow::InitMupen64()
 {
+    // Try a reasonable default for plugin dir
+    Mupen64PluginDir = Mupen64Library.left(
+                Mupen64Library.lastIndexOf(OSAL_DIR_SEPARATOR)).toLocal8Bit().constData();
+    UpdateM64PluginDir();
     m_api = new Mupen64PlusPlus(Mupen64Library.toLocal8Bit().constData(),
-                                Mupen64Library.left(
-                                    Mupen64Library.lastIndexOf(OSAL_DIR_SEPARATOR)).toLocal8Bit().constData(),
+                                Mupen64PluginDir.toLocal8Bit().constData(),
                                 "mupen64plus-video-rice",
                                 "mupen64plus-audio-sdl",
                                 "mupen64plus-input-sdl",

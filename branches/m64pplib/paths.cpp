@@ -123,8 +123,10 @@ void MainWindow::UpdateM64PluginDir()
     // Save the chosen directory in CuteMupen config
     ConfigSection* cfg = GetSection("UI-CuteMupen");
     if (cfg)
+    {
         cfg->getParamWithName("PluginDir")->setStringValue(Mupen64PluginDir.toStdString());
-    saveConfig();
+        saveConfig();
+    }
     // Set label to the chosen directory
     ui->le_PluginsDir->setText(Mupen64PluginDir);
     // Tweak PATH or LD_LIBRARY depending on OS
