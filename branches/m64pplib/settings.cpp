@@ -260,8 +260,12 @@ void MainWindow::chooseGfxPlugin (QString text)
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
 
     if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_GFX) != M64ERR_SUCCESS)
-    //if (PluginLoadTry (filePath.toLocal8Bit().constData(), M64PLUGIN_GFX) != M64ERR_SUCCESS)
-      qDebug () << "chooseGfxPlugin failed !";
+    {
+        qDebug () << "chooseGfxPlugin failed for" << text;
+        QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
+        // Remove it from the combo box ; this should reset to a sane value
+        ui->cb_GfxPlugin->removeItem(ui->cb_GfxPlugin->currentIndex());
+    }
 }
 
 void MainWindow::chooseSndPlugin (QString text)
@@ -275,7 +279,12 @@ void MainWindow::chooseSndPlugin (QString text)
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
 
     if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_AUDIO) != M64ERR_SUCCESS)
-      qDebug () << "chooseSndPlugin failed !";
+    {
+        qDebug () << "chooseSndPlugin failed for" << text;
+        QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
+        // Remove it from the combo box ; this should reset to a sane value
+        ui->cb_SndPlugin->removeItem(ui->cb_SndPlugin->currentIndex());
+    }
 }
 
 void MainWindow::chooseInpPlugin (QString text)
@@ -289,7 +298,12 @@ void MainWindow::chooseInpPlugin (QString text)
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
 
     if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_INPUT) != M64ERR_SUCCESS)
-      qDebug () << "chooseInpPlugin failed !";
+    {
+        qDebug () << "chooseInpPlugin failed for" << text;
+        QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
+        // Remove it from the combo box ; this should reset to a sane value
+        ui->cb_InpPlugin->removeItem(ui->cb_InpPlugin->currentIndex());
+    }
 }
 
 void MainWindow::chooseRspPlugin (QString text)
@@ -303,7 +317,12 @@ void MainWindow::chooseRspPlugin (QString text)
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
 
     if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_RSP) != M64ERR_SUCCESS)
-      qDebug () << "chooseRspPlugin failed !";
+    {
+        qDebug () << "chooseRspPlugin failed for" << text;
+        QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
+        // Remove it from the combo box ; this should reset to a sane value
+        ui->cb_RspPlugin->removeItem(ui->cb_RspPlugin->currentIndex());
+    }
 }
 
 
