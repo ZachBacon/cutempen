@@ -100,14 +100,16 @@ void MainWindow::changeEvent(QEvent *e)
 
 int MainWindow::clickedROM(const QModelIndex & index)
 {
-  ROMFile = dirModel->filePath(index);
-  if (m_api)
-  {
-      Mupen64PlusPlus::RomInfo info = m_api->getRomInfo(ROMFile);
-      ui->statusBar->showMessage(info.name);
-  }
-
-  return 0;
+    if (dirModel->isDir(index))
+        return 0;
+    ROMFile = dirModel->filePath(index);
+    if (m_api)
+    {
+        Mupen64PlusPlus::RomInfo info = m_api->getRomInfo(
+                    ROMFile.toLocal8Bit().constData());
+        ui->statusBar->showMessage(info.name);
+    }
+    return 0;
 }
 
 int MainWindow::clickedRun()
