@@ -387,47 +387,35 @@ void MainWindow::clickedInp ()
       if (ch.isLetter ())
           configSections.removeAt(i);
   }
+#endif
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_InpPlugin->currentText();
   pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
   // Suppress the filename extension
   pluginName.chop(pluginName.length() - pluginName.lastIndexOf('.'));
-  pluginName[0] = pluginName[0].toUpper();
+  //pluginName[0] = pluginName[0].toUpper();
+  pluginName = pluginName.toUpper();
   QString sectionName;
   sectionName.sprintf("Input-%s-Control", pluginName.toLocal8Bit().constData());
-  inputDialog = NULL;
-  QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
-  subset.sort();
-  if (subset.count() == 4)
-  {
-      m64p_handle cfgHandle[4];
-      for (int i = 0; i< 4; i++)
-      {
-        cfgHandle[i] = GetSectionHandle (subset[i].toLocal8Bit().constData());
-      }
 
-      inputDialog = new InputDialog (this, cfgHandle, subset);
-
-      for (int i = 0; i < 4; i++)
-      {
-        //qDebug () << "Getting section parameters for" << subset[i].toLocal8Bit().constData();
-        GetSectionParameters (subset[i].toLocal8Bit().constData());
-        if (i < 3)
-          inputDialog->NextTab ();
-      }
-      inputDialog->SetCurrentTab (0);
-      inputDialog->exec();
-      delete inputDialog;
-  }
-  else
+  QVector<ConfigSection*> inputSections;
+  for (size_t idx = 0; idx < 4; idx++)
   {
-    qDebug () << "Found an unexpected number (" << subset.count () << ") of matching elements:";
-    for (int i = 0; i < subset.count(); i++)
-      qDebug () << subset[i];
-    QMessageBox::information (this, "Nothing to configure",
-        "Couldn't find parameters for " + sectionName + " section.");
+      QString cfgname;
+      cfgname.sprintf("%s%d", sectionName.toLocal8Bit().constData(), idx);
+      ConfigSection* cfg = GetSection (cfgname.toLocal8Bit().constData());
+      if (cfg)
+      {
+          qDebug () << "Input : adding" << QString::fromStdString(
+                           cfg->m_section_name).toLocal8Bit().constData();
+          inputSections.append(cfg);
+      }
   }
-#endif
+
+  inputDialog = new InputDialog (this, inputSections, pluginName);
+  inputDialog->SetCurrentTab (0);
+  inputDialog->exec();
+  delete inputDialog;
 }
 
 void MainWindow::clickedRsp ()
