@@ -37,11 +37,9 @@
 #include "mupen64plusplus/MupenAPI.h"
 #include "mupen64plusplus/MupenAPIpp.h"
 #include "mupen64plusplus/plugin.h"
-extern ptr_ConfigSetParameter PtrConfigSetParameter;
 
 extern bool doLog;
 extern bool doLogVerbose;
-//extern QStringList parameterList;
 extern PluginDialog* pDialog;
 extern InputDialog* inputDialog;
 
@@ -274,7 +272,6 @@ void MainWindow::chooseSndPlugin (QString text)
     if (!cfg)
         return;
     cfg->getParamWithName("AudioPlugin")->setStringValue(text.toStdString());
-    saveConfig();
 
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
 
@@ -284,7 +281,9 @@ void MainWindow::chooseSndPlugin (QString text)
         QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
         // Remove it from the combo box ; this should reset to a sane value
         ui->cb_SndPlugin->removeItem(ui->cb_SndPlugin->currentIndex());
+        return;
     }
+    saveConfig();
 }
 
 void MainWindow::chooseInpPlugin (QString text)
@@ -293,7 +292,6 @@ void MainWindow::chooseInpPlugin (QString text)
     if (!cfg)
         return;
     cfg->getParamWithName("InputPlugin")->setStringValue(text.toStdString());
-    saveConfig();
 
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
 
@@ -303,7 +301,9 @@ void MainWindow::chooseInpPlugin (QString text)
         QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
         // Remove it from the combo box ; this should reset to a sane value
         ui->cb_InpPlugin->removeItem(ui->cb_InpPlugin->currentIndex());
+        return;
     }
+    saveConfig();
 }
 
 void MainWindow::chooseRspPlugin (QString text)
@@ -312,7 +312,6 @@ void MainWindow::chooseRspPlugin (QString text)
     if (!cfg)
         return;
     cfg->getParamWithName("RspPlugin")->setStringValue(text.toStdString());
-    saveConfig();
 
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
 
@@ -322,7 +321,9 @@ void MainWindow::chooseRspPlugin (QString text)
         QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
         // Remove it from the combo box ; this should reset to a sane value
         ui->cb_RspPlugin->removeItem(ui->cb_RspPlugin->currentIndex());
+        return;
     }
+    saveConfig();
 }
 
 
@@ -353,16 +354,21 @@ void MainWindow::clickedSnd ()
   pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
   // Suppress the filename extension
   pluginName.chop(pluginName.length() - pluginName.lastIndexOf('.'));
-  // @TODO : be more robust wrt. section names upper/lower case
-  //pluginName[0] = pluginName[0].toUpper(); // for Audio-Sdl
-  pluginName = pluginName.toUpper(); // for Audio-SDL
 
   QString sectionName;
+  // First look for eg. 'Audio-SDL' section, new name with 1.99.5 it seems
+  pluginName = pluginName.toUpper();
   sectionName.sprintf("Audio-%s", pluginName.toLocal8Bit().constData());
-
   ConfigSection* cfg = GetSection(sectionName.toLocal8Bit().constData());
   if (!cfg)
-      return;
+  {
+      // Now look for eg. 'Audio-Sdl'
+      pluginName = pluginName.toLower();
+      pluginName[0] = pluginName[0].toUpper();
+      cfg = GetSection(sectionName.toLocal8Bit().constData());
+      if (!cfg)
+          return;
+  }
 
   pDialog = new PluginDialog (this, cfg);
   pDialog->exec();
