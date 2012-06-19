@@ -43,7 +43,6 @@ extern QStringList* logList;
 extern PluginDialog* pDialog;
 extern InputDialog* inputDialog;
 
-
 m64p_error MainWindow::InitMupen64()
 {
     // Try a reasonable default for plugin dir
@@ -140,91 +139,7 @@ m64p_error MainWindow::DetachCoreLib()
   return ::DetachCoreLib();
 }
 
-m64p_error MainWindow::SaveConfigurationOptions(void)
-{
-#if 0
-    /* if shared data directory was given on the command line, write it into the config file */
-    if (l_DataDirPath != NULL)
-        (*ConfigSetParameter)(l_ConfigCore, "SharedDataPath", M64TYPE_STRING, l_DataDirPath);
-
-    /* if any plugin filepaths were given on the command line, write them into the config file */
-    if (g_PluginDir != NULL)
-        (*ConfigSetParameter)(l_ConfigUI, "PluginDir", M64TYPE_STRING, g_PluginDir);
-    if (g_GfxPlugin != NULL)
-        (*ConfigSetParameter)(l_ConfigUI, "VideoPlugin", M64TYPE_STRING, g_GfxPlugin);
-    if (g_AudioPlugin != NULL)
-        (*ConfigSetParameter)(l_ConfigUI, "AudioPlugin", M64TYPE_STRING, g_AudioPlugin);
-    if (g_InputPlugin != NULL)
-        (*ConfigSetParameter)(l_ConfigUI, "InputPlugin", M64TYPE_STRING, g_InputPlugin);
-    if (g_RspPlugin != NULL)
-        (*ConfigSetParameter)(l_ConfigUI, "RspPlugin", M64TYPE_STRING, g_RspPlugin);
-
-    return (*ConfigSaveFile)();
-#endif
-    return M64ERR_SUCCESS;
-}
-
 /* ============================================================================= */
-
-#if 0
-void ParameterListCallback(void* sectionHandle, const char* ParamName, m64p_type ParamType)
-{
-    m64p_handle* section = (m64p_handle*)sectionHandle;
-
-    bool isInput = false;
-    m64p_handle inpH1 = GetSectionHandle ("Input-SDL-Control1");
-    m64p_handle inpH2 = GetSectionHandle ("Input-SDL-Control2");
-    m64p_handle inpH3 = GetSectionHandle ("Input-SDL-Control3");
-    m64p_handle inpH4 = GetSectionHandle ("Input-SDL-Control4");
-    if ((inpH1 == section) || (inpH2 == section) || (inpH3 == section) || (inpH4 == section))
-      isInput = true;
-
-    bool boolValue = true;
-    int intValue = -1;
-    float floatValue = -1.0f;
-    char* stringValue;
-    switch (ParamType)
-    {
-      case M64TYPE_BOOL:
-        boolValue = (*ConfigGetParamBool)(section, ParamName);
-        if (isInput)
-          inputDialog->AddParameter(ParamName, ParamType, &boolValue);
-        else
-          pDialog->AddParameter(ParamName, ParamType, &boolValue);
-        break;
-      case M64TYPE_FLOAT:
-        floatValue = (*ConfigGetParamFloat)(section, ParamName);
-        if (isInput)
-          inputDialog->AddParameter(ParamName, ParamType, &floatValue);
-        else
-          pDialog->AddParameter(ParamName, ParamType, &floatValue);
-        break;
-      case M64TYPE_INT:
-        intValue = (*ConfigGetParamInt)(section, ParamName);
-        if (isInput)
-          inputDialog->AddParameter(ParamName, ParamType, &floatValue);
-        else
-          pDialog->AddParameter(ParamName, ParamType, &intValue);
-        break;
-      case M64TYPE_STRING:
-        stringValue = (char*)(*ConfigGetParamString)(section, ParamName);
-        if (isInput)
-          inputDialog->AddParameter(ParamName, ParamType, &floatValue);
-        else
-          pDialog->AddParameter(ParamName, ParamType, stringValue);
-        break;
-    }
-}
-
-void SectionListCallback(void* context, const char* section)
-{
-    //(void)context;
-    QStringList* configSections;
-    configSections = (QStringList*)context;
-    //qDebug () << section;
-    configSections->append (section);
-}
-#endif
 
 ConfigSection* MainWindow::GetSection (const char* name)
 {
@@ -233,7 +148,15 @@ ConfigSection* MainWindow::GetSection (const char* name)
         if (!strcmp(configSections[idx].m_section_name.c_str(), name))
             return &configSections[idx];
     }
-    printf("CuteMupen: couldn't find section %s\n", name);
-    fflush(stdout);
+    return 0;
+}
+
+ConfigSection* MainWindow::GetSection (m64p_handle handle)
+{
+    for (size_t idx = 0; idx < configSections.size(); idx++)
+    {
+        if (configSections[idx].m_handle == handle)
+            return &configSections[idx];
+    }
     return 0;
 }

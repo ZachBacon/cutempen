@@ -341,31 +341,9 @@ void MainWindow::clickedGfx ()
   if (!cfg)
       return;
 
-  //pDialog = NULL;
-  //QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
-  //ConfigSection cfgVideo = configSections[0];
-
-  pDialog = new PluginDialog (this, cfg->m_handle,
-                              QString::fromStdString(cfg->m_section_name).toLocal8Bit().constData());
+  pDialog = new PluginDialog (this, cfg);
   pDialog->exec();
-
-#if 0
-  if (subset.count() == 1)
-  {
-      pDialog = new PluginDialog (this,
-          GetSectionHandle (sectionName.toLocal8Bit().constData()),
-          sectionName.toLocal8Bit().constData());
-      GetSectionParameters (sectionName.toLocal8Bit().constData());
-      pDialog->exec();
-  }
-  else
-  {
-    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
-    QMessageBox::information (this, "Nothing to configure",
-        "Couldn't find parameters in " + sectionName + " section.");
-    return;
-  }
-#endif
+  delete pDialog;
 }
 
 void MainWindow::clickedSnd ()
@@ -375,30 +353,20 @@ void MainWindow::clickedSnd ()
   pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
   // Suppress the filename extension
   pluginName.chop(pluginName.length() - pluginName.lastIndexOf('.'));
-  pluginName[0] = pluginName[0].toUpper();
+  // @TODO : be more robust wrt. section names upper/lower case
+  //pluginName[0] = pluginName[0].toUpper(); // for Audio-Sdl
+  pluginName = pluginName.toUpper(); // for Audio-SDL
+
   QString sectionName;
   sectionName.sprintf("Audio-%s", pluginName.toLocal8Bit().constData());
-  pDialog = NULL;
-#if 0
-  QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
-  if (subset.count() == 1)
-  {
-      pDialog = new PluginDialog (this,
-          GetSectionHandle (sectionName.toLocal8Bit().constData()),
-          sectionName.toLocal8Bit().constData());
-      GetSectionParameters (sectionName.toLocal8Bit().constData());
-      pDialog->exec();
-  }
-  else
-  {
-    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
-    for (int i = 0; i < subset.count(); i++)
-      qDebug () << subset[i];
-    QMessageBox::information (this, "Nothing to configure",
-        "Couldn't find parameters in " + sectionName + " section.");
-    return;
-  }
-#endif
+
+  ConfigSection* cfg = GetSection(sectionName.toLocal8Bit().constData());
+  if (!cfg)
+      return;
+
+  pDialog = new PluginDialog (this, cfg);
+  pDialog->exec();
+  delete pDialog;
 }
 
 void MainWindow::clickedInp ()
@@ -458,8 +426,6 @@ void MainWindow::clickedInp ()
 
 void MainWindow::clickedRsp ()
 {
-#if 0
-  GetConfigurationSections ();
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_RspPlugin->currentText();
   pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
@@ -468,31 +434,12 @@ void MainWindow::clickedRsp ()
   pluginName[0] = pluginName[0].toUpper();
   QString sectionName;
   sectionName.sprintf("Rsp-%s", pluginName.toLocal8Bit().constData());
-  pDialog = NULL;
-  QStringList subset = configSections.filter(pluginName, Qt::CaseInsensitive);
-  if (subset.count() == 1)
-  {
-      pDialog = new PluginDialog (this,
-          GetSectionHandle (sectionName.toLocal8Bit().constData()),
-          sectionName.toLocal8Bit().constData());
-      GetSectionParameters (sectionName.toLocal8Bit().constData());
-      pDialog->exec();
-  }    ConfigSection* cfg = GetSection("UI-CuteMupen");
+
+  ConfigSection* cfg = GetSection(sectionName.toLocal8Bit().constData());
   if (!cfg)
       return;
-  cfg->getParamWithName("VideoPlugin")->setStringValue(text.toStdString());
-  saveConfig();
 
-  QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
-
-  if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_GFX) != M64ERR_SUCCESS)
-    qDebug () << "chooseGfxPlugin failed !";
-  else
-  {
-    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
-    QMessageBox::information (this, "Nothing to configure",
-        "Couldn't find parameters in " + sectionName + " section.");
-    return;
-  }
-#endif
+  pDialog = new PluginDialog(this, GetSection(sectionName.toLocal8Bit().constData()));
+  pDialog->exec();
+  delete pDialog;
 }

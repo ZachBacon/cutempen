@@ -60,13 +60,13 @@ private:
 
     std::vector<ConfigSection> configSections;
     ConfigSection* GetSection (const char* name);
+    ConfigSection* GetSection (m64p_handle);
 
     m64p_error InitMupen64();
     void RestoreSettings();
     bool LoadFile(QString& ROMFile);
     bool LoadRom (qint64 lentgh, char* buffer);
     m64p_error DetachCoreLib();
-    m64p_error SaveConfigurationOptions();
 
     void UpdateM64Library ();
     void UpdateM64PluginDir ();
