@@ -52,7 +52,7 @@ InputDialog::InputDialog(QWidget *parent, QVector<ConfigSection*> inpSections, Q
         glName.sprintf("gl_Tab%d", tabIndex + 1);
         qgl = ui.tabWidget->findChild<QGridLayout*>(glName);
         config = inputSections[tabIndex];
-        for (int i = 0; i < config->m_parameters.size(); i++)
+        for (size_t i = 0; i < config->m_parameters.size(); i++)
             AddParameter(config->m_parameters[i]);
     }
 }
