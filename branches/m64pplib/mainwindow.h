@@ -25,9 +25,9 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QModelIndex>
-#include <QDirModel>
 #include <QString>
 #include <QVector>
+#include <QFileSystemModel>
 
 #include "mupen64plusplus/MupenAPI.h"
 #include "mupen64plusplus/MupenAPIpp.h"
@@ -56,7 +56,7 @@ private:
     QString Mupen64ConfigDir;
     QString ROMsDir;
     QString ROMFile;
-    QDirModel *dirModel;
+    QFileSystemModel *fsmodel;
 
     std::vector<ConfigSection> configSections;
     ConfigSection* GetSection (const char* name);

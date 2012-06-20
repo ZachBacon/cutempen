@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lb_About_NameVersion->setText(title);
 
     // For the ROM browser
-    dirModel = new QDirModel();
+    fsmodel = new QFileSystemModel();
     ROMFile = "";
 
     QSettings settings ("CuteMupen", "CuteMupen");
@@ -100,16 +100,16 @@ void MainWindow::changeEvent(QEvent *e)
 
 int MainWindow::clickedROM(const QModelIndex & index)
 {
-    if (dirModel->isDir(index))
-        return 0;
-    ROMFile = dirModel->filePath(index);
-    if (m_api)
-    {
-        Mupen64PlusPlus::RomInfo info = m_api->getRomInfo(
-                    ROMFile.toLocal8Bit().constData());
-        ui->statusBar->showMessage(info.name);
-    }
-    return 0;
+  if (fsmodel->isDir(index))
+      return 0;
+  ROMFile = fsmodel->filePath(index);
+  // @FIXME@ : doesn't cope well with non-ASCII paths
+  if (m_api)
+  {
+      Mupen64PlusPlus::RomInfo info = m_api->getRomInfo(ROMFile);
+      ui->statusBar->showMessage(info.name);
+  }
+  return 0;
 }
 
 int MainWindow::clickedRun()

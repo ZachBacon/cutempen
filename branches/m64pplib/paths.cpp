@@ -23,8 +23,10 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>         // For directory selections
+#include <QFileSystemModel>
 #include <QMessageBox>
 #include <QDir>
+#include <QDebug>
 
 #include "mupen64plusplus/osal_preproc.h" // For default core library filename
 
@@ -256,7 +258,7 @@ void MainWindow::chooseROMsDir(bool skipDialog)
 void MainWindow::editedROMsDir()
 {
   QString path;
-  path = ui->le_ROMsDir->text();
+  path = ui->le_ROMsDir->text();      
   if (!QFile::exists(path))
   {
     QMessageBox::warning(this, tr("Directory does not exist"),
@@ -280,26 +282,18 @@ void MainWindow::UpdateROMsDir()
     }
     // Set the label to the chosen directory
     ui->le_ROMsDir->setText(ROMsDir);
-    // Update the ROM browser view
-    dirModel->setSorting(QDir::DirsFirst);
-    dirModel->setFilter(QDir::Files|QDir::AllDirs|QDir::NoDotAndDotDot);
-    QStringList filters;
-    filters << "*.n64" << "*.v64" << "*.z64" << "*.zip";
-    dirModel->setNameFilters(filters);
-    QModelIndex idx = dirModel->index(ROMsDir, 0);
-    ui->treeView->setModel(dirModel);
-    ui->treeView->setRootIndex(idx);
+    QStringList nameFilters;
+    nameFilters << "*.n64" << "*.v64" << "*.z64" << "*.zip";
+    fsmodel->setNameFilters(nameFilters);
+    fsmodel->setFilter(
+                QDir::Files|QDir::AllDirs|QDir::NoDotAndDotDot);
+    fsmodel->setRootPath(QDir::currentPath());
+    ui->treeView->setModel(fsmodel);
+    ui->treeView->setRootIndex(fsmodel->index(ROMsDir));
     ui->treeView->resizeColumnToContents(0);
     ui->treeView->hideColumn(1);
     ui->treeView->hideColumn(2);
     ui->treeView->hideColumn(3);
-    //ui->treeView->expandAll();
-
-    // (vk) for more recent Qt version (4.6+), use fsmodel
-    //QFileSystemModel *fsmodel = new QFileSystemModel();
-    //fsmodel->setRootDirectory(ROMsDir);
-    //fsmodel->setRootPath(QDir::currentPath());
-    //ui->treeView->setModel(fsmodel);
   }
 }
 
