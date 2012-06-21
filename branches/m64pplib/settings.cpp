@@ -230,6 +230,7 @@ void MainWindow::RestoreSettings ()
     }
   }
 
+  // Change combobox active item to the plugin from the config, if present
   int idx;
   idx = ui->cb_GfxPlugin->findText (GfxPlugin);
   if (idx != -1)
@@ -377,17 +378,6 @@ void MainWindow::clickedSnd ()
 
 void MainWindow::clickedInp ()
 {
-#if 0
-  GetConfigurationSections ();
-  // Delete any section not finishing with a number, since Input-Sdl-Control
-  // gets created on query...
-  for (int i = 0; i < configSections.count(); i++)
-  {
-      QChar ch = configSections[i].at(configSections[i].length() -1);
-      if (ch.isLetter ())
-          configSections.removeAt(i);
-  }
-#endif
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_InpPlugin->currentText();
   pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
