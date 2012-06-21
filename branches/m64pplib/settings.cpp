@@ -402,7 +402,7 @@ void MainWindow::clickedInp ()
   for (size_t idx = 0; idx < 4; idx++)
   {
       QString cfgname;
-      cfgname.sprintf("%s%d", sectionName.toLocal8Bit().constData(), idx);
+      cfgname.sprintf("%s%zu", sectionName.toLocal8Bit().constData(), idx);
       ConfigSection* cfg = GetSection (cfgname.toLocal8Bit().constData());
       if (cfg)
       {
