@@ -18,7 +18,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gl_PluginParams">
+    <layout class="QGridLayout" name="gl_InputParams">
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
@@ -31,48 +31,8 @@
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>-1</number>
        </property>
-       <widget class="QWidget" name="tab1">
-        <attribute name="title">
-         <string>Controler 1</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0">
-          <layout class="QGridLayout" name="gl_Tab1"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tab2">
-        <attribute name="title">
-         <string>Controler 2</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <layout class="QGridLayout" name="gl_Tab2"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tab3">
-        <attribute name="title">
-         <string>Controler 3</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_4">
-         <item row="0" column="0">
-          <layout class="QGridLayout" name="gl_Tab3"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tab4">
-        <attribute name="title">
-         <string>Controler 4</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_5">
-         <item row="0" column="0">
-          <layout class="QGridLayout" name="gl_Tab4"/>
-         </item>
-        </layout>
-       </widget>
       </widget>
      </item>
     </layout>

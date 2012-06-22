@@ -30,6 +30,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QVector>
+#include <QGridLayout>
 
 #include "m64p_types.h"
 
@@ -43,9 +44,8 @@ class InputDialog : public QDialog
 public:
     InputDialog(QWidget *parent = 0, QVector<ConfigSection*> inpSections = QVector<ConfigSection*>(0), QString pluginName = 0);
     ~InputDialog();
-    void NextTab ();
-    void AddParameter (ConfigParam& par);
-    void SetCurrentTab (int index);
+
+    void AddParameter (QGridLayout* layout, ConfigParam& par);
 
 private:
     Ui::InputDialogClass ui;
@@ -53,13 +53,14 @@ private:
     QVector<ConfigSection*> inputSections;
     ConfigSection* config;
     QTabWidget* tab;
-    QGridLayout* qgl;
 
     int line;
     int column;
-    int tabIndex;
 
 public slots:
+    // Sent from the QTabWidget
+    void currentChanged (int index);
+    // Sent from parameter value widgets
     void changedBoolSetting (int index);
     void changedFloatSetting (double value);
     void changedIntSetting (int value);

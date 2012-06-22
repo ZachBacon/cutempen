@@ -403,7 +403,6 @@ void MainWindow::clickedInp ()
   }
 
   inputDialog = new InputDialog (this, inputSections, pluginName);
-  inputDialog->SetCurrentTab (0);
   inputDialog->exec();
   delete inputDialog;
 }

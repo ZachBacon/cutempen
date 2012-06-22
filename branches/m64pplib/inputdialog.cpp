@@ -37,23 +37,25 @@
 InputDialog::InputDialog(QWidget *parent, QVector<ConfigSection*> inpSections, QString pluginName)
     : QDialog(parent)
 {
-	ui.setupUi(this);
+    ui.setupUi(this);
+
     pluginName.chop(pluginName.length() - pluginName.lastIndexOf('-'));
     this->setWindowTitle(pluginName);
     inputSections = inpSections;
     config = 0; // Will be the section for current tab
 	line = 0;
 	column = 0;
-	tabIndex = 0;
-	QString glName;
 
-    for (tabIndex = 0; tabIndex < inputSections.size(); tabIndex++)
+    for (int idx = 0; idx < inputSections.size(); idx++)
     {
-        glName.sprintf("gl_Tab%d", tabIndex + 1);
-        qgl = ui.tabWidget->findChild<QGridLayout*>(glName);
-        config = inputSections[tabIndex];
+        config = inputSections[idx];
+        QWidget *page = new QWidget;
+        QGridLayout *layout = new QGridLayout (page);
         for (size_t i = 0; i < config->m_parameters.size(); i++)
-            AddParameter(config->m_parameters[i]);
+            AddParameter(layout, config->m_parameters[i]);
+        QString tabText = QString::fromStdString(
+                    config->getParamWithName("name")->getStringValue());
+        ui.tabWidget->addTab(page, tabText);
     }
 }
 
@@ -61,36 +63,20 @@ InputDialog::~InputDialog()
 {
 }
 
-void InputDialog::SetCurrentTab (int index)
+void InputDialog::AddParameter (QGridLayout *layout, ConfigParam &par)
 {
-  ui.tabWidget->setCurrentIndex(index);
-  //config = inputSections[index - 1];
-}
-
-void InputDialog::NextTab ()
-{
-  tabIndex++;
-  ui.tabWidget->setCurrentIndex(tabIndex);
-  config = inputSections[tabIndex];
-  QString glName;
-  glName.sprintf("gl_Tab%d", tabIndex + 1);
-  qgl = ui.tabWidget->findChild<QGridLayout*>(glName);
-}
-
-void InputDialog::AddParameter (ConfigParam &par)
-{
-  ui.tabWidget->setCurrentIndex(tabIndex);
+  // First add a label showing parameter name, with parameter help text in its tooltip
   QString pName = QString::fromStdString(par.m_param_name);
   QLabel* label = new QLabel (pName);
   label->setToolTip(QString::fromStdString(par.m_help_string));
   label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  qgl->addWidget(label, line, column, Qt::AlignRight|Qt::AlignVCenter);
+  layout->addWidget(label, line, column, Qt::AlignRight|Qt::AlignVCenter);
 
+  // Now show the parameter value in a widget depending on parameter type
   QComboBox* cbox;
   QLineEdit* ledit;
   QDoubleSpinBox* dspbox;
   QSpinBox* spbox;
-
 
   switch (par.m_param_type)
   {
@@ -104,7 +90,7 @@ void InputDialog::AddParameter (ConfigParam &par)
       else
         cbox->setCurrentIndex(cbox->findText("false"));
       cbox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-      qgl->addWidget(cbox, line, column + 1);
+      layout->addWidget(cbox, line, column + 1);
       connect(cbox, SIGNAL(currentIndexChanged(int)), this, SLOT(changedBoolSetting(int)));
       break;
     case M64TYPE_FLOAT:
@@ -113,8 +99,10 @@ void InputDialog::AddParameter (ConfigParam &par)
       dspbox->setMaximum(16000000);
       dspbox->setValue (par.getFloatValue());
       dspbox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-      qgl->addWidget(dspbox, line, column + 1);
+      layout->addWidget(dspbox, line, column + 1);
       connect(dspbox, SIGNAL(valueChanged(double)), this, SLOT(changedFloatSetting(double)));
+      if (pName.toLower() == "version")
+          dspbox->setDisabled(true);
       break;
     case M64TYPE_INT:
       spbox = new QSpinBox ();
@@ -123,16 +111,21 @@ void InputDialog::AddParameter (ConfigParam &par)
       spbox->setMinimum(-32768);
       spbox->setValue (par.getIntValue());
       spbox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-      qgl->addWidget(spbox, line, column + 1);
+      layout->addWidget(spbox, line, column + 1);
       connect(spbox, SIGNAL(valueChanged(int)), this, SLOT(changedIntSetting(int)));
       break;
     case M64TYPE_STRING:
-      QString tmp = QString::fromStdString(par.getStringValue());
-      ledit = new QLineEdit (tmp.toLocal8Bit().constData());
+      QString value = QString::fromStdString(par.getStringValue());
+      ledit = new QLineEdit (value.toLocal8Bit().constData());
       ledit->setObjectName(pName);
       ledit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-      qgl->addWidget(ledit, line, column + 1);
+      layout->addWidget(ledit, line, column + 1);
       connect(ledit, SIGNAL(editingFinished()), this, SLOT(changedStringSetting()));
+      if (pName.toLower() == "name")
+      {
+          ui.tabWidget->setTabText(ui.tabWidget->currentIndex(), value);
+          ledit->setDisabled(true);
+      }
   }
 
   if (line < 11)
@@ -142,6 +135,11 @@ void InputDialog::AddParameter (ConfigParam &par)
     line = 0;
     column += 2;
   }
+}
+
+void InputDialog::currentChanged(int index)
+{
+    config = inputSections[index];
 }
 
 void InputDialog::changedBoolSetting (int index)
@@ -159,7 +157,7 @@ void InputDialog::changedBoolSetting (int index)
       par->setBoolValue(newValue);
   else
       qDebug () << "InputDialog : no param named" << sender()->objectName().toLocal8Bit().constData();
-  //saveConfig();
+  saveConfig();
 }
 
 void InputDialog::changedFloatSetting (double value)
@@ -171,7 +169,7 @@ void InputDialog::changedFloatSetting (double value)
       par->setFloatValue(newValue);
   else
       qDebug () << "InputDialog : no param named" << sender()->objectName().toLocal8Bit().constData();
-  //saveConfig();
+  saveConfig();
 }
 
 void InputDialog::changedIntSetting (int value)
@@ -182,7 +180,7 @@ void InputDialog::changedIntSetting (int value)
         par->setIntValue(value);
     else
         qDebug () << "InputDialog : no param named" << sender()->objectName().toLocal8Bit().constData();
-    //saveConfig();
+    saveConfig();
 }
 
 void InputDialog::changedStringSetting ()
@@ -194,5 +192,5 @@ void InputDialog::changedStringSetting ()
       par->setStringValue(ledit->text().toLocal8Bit().constData());
   else
       qDebug () << "InputDialog : no param named" << sender()->objectName().toLocal8Bit().constData();
-  //saveConfig();
+  saveConfig();
 }
