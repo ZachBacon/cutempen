@@ -66,7 +66,6 @@ private:
     void RestoreSettings();
     bool LoadFile(QString& ROMFile);
     bool LoadRom (qint64 lentgh, char* buffer);
-    m64p_error DetachCoreLib();
 
     void UpdateM64Library ();
     void UpdateM64PluginDir ();

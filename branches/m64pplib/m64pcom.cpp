@@ -127,16 +127,11 @@ bool MainWindow::LoadRom (qint64 romlength, char* buffer)
         logLine->sprintf("Error: core failed to open ROM image.");
         logList->append(*logLine);
         //(*CoreShutdown)();
-        DetachCoreLib();
+        ::DetachCoreLib();
         return false;
     }
     ::attachPlugins();
     return true;
-}
-
-m64p_error MainWindow::DetachCoreLib()
-{
-  return ::DetachCoreLib();
 }
 
 /* ============================================================================= */

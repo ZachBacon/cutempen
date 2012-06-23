@@ -80,8 +80,8 @@ MainWindow::~MainWindow()
   if (isCoreReady)
   {
     /* Shut down and release the Core library */
-    (*CoreShutdown)();
-    DetachCoreLib();
+    ::CoreShutdown();
+    ::DetachCoreLib();
   }
   delete ui;
 }

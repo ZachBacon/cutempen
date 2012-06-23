@@ -62,9 +62,9 @@ void MainWindow::UpdateM64Library()
 {
   if (isCoreReady)
   {
-    /* Shut down and release the Core library */
-    (*CoreShutdown)();
-    DetachCoreLib();
+    // Shut down and release the Core library
+    ::CoreShutdown();
+    ::DetachCoreLib();
     isCoreReady = false;
   }
   if (!Mupen64Library.isEmpty())
