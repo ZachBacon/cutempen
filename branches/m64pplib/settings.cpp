@@ -40,7 +40,7 @@
 
 extern bool doLog;
 extern bool doLogVerbose;
-extern PluginDialog* pDialog;
+extern PluginDialog* pluginDialog;
 extern InputDialog* inputDialog;
 
 extern m64p_plugin_type GetPluginType (const char* filepath);
@@ -343,9 +343,9 @@ void MainWindow::clickedGfx ()
   if (!cfg)
       return;
 
-  pDialog = new PluginDialog (this, cfg);
-  pDialog->exec();
-  delete pDialog;
+  pluginDialog = new PluginDialog (this, cfg);
+  pluginDialog->exec();
+  delete pluginDialog;
 }
 
 void MainWindow::clickedSnd ()
@@ -371,9 +371,9 @@ void MainWindow::clickedSnd ()
           return;
   }
 
-  pDialog = new PluginDialog (this, cfg);
-  pDialog->exec();
-  delete pDialog;
+  pluginDialog = new PluginDialog (this, cfg);
+  pluginDialog->exec();
+  delete pluginDialog;
 }
 
 void MainWindow::clickedInp ()
@@ -422,7 +422,7 @@ void MainWindow::clickedRsp ()
   if (!cfg)
       return;
 
-  pDialog = new PluginDialog(this, GetSection(sectionName.toLocal8Bit().constData()));
-  pDialog->exec();
-  delete pDialog;
+  pluginDialog = new PluginDialog(this, GetSection(sectionName.toLocal8Bit().constData()));
+  pluginDialog->exec();
+  delete pluginDialog;
 }

@@ -40,7 +40,7 @@
 
 extern QString* logLine;
 extern QStringList* logList;
-extern PluginDialog* pDialog;
+extern PluginDialog* pluginDialog;
 extern InputDialog* inputDialog;
 
 m64p_error MainWindow::InitMupen64()
@@ -74,8 +74,8 @@ bool MainWindow::LoadFile(QString & ROMFile)
             tr("Error while trying to load ROM file:\n") + ROMFile);
         return false;
     }
-    qint64 romlength = file.size();
-    /*unsigned*/ char *FILE_buffer = (char*)file.map(0, romlength);
+    qint64 fileSize = file.size();
+    /*unsigned*/ char *FILE_buffer = (char*)file.map(0, fileSize);
     /*unsigned*/ char *ROM_buffer = 0;
 
     // Check ZIP file signature
@@ -110,7 +110,7 @@ bool MainWindow::LoadFile(QString & ROMFile)
     {
         // Not a ZIP file, load it directly
         ROM_buffer = FILE_buffer;
-        LoadRom (romlength, ROM_buffer);
+        LoadRom (fileSize, ROM_buffer);
     }
 
     // the core copies the ROM image, so we can release this buffer immediately
@@ -126,7 +126,6 @@ bool MainWindow::LoadRom (qint64 romlength, char* buffer)
     {
         logLine->sprintf("Error: core failed to open ROM image.");
         logList->append(*logLine);
-        //(*CoreShutdown)();
         ::DetachCoreLib();
         return false;
     }

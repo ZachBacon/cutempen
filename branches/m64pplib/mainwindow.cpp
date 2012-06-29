@@ -43,7 +43,7 @@ bool doLog;
 bool doLogVerbose;
 
 QStringList parameterList;
-PluginDialog* pDialog;
+PluginDialog* pluginDialog;
 InputDialog* inputDialog;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     doLogVerbose = false;
     logLine = new QString();
     logList = new QStringList();
-    pDialog = NULL;
+    pluginDialog = NULL;
     inputDialog = NULL;
 
     QString title ("CuteMupen");
@@ -79,7 +79,7 @@ MainWindow::~MainWindow()
 {
   if (isCoreReady)
   {
-    /* Shut down and release the Core library */
+    // Shut down and release the Core library
     ::CoreShutdown();
     ::DetachCoreLib();
   }
@@ -103,7 +103,7 @@ int MainWindow::clickedROM(const QModelIndex & index)
   if (fsmodel->isDir(index))
       return 0;
   ROMFile = fsmodel->filePath(index);
-  // @FIXME@ : doesn't cope well with non-ASCII paths
+  //FIXME: doesn't cope well with non-ASCII paths
   if (m_api)
   {
       Mupen64PlusPlus::RomInfo info = m_api->getRomInfo(ROMFile);
