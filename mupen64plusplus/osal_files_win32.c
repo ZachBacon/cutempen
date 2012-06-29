@@ -28,11 +28,9 @@
 #include <string.h>
 #include <windows.h>
 
-extern "C" {
 #include "m64p_types.h"
-#include "osal_preproc.h"
-#include "osal_files.h"
-}
+#include "mupen64plusplus/osal_preproc.h"
+#include "mupen64plusplus/osal_files.h"
 
 /* definitions for system directories to search when looking for mupen64plus plugins */
 const int  osal_libsearchdirs = 1;
@@ -51,17 +49,13 @@ osal_lib_search *osal_library_search(const char *searchpath)
         return NULL;
     }
     sprintf(pchSearchPath, "%s\\*.dll", searchpath);
-    //hDir = FindFirstFile((LPCWSTR)pchSearchPath, &entry);
+    //hDir = FindFirstFile(pchSearchPath, &entry);
     WCHAR sp[PATH_MAX];
     MultiByteToWideChar(CP_ACP, 0, pchSearchPath, -1, sp, PATH_MAX);
     hDir = FindFirstFile(sp, &entry);
     free(pchSearchPath);
     if (hDir == INVALID_HANDLE_VALUE)
-    {
-        printf("INVALID_HANDLE_VALUE, error code = %ld\n", GetLastError());
-        fflush(stdout);
         return NULL;
-    }
 
     /* look for any shared libraries in this folder */
     do
@@ -97,7 +91,7 @@ osal_lib_search *osal_library_search(const char *searchpath)
         WideCharToMultiByte(CP_ACP, 0, entry.cFileName, -1, CFName, lenCFN, NULL, NULL);
         CFName[lenCFN] = '\0';
         strncat(curr->filepath, CFName, PATH_MAX - pathlen - 1);
-        //strncat(curr->filepath, (const char*)entry.cFileName, PATH_MAX - pathlen - 1);
+        //strncat(curr->filepath, entry.cFileName, PATH_MAX - pathlen - 1);
         curr->filepath[PATH_MAX-1] = 0;
         /* set plugin_type and next pointer */
         curr->plugin_type = (m64p_plugin_type) 0;

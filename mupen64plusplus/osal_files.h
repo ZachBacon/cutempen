@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-console - osal_dynamiclib_unix.c                       *
+ *   Mupen64plus-ui-console - osal_files.h                                 *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
@@ -19,48 +19,31 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <dlfcn.h>
+/* This header file is for all kinds of system-dependent file handling
+ *
+ */
+
+#if !defined(OSAL_FILES_H)
+#define OSAL_FILES_H
 
 #include "m64p_types.h"
-#include "osal_dynamiclib.h"
+#include "mupen64plusplus/osal_preproc.h"
 
-m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath)
-{
-    if (pLibHandle == NULL || pccLibraryPath == NULL)
-        return M64ERR_INPUT_ASSERT;
+/* data structure for linked list of shared libraries found in a directory */
+typedef struct _osal_lib_search {
+  char                     filepath[PATH_MAX];
+  char                    *filename;
+  m64p_plugin_type         plugin_type;
+  struct _osal_lib_search *next;
+  } osal_lib_search;
 
-    *pLibHandle = dlopen(pccLibraryPath, RTLD_NOW);
+/* const definitions for system directories to search when looking for mupen64plus plugins */
+extern const int   osal_libsearchdirs;
+extern const char *osal_libsearchpath[];
 
-    if (*pLibHandle == NULL)
-    {
-        fprintf(stderr, "dlopen('%s') error: %s\n", pccLibraryPath, dlerror());
-        return M64ERR_INPUT_NOT_FOUND;
-    }
+/* functions for searching for shared libraries in a given directory */
+extern osal_lib_search *osal_library_search(const char *searchpath);
+extern void             osal_free_lib_list(osal_lib_search *head);
 
-    return M64ERR_SUCCESS;
-}
-
-void * osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName)
-{
-    if (pccProcedureName == NULL)
-        return NULL;
-
-    return dlsym(LibHandle, pccProcedureName);
-}
-
-m64p_error osal_dynlib_close(m64p_dynlib_handle LibHandle)
-{
-    int rval = dlclose(LibHandle);
-
-    if (rval != 0)
-    {
-        fprintf(stderr, "dlclose() error: %s\n", dlerror());
-        return M64ERR_INTERNAL;
-    }
-
-    return M64ERR_SUCCESS;
-}
-
+#endif /* #define OSAL_FILES_H */
 

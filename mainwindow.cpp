@@ -34,17 +34,7 @@
 #include <QRegExp>          // for resolution input validation
 #include <QFile>
 
-extern "C" {
-#include "osal/osal_preproc.h"
-#include "osal/osal_dynamiclib.h"
-#include "m64p_common.h"
-#include "m64p_frontend.h"
-#include "m64p_config.h"
-#include "m64p/core_interface.h"
-void DebugCallback(void *Context, int level, const char *message);
-}
-
-#include "m64p/plugin.h"
+#include "mupen64plusplus/MupenAPIpp.h"
 
 // For log text
 QString* logLine;
@@ -53,7 +43,7 @@ bool doLog;
 bool doLogVerbose;
 
 QStringList parameterList;
-PluginDialog* pDialog;
+PluginDialog* pluginDialog;
 InputDialog* inputDialog;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -66,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     doLogVerbose = false;
     logLine = new QString();
     logList = new QStringList();
-    pDialog = NULL;
+    pluginDialog = NULL;
     inputDialog = NULL;
 
     QString title ("CuteMupen");
@@ -75,19 +65,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lb_About_NameVersion->setText(title);
 
     // For the ROM browser
-    dirModel = new QDirModel();
+    fsmodel = new QFileSystemModel();
     ROMFile = "";
 
-    RestoreSettings();
+    QSettings settings ("CuteMupen", "CuteMupen");
+    settings.setIniCodec("UTF-8");
+    Mupen64Library = settings.value ("Paths/Mupen64Library", "").toString();
+    if ((!Mupen64Library.isEmpty()) && QFile::exists(Mupen64Library))
+        chooseMupen64Library(true); // don't show the dialog
 }
 
 MainWindow::~MainWindow()
 {
   if (isCoreReady)
   {
-    /* Shut down and release the Core library */
-    (*CoreShutdown)();
-    DetachCoreLib();
+    // Shut down and release the Core library
+    ::CoreShutdown();
+    ::DetachCoreLib();
   }
   delete ui;
 }
@@ -106,7 +100,15 @@ void MainWindow::changeEvent(QEvent *e)
 
 int MainWindow::clickedROM(const QModelIndex & index)
 {
-  ROMFile = dirModel->filePath(index);
+  if (fsmodel->isDir(index))
+      return 0;
+  ROMFile = fsmodel->filePath(index);
+  //FIXME: doesn't cope well with non-ASCII paths
+  if (m_api)
+  {
+      Mupen64PlusPlus::RomInfo info = m_api->getRomInfo(ROMFile);
+      ui->statusBar->showMessage(info.name);
+  }
   return 0;
 }
 
@@ -123,8 +125,6 @@ int MainWindow::clickedRun()
         return 1;
     }
 
-    ApplyConfiguration();
-
     if (ROMFile.isEmpty())
     {
         QMessageBox::warning(this, tr("No ROM selected"),
@@ -134,32 +134,9 @@ int MainWindow::clickedRun()
         return 1;
     }
 
-    if (!LoadFile(ROMFile))
-    {
-        QMessageBox::critical(this, tr("Error loading ROM"),
-            tr("Unable to load ROM !"));
-        ui->pb_Run->setDisabled(false);
-        return 2;
-    }
-
-    m64p_error res;
-    res = AttachAllPlugins ();
-    if (res != M64ERR_SUCCESS)
-    {
-        (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
-        (*CoreShutdown)();
-        DetachCoreLib();
-        return res;
-    }
-
-    /* run the game */
-    (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-
-    DetachAllPlugins ();
-
-    /* close the ROM image */
-    (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
-
+    LoadFile(ROMFile);
+    m_api->runEmulation();
+    m_api->closeRom();
     /* save the configuration file again if --saveoptions was specified, to keep any updated parameters from the core/plugins */
     //if (l_SaveOptions)
     //    SaveConfigurationOptions();
@@ -168,32 +145,6 @@ int MainWindow::clickedRun()
 
     ui->pb_Run->setDisabled(false);
     return 0;
-}
-
-m64p_error MainWindow::AttachAllPlugins ()
-{
-  /* attach plugins to core */
-  m64p_error res = M64ERR_SUCCESS;
-  for (int i = 0; i < 4; i++)
-  {
-      res = (*CoreAttachPlugin)(g_PluginMap[i].type, g_PluginMap[i].handle);
-      if ( res != M64ERR_SUCCESS)
-      {
-          QString errorString;
-          errorString.sprintf("Error attaching %s plugin !", g_PluginMap[i].name);
-          QMessageBox::critical(this, "Plugins", errorString);
-          ui->pb_Run->setDisabled(false);
-          return res;
-      }
-  }
-  return res;
-}
-
-void MainWindow::DetachAllPlugins ()
-{
-  /* detach plugins from core and unload them */
-  for (int i = 0; i < 4; i++)
-      (*CoreDetachPlugin)(g_PluginMap[i].type);
 }
 
 void MainWindow::FlushLog ()

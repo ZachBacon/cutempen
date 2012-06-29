@@ -23,14 +23,12 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>         // For directory selections
+#include <QFileSystemModel>
 #include <QMessageBox>
 #include <QDir>
+#include <QDebug>
 
-#include "osal/osal_preproc.h" // For default core library filename
-
-extern "C" {
-#include "m64p/core_interface.h"
-}
+#include "mupen64plusplus/osal_preproc.h" // For default core library filename
 
 void MainWindow::chooseMupen64Library(bool skipDialog)
 {
@@ -48,12 +46,12 @@ void MainWindow::chooseMupen64Library(bool skipDialog)
 void MainWindow::editedMupen64Library()
 {
   QString path;
-  path = ui->le_Library->text();
+  path = ui->lb_Library_Path->text();
   if (!QFile::exists(path))
   {
     QMessageBox::warning(this, tr("File does not exist"),
         tr("Please set the library file to a valid file."));
-    ui->le_Library->setText(QDir::currentPath());
+    ui->lb_Library_Path->setText(QDir::currentPath());
     return;
   }
   Mupen64Library = path;
@@ -64,9 +62,9 @@ void MainWindow::UpdateM64Library()
 {
   if (isCoreReady)
   {
-    /* Shut down and release the Core library */
-    (*CoreShutdown)();
-    DetachCoreLib();
+    // Shut down and release the Core library
+    ::CoreShutdown();
+    ::DetachCoreLib();
     isCoreReady = false;
   }
   if (!Mupen64Library.isEmpty())
@@ -75,8 +73,11 @@ void MainWindow::UpdateM64Library()
     QSettings settings ("CuteMupen", "CuteMupen");
     settings.setIniCodec("UTF-8");
     settings.setValue("Paths/Mupen64Library", Mupen64Library);
-    // Set label to the chosen directory
-    ui->le_Library->setText(Mupen64Library);
+    // Set line edit to the chosen directory
+    //ui->le_Library->setText(Mupen64Library);
+    ui->lb_Library_Path->setText(
+                Mupen64Library.mid(Mupen64Library.lastIndexOf(OSAL_DIR_SEPARATOR) + 1));
+
 #if defined(Q_WS_WIN)
     {
       Mupen64Library.replace("/", "\\");
@@ -92,7 +93,6 @@ void MainWindow::UpdateM64Library()
     return;
   }
   isCoreReady = true;
-  ApplyConfiguration();
 }
 
 void MainWindow::chooseMupen64PluginDir(bool skipDialog)
@@ -123,9 +123,12 @@ void MainWindow::UpdateM64PluginDir()
   if (!Mupen64PluginDir.isEmpty())
   {
     // Save the chosen directory in CuteMupen config
-    QSettings settings ("CuteMupen", "CuteMupen");
-    settings.setIniCodec("UTF-8");
-    settings.setValue("Paths/Mupen64PluginDir", Mupen64PluginDir);
+    ConfigSection* cfg = GetSection("UI-CuteMupen");
+    if (cfg)
+    {
+        cfg->getParamWithName("PluginDir")->setStringValue(Mupen64PluginDir.toStdString());
+        saveConfig();
+    }
     // Set label to the chosen directory
     ui->le_PluginsDir->setText(Mupen64PluginDir);
     // Tweak PATH or LD_LIBRARY depending on OS
@@ -158,9 +161,6 @@ void MainWindow::UpdateM64PluginDir()
 
     // Set environment variable
     AddToEnvVar(envLD, Mupen64PluginDir);
-
-    //QString currentEnv (getenv(envLD.toLocal8Bit().constData()));
-    //QMessageBox::information(this, "Now is Current " + envLD, currentEnv);
   }
 }
 
@@ -192,6 +192,7 @@ void MainWindow::editedMupen64DataDir()
 
 void MainWindow::UpdateM64DataDir()
 {
+#if 0
   // Save the chosen directory in CuteMupen config
   QSettings settings ("CuteMupen", "CuteMupen");
   settings.setIniCodec("UTF-8");
@@ -199,6 +200,7 @@ void MainWindow::UpdateM64DataDir()
   // Set label to the chosen directory
   if (!Mupen64DataDir.isEmpty())
     ui->le_DataDir->setText(Mupen64DataDir);
+#endif
 }
 
 void MainWindow::chooseMupen64ConfigDir(bool skipDialog)
@@ -229,6 +231,7 @@ void MainWindow::editedMupen64ConfigDir()
 
 void MainWindow::UpdateM64ConfigDir()
 {
+#if 0
   // Save the chosen directory in CuteMupen config
   QSettings settings ("CuteMupen", "CuteMupen");
   settings.setIniCodec("UTF-8");
@@ -236,6 +239,7 @@ void MainWindow::UpdateM64ConfigDir()
   // Set label to the chosen directory
   if (!Mupen64ConfigDir.isEmpty())
     ui->le_ConfigDir->setText(Mupen64ConfigDir);
+#endif
 }
 
 void MainWindow::chooseROMsDir(bool skipDialog)
@@ -254,7 +258,7 @@ void MainWindow::chooseROMsDir(bool skipDialog)
 void MainWindow::editedROMsDir()
 {
   QString path;
-  path = ui->le_ROMsDir->text();
+  path = ui->le_ROMsDir->text();      
   if (!QFile::exists(path))
   {
     QMessageBox::warning(this, tr("Directory does not exist"),
@@ -267,34 +271,29 @@ void MainWindow::editedROMsDir()
 
 void MainWindow::UpdateROMsDir()
 {
-  if (!ROMsDir.isEmpty())
+  if (!ROMsDir.isEmpty() && QFile::exists(ROMsDir))
   {
     // Save the chosen directory in CuteMupen config
-    QSettings settings ("CuteMupen", "CuteMupen");
-    settings.setIniCodec("UTF-8");
-    settings.setValue("Paths/ROMsDir", ROMsDir);
+    ConfigSection* cfg = GetSection("UI-CuteMupen");
+    if (cfg)
+    {
+        cfg->getParamWithName("GamesPath")->setStringValue(ROMsDir.toStdString());
+        saveConfig();
+    }
     // Set the label to the chosen directory
     ui->le_ROMsDir->setText(ROMsDir);
-    // Update the ROM browser view
-    dirModel->setSorting(QDir::DirsFirst);
-    dirModel->setFilter(QDir::Files|QDir::AllDirs|QDir::NoDotAndDotDot);
-    QStringList filters;
-    filters << "*.n64" << "*.v64" << "*.z64" << "*.zip";
-    dirModel->setNameFilters(filters);
-    QModelIndex idx = dirModel->index(ROMsDir, 0);
-    ui->treeView->setModel(dirModel);
-    ui->treeView->setRootIndex(idx);
+    QStringList nameFilters;
+    nameFilters << "*.n64" << "*.v64" << "*.z64" << "*.zip";
+    fsmodel->setNameFilters(nameFilters);
+    fsmodel->setFilter(
+                QDir::Files|QDir::AllDirs|QDir::NoDotAndDotDot);
+    fsmodel->setRootPath(QDir::currentPath());
+    ui->treeView->setModel(fsmodel);
+    ui->treeView->setRootIndex(fsmodel->index(ROMsDir));
     ui->treeView->resizeColumnToContents(0);
     ui->treeView->hideColumn(1);
     ui->treeView->hideColumn(2);
     ui->treeView->hideColumn(3);
-    //ui->treeView->expandAll();
-
-    // (vk) for more recent Qt version (4.6+), use fsmodel
-    //QFileSystemModel *fsmodel = new QFileSystemModel();
-    //fsmodel->setRootDirectory(ROMsDir);
-    //fsmodel->setRootPath(QDir::currentPath());
-    //ui->treeView->setModel(fsmodel);
   }
 }
 

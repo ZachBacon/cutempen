@@ -25,10 +25,12 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QModelIndex>
-#include <QDirModel>
 #include <QString>
+#include <QVector>
+#include <QFileSystemModel>
 
-#include "m64p_types.h"
+#include "mupen64plusplus/MupenAPI.h"
+#include "mupen64plusplus/MupenAPIpp.h"
 
 namespace Ui {
     class MainWindow;
@@ -46,29 +48,24 @@ protected:
 private:
     Ui::MainWindow *ui;
 
+    Mupen64PlusPlus* m_api;
+
     QString Mupen64Library;
     QString Mupen64PluginDir;
     QString Mupen64DataDir;
     QString Mupen64ConfigDir;
     QString ROMsDir;
     QString ROMFile;
-    QDirModel *dirModel;
-    QStringList configSections;
+    QFileSystemModel *fsmodel;
+
+    std::vector<ConfigSection> configSections;
+    ConfigSection* GetSection (const char* name);
+    ConfigSection* GetSection (m64p_handle);
 
     m64p_error InitMupen64();
     void RestoreSettings();
-    void ApplyConfiguration();
     bool LoadFile(QString& ROMFile);
     bool LoadRom (qint64 lentgh, char* buffer);
-    m64p_error DetachCoreLib();
-    m64p_error OpenConfigurationHandles();
-    m64p_error SaveConfigurationOptions();
-
-    m64p_handle l_ConfigCore;
-    m64p_handle l_ConfigUI;
-    m64p_handle l_ConfigVideo;
-    m64p_handle l_DataDirPath;
-    m64p_handle l_ConfigDirPath;
 
     void UpdateM64Library ();
     void UpdateM64PluginDir ();
@@ -77,19 +74,9 @@ private:
     void UpdateROMsDir ();
     void AddToEnvVar (QString envVar, QString value);
 
-    m64p_error ActivatePlugin (const char* filePath, m64p_plugin_type pType);
-    m64p_error PluginLoadTry (const char *filepath, int MapIndex);
-    m64p_error AttachAllPlugins ();
-    m64p_error UnloadPlugin (m64p_plugin_type pType);
-    void DetachAllPlugins ();
-
     void FlushLog ();
 
     bool isCoreReady;
-
-    m64p_plugin_type GetPluginType (const char* filepath);
-    void GetConfigurationSections ();
-    m64p_error GetSectionParameters (const char* sectionName);
 
 public slots:
     void chooseMupen64Library (bool skipDialog = false);

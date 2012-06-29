@@ -30,8 +30,8 @@
 #include <dirent.h>  // for opendir(), readdir(), closedir()
 
 #include "m64p_types.h"
-#include "osal_preproc.h"
-#include "osal_files.h"
+#include "mupen64plusplus/osal_preproc.h"
+#include "mupen64plusplus/osal_files.h"
 
 /* definitions for system directories to search when looking for mupen64plus plugins */
 #if defined(PLUGINDIR)
