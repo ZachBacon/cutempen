@@ -33,35 +33,40 @@
 #include <QDesktopWidget>   // to get screen geometry
 #include <QChar>
 
-extern "C" {
-#include "m64p/core_interface.h"
-#include "m64p/plugin.h"
-#include "osal/osal_dynamiclib.h"
-#include "osal/osal_preproc.h"   // for shared lib extension
-}
+#include "mupen64plusplus/osal_preproc.h"
+#include "mupen64plusplus/MupenAPI.h"
+#include "mupen64plusplus/MupenAPIpp.h"
+#include "mupen64plusplus/plugin.h"
+
 extern bool doLog;
 extern bool doLogVerbose;
-//extern QStringList parameterList;
-extern PluginDialog* pDialog;
+extern PluginDialog* pluginDialog;
 extern InputDialog* inputDialog;
-extern m64p_handle GetSectionHandle (const char* name);
+
+extern m64p_plugin_type GetPluginType (const char* filepath);
 
 void MainWindow::toggledEmuMode(bool /*checked*/)
 {
-  QSettings settings ("CuteMupen", "CuteMupen");
-  settings.setIniCodec("UTF-8");
+  ConfigSection* cfg = GetSection ("Core");
+  if (!cfg)
+      return;
+  ConfigParam* par = cfg->getParamWithName("R4300Emulator");
+  if (!par)
+      return;
+
   if (ui->rb_PureInterpreter->isChecked())
   {
-    settings.setValue("Settings/EmuMode", 0);
+    par->setIntValue(0);
   }
   else if (ui->rb_Interpreter->isChecked())
   {
-    settings.setValue("Settings/EmuMode", 1);
+    par->setIntValue(1);
   }
   else if (ui->rb_DynaRec->isChecked())
   {
-    settings.setValue("Settings/EmuMode", 2);
+    par->setIntValue(2);
   }
+  saveConfig();
 }
 
 void MainWindow::toggledLogging(bool /*checked*/)
@@ -85,22 +90,28 @@ void MainWindow::toggledLogging(bool /*checked*/)
 
 void MainWindow::toggledOSD(bool checked)
 {
-  QSettings settings ("CuteMupen", "CuteMupen");
-  settings.setIniCodec("UTF-8");
-  settings.setValue("Video/OSD", checked);
+  ConfigSection* cfg = GetSection("Core");
+  if (!cfg)
+      return;
+  cfg->getParamWithName("OnScreenDisplay")->setBoolValue(checked ? 1 : 0);
+  saveConfig();
 }
 
 void MainWindow::toggledFullscreen(bool checked)
 {
-  QSettings settings ("CuteMupen", "CuteMupen");
-  settings.setIniCodec("UTF-8");
-  settings.setValue("Video/Fullscreen", checked);
+  ConfigSection* cfg = GetSection("Video-General");
+  if (!cfg)
+      return;
+  cfg->getParamWithName("Fullscreen")->setBoolValue(checked ? 1 : 0);
+    saveConfig();
 }
 
 void MainWindow::chooseResolution (QString /*text*/)
 {
-  QSettings settings ("CuteMupen", "CuteMupen");
-  settings.setIniCodec("UTF-8");
+  ConfigSection* cfg = GetSection("Video-General");
+  if (!cfg)
+      return;
+
   QString res = ui->cb_Resolution->currentText();
   QRegExp resRegex ("^[0-9]{3,4}x[0-9]{3,4}$");
   if (resRegex.exactMatch(res))
@@ -108,9 +119,9 @@ void MainWindow::chooseResolution (QString /*text*/)
     int xres, yres;
     xres = res.section("x", 0, 0).toInt();   // leftmost field from "x" separator
     yres = res.section("x", -1, -1).toInt(); // rightmost field from "x" separator
-    (*ConfigSetParameter)(l_ConfigVideo, "ScreenWidth", M64TYPE_INT, &xres);
-    (*ConfigSetParameter)(l_ConfigVideo, "ScreenHeight", M64TYPE_INT, &yres);
-    settings.setValue("Video/Resolution", res);
+    cfg->getParamWithName("ScreenWidth")->setIntValue(xres);
+    cfg->getParamWithName("ScreenHeight")->setIntValue(yres);
+    saveConfig();
   }
   else
     QMessageBox::warning(this, tr("Invalid resolution"),
@@ -120,20 +131,6 @@ void MainWindow::chooseResolution (QString /*text*/)
 
 void MainWindow::RestoreSettings ()
 {
-  QSettings settings ("CuteMupen", "CuteMupen");
-  settings.setIniCodec("UTF-8");
-  // Get settings for the paths. If they're empty, prompt for selection
-  Mupen64PluginDir = settings.value ("Paths/Mupen64PluginDir", "").toString();
-  chooseMupen64PluginDir(!Mupen64PluginDir.isEmpty());
-  Mupen64Library = settings.value ("Paths/Mupen64Library", "").toString();
-  chooseMupen64Library(!Mupen64Library.isEmpty());
-  Mupen64DataDir = settings.value ("Paths/Mupen64DataDir", "").toString();
-  chooseMupen64DataDir(!Mupen64DataDir.isEmpty());
-  Mupen64ConfigDir = settings.value ("Paths/Mupen64ConfigDir", "").toString();
-  chooseMupen64ConfigDir(!Mupen64ConfigDir.isEmpty());
-  ROMsDir = settings.value ("Paths/ROMsDir", "").toString();
-  chooseROMsDir(!ROMsDir.isEmpty());
-
   // Get current screen resolution/size, and add it to the combobox
   QDesktopWidget* desktop = QApplication::desktop();
   int width = desktop->screenGeometry().size().width();
@@ -141,26 +138,68 @@ void MainWindow::RestoreSettings ()
   QString geom;
   geom.sprintf("%dx%d", width, height);
   ui->cb_Resolution->addItem(geom);
-
-  // Restore fullscreen setting
-  ui->cb_Fullscreen->setChecked(settings.value("Video/Fullscreen", false).toBool());
-
-  // Restore screen size setting
-  QString resToRestore = settings.value("Video/Resolution", "640x480").toString();
-  int idxToRestore = ui->cb_Resolution->findText(resToRestore);
+  // Now add the one from config
+  ConfigSection* cfg_videogen = GetSection("Video-General");
+  if (!cfg_videogen)
+      return;
+  QString res;
+  res.sprintf("%dx%d",
+              cfg_videogen->getParamWithName("ScreenWidth")->getIntValue(),
+              cfg_videogen->getParamWithName("ScreenHeight")->getIntValue());
+  // make sure it's in combobox, and select it
+  int idxToRestore = ui->cb_Resolution->findText(res);
   if (idxToRestore == -1) // not in the list, let's create an item for it
-    ui->cb_Resolution->addItem(resToRestore);
-  idxToRestore = ui->cb_Resolution->findText(resToRestore);
+    ui->cb_Resolution->addItem(res);
+  idxToRestore = ui->cb_Resolution->findText(res);
   ui->cb_Resolution->setCurrentIndex(idxToRestore);
 
+  // Restore fullscreen setting
+  ui->cb_Fullscreen->setChecked(cfg_videogen->getParamWithName("Fullscreen")->getBoolValue());
+
   // Restore OSD setting
-  ui->cb_OSD->setChecked(settings.value("Video/OSD", true).toBool());
+  ConfigSection* cfg_core = GetSection("Core");
+  if (!cfg_core)
+      return;
+  ui->cb_OSD->setChecked(cfg_core->getParamWithName("OnScreenDisplay")->getBoolValue());
+
+  // Restore EmuMode setting
+  int emuMode = cfg_core->getParamWithName("R4300Emulator")->getIntValue();
+  switch (emuMode)
+  {
+    case 2:
+      ui->rb_DynaRec->setChecked(true);
+      break;
+    case 1:
+      ui->rb_Interpreter->setChecked(true);
+      break;
+    case 0:
+      ui->rb_PureInterpreter->setChecked(true);
+      break;
+    default:
+      QMessageBox::warning(this, tr("Unknown EmuMode setting"),
+          tr("Invalid value for EmuMode"));
+  }
+
+  ConfigSection* cfg_ui = GetSection("UI-CuteMupen");
+  if (!cfg_ui)
+      return;
+
+  // Restore the path to ROMs directory
+  ROMsDir = QString::fromStdString(
+              cfg_ui->getParamWithName("GamesPath")->getStringValue());
+  UpdateROMsDir();
 
   // Get selected plugins from configuration settings before they're overwritten by discovery
-  QString GfxPlugin = settings.value("Settings/GfxPlugin").toString();
-  QString SndPlugin = settings.value("Settings/SndPlugin").toString();
-  QString InpPlugin = settings.value("Settings/InpPlugin").toString();
-  QString RspPlugin = settings.value("Settings/RspPlugin").toString();
+  Mupen64PluginDir = QString::fromStdString(
+              cfg_ui->getParamWithName("PluginDir")->getStringValue());
+  QString GfxPlugin = QString::fromStdString(
+              cfg_ui->getParamWithName("VideoPlugin")->getStringValue());
+  QString SndPlugin = QString::fromStdString(
+              cfg_ui->getParamWithName("AudioPlugin")->getStringValue());
+  QString InpPlugin = QString::fromStdString(
+              cfg_ui->getParamWithName("InputPlugin")->getStringValue());
+  QString RspPlugin = QString::fromStdString(
+              cfg_ui->getParamWithName("RspPlugin")->getStringValue());
 
   // Find all plugins and fill combo-boxes
   QDir pluginDir (Mupen64PluginDir);
@@ -170,7 +209,7 @@ void MainWindow::RestoreSettings ()
   pluginDir.setNameFilters(filters);
   for (int i = 0; i < pluginDir.entryList().count(); i++)
   {
-    m64p_plugin_type pType = GetPluginType (
+    m64p_plugin_type pType = ::GetPluginType (
         pluginDir.absoluteFilePath(pluginDir[i]).toLocal8Bit().constData());
     switch (pType)
     {
@@ -191,10 +230,13 @@ void MainWindow::RestoreSettings ()
     }
   }
 
+  // Change combobox active item to the plugin from the config, if present
   int idx;
   idx = ui->cb_GfxPlugin->findText (GfxPlugin);
   if (idx != -1)
     ui->cb_GfxPlugin->setCurrentIndex (idx);
+  else
+      ui->cb_GfxPlugin->setCurrentIndex(0);
   idx = ui->cb_SndPlugin->findText (SndPlugin);
   if (idx != -1)
     ui->cb_SndPlugin->setCurrentIndex (idx);
@@ -204,155 +246,90 @@ void MainWindow::RestoreSettings ()
   idx = ui->cb_RspPlugin->findText (RspPlugin);
   if (idx != -1)
     ui->cb_RspPlugin->setCurrentIndex (idx);
-
-  //Test (); // Check if we can get some plugin parameters
-
-  // Restore EmuMode setting
-  int emuMode = settings.value("Settings/EmuMode", 2).toInt();
-  switch (emuMode)
-  {
-    case 2:
-      ui->rb_DynaRec->setChecked(true);
-      break;
-    case 1:
-      ui->rb_Interpreter->setChecked(true);
-      break;
-    case 0:
-      ui->rb_PureInterpreter->setChecked(true);
-      break;
-    default:
-      QMessageBox::warning(this, tr("Unknown EmuMode setting"),
-          tr("Invalid value for EmuMode"));
-  }
-}
-
-void MainWindow::ApplyConfiguration ()
-{
-  QSettings settings ("CuteMupen", "CuteMupen");
-  settings.setIniCodec("UTF-8");
-
-  int FullScreen;
-  ui->cb_Fullscreen->isChecked() ? FullScreen = 1 : FullScreen = 0;
-  (*ConfigSetParameter)(l_ConfigVideo, "Fullscreen", M64TYPE_BOOL, &FullScreen);
-  //settings.setValue("Video/Fullscreen", ui->cb_Fullscreen->isChecked());
-
-  int Osd;
-  ui->cb_OSD->isChecked() ? Osd = 1 : Osd = 0;
-  (*ConfigSetParameter)(l_ConfigCore, "OnScreenDisplay", M64TYPE_BOOL, &Osd);
-  //settings.setValue("Video/OSD", ui->cb_OSD->isChecked());
-
-  int emumode;
-  emumode = settings.value("Settings/EmuMode", "2").toInt();
-  if ((emumode >= 0) && (emumode <= 2))
-    (*ConfigSetParameter)(l_ConfigCore, "R4300Emulator", M64TYPE_INT, &emumode);
 }
 
 void MainWindow::chooseGfxPlugin (QString text)
 {
-    (*ConfigSetParameter)(l_ConfigUI, "VideoPlugin", M64TYPE_STRING,
-                          text.toLocal8Bit().constData());
+    ConfigSection* cfg = GetSection("UI-CuteMupen");
+    if (!cfg)
+        return;
+    cfg->getParamWithName("VideoPlugin")->setStringValue(text.toStdString());
+    saveConfig();
+
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
+
     if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_GFX) != M64ERR_SUCCESS)
     {
-      qDebug () << "chooseGfxPlugin failed !";
-      return;
+        qDebug () << "chooseGfxPlugin failed for" << text;
+        QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
+        // Remove it from the combo box ; this should reset to a sane value
+        ui->cb_GfxPlugin->removeItem(ui->cb_GfxPlugin->currentIndex());
     }
-    QSettings settings ("CuteMupen", "CuteMupen");
-    settings.setIniCodec("UTF-8");
-    settings.setValue("Settings/GfxPlugin", text.toLocal8Bit().constData());
 }
 
 void MainWindow::chooseSndPlugin (QString text)
 {
-    (*ConfigSetParameter)(l_ConfigUI, "AudioPlugin", M64TYPE_STRING,
-                          text.toLocal8Bit().constData());
+    ConfigSection* cfg = GetSection("UI-CuteMupen");
+    if (!cfg)
+        return;
+    cfg->getParamWithName("AudioPlugin")->setStringValue(text.toStdString());
+
     QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
+
     if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_AUDIO) != M64ERR_SUCCESS)
     {
-      qDebug () << "chooseSndPlugin failed !";
-      return;
+        qDebug () << "chooseSndPlugin failed for" << text;
+        QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
+        // Remove it from the combo box ; this should reset to a sane value
+        ui->cb_SndPlugin->removeItem(ui->cb_SndPlugin->currentIndex());
+        return;
     }
-    QSettings settings ("CuteMupen", "CuteMupen");
-    settings.setIniCodec("UTF-8");
-    settings.setValue("Settings/SndPlugin", text.toLocal8Bit().constData());
+    saveConfig();
 }
 
 void MainWindow::chooseInpPlugin (QString text)
 {
-  (*ConfigSetParameter)(l_ConfigUI, "InputPlugin", M64TYPE_STRING,
-                        text.toLocal8Bit().constData());
-  QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
-  if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_INPUT) != M64ERR_SUCCESS)
-  {
-    qDebug () << "chooseInpPlugin failed !";
-    return;
-  }
-  QSettings settings ("CuteMupen", "CuteMupen");
-  settings.setIniCodec("UTF-8");
-  settings.setValue("Settings/InpPlugin", text.toLocal8Bit().constData());
+    ConfigSection* cfg = GetSection("UI-CuteMupen");
+    if (!cfg)
+        return;
+    cfg->getParamWithName("InputPlugin")->setStringValue(text.toStdString());
+
+    QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
+
+    if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_INPUT) != M64ERR_SUCCESS)
+    {
+        qDebug () << "chooseInpPlugin failed for" << text;
+        QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
+        // Remove it from the combo box ; this should reset to a sane value
+        ui->cb_InpPlugin->removeItem(ui->cb_InpPlugin->currentIndex());
+        return;
+    }
+    saveConfig();
 }
 
 void MainWindow::chooseRspPlugin (QString text)
 {
-  (*ConfigSetParameter)(l_ConfigUI, "RspPlugin", M64TYPE_STRING,
-                        text.toLocal8Bit().constData());
-  QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
-  if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_RSP) != M64ERR_SUCCESS)
-  {
-    qDebug () << "chooseRspPlugin failed !";
-    return;
-  }
-  QSettings settings ("CuteMupen", "CuteMupen");
-  settings.setIniCodec("UTF-8");
-  settings.setValue("Settings/RspPlugin", text.toLocal8Bit().constData());
+    ConfigSection* cfg = GetSection("UI-CuteMupen");
+    if (!cfg)
+        return;
+    cfg->getParamWithName("RspPlugin")->setStringValue(text.toStdString());
+
+    QString filePath = Mupen64PluginDir + OSAL_DIR_SEPARATOR + text;
+
+    if (ActivatePlugin (filePath.toLocal8Bit().constData(), M64PLUGIN_RSP) != M64ERR_SUCCESS)
+    {
+        qDebug () << "chooseRspPlugin failed for" << text;
+        QMessageBox::critical(this, "Failed to load plugin", tr("Error while loading ") + text);
+        // Remove it from the combo box ; this should reset to a sane value
+        ui->cb_RspPlugin->removeItem(ui->cb_RspPlugin->currentIndex());
+        return;
+    }
+    saveConfig();
 }
 
-m64p_error MainWindow::ActivatePlugin (const char* filePath, m64p_plugin_type pType)
-{
-  m64p_dynlib_handle handle;
-  m64p_error rval;
-  rval = osal_dynlib_open(&handle, filePath);
-  if (rval != M64ERR_SUCCESS)
-  {
-    QMessageBox::information(this, "ActivatePlugin failed", filePath);
-    return rval;
-  }
-
-  rval = UnloadPlugin (pType);
-  if (rval != M64ERR_SUCCESS)
-    qDebug () << "Unable to unload plugin type " << pType;
-
-  switch (pType)
-  {
-    // Kind of ugly, the int argument is the index for g_PluginMap
-    case M64PLUGIN_GFX:
-      rval = PluginLoadTry (filePath, 0);
-      break;
-    case M64PLUGIN_AUDIO:
-      rval = PluginLoadTry (filePath, 1);
-      break;
-    case M64PLUGIN_INPUT:
-      rval = PluginLoadTry (filePath, 2);
-      break;
-    case M64PLUGIN_RSP:
-      rval = PluginLoadTry (filePath, 3);
-      break;
-    default:
-      break;
-  }
-
-  if (rval != M64ERR_SUCCESS)
-  {
-    qDebug () << "PluginLoadTry() failed for " << filePath;
-    return rval;
-  }
-
-  return rval;
-}
 
 void MainWindow::clickedGfx ()
 {
-  GetConfigurationSections ();
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_GfxPlugin->currentText();
   pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
@@ -361,114 +338,77 @@ void MainWindow::clickedGfx ()
   pluginName[0] = pluginName[0].toUpper();
   QString sectionName;
   sectionName.sprintf("Video-%s", pluginName.toLocal8Bit().constData());
-  pDialog = NULL;
-  QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
-  if (subset.count() == 1)
-  {
-      pDialog = new PluginDialog (this,
-          GetSectionHandle (sectionName.toLocal8Bit().constData()),
-          sectionName.toLocal8Bit().constData());
-      GetSectionParameters (sectionName.toLocal8Bit().constData());
-      pDialog->exec();
-  }
-  else
-  {
-    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
-    QMessageBox::information (this, "Nothing to configure",
-        "Couldn't find parameters in " + sectionName + " section.");
-    return;
-  }
+
+  ConfigSection* cfg = GetSection(sectionName.toLocal8Bit().constData());
+  if (!cfg)
+      return;
+
+  pluginDialog = new PluginDialog (this, cfg);
+  pluginDialog->exec();
+  delete pluginDialog;
 }
 
 void MainWindow::clickedSnd ()
 {
-  GetConfigurationSections ();
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_SndPlugin->currentText();
   pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
   // Suppress the filename extension
   pluginName.chop(pluginName.length() - pluginName.lastIndexOf('.'));
-  pluginName[0] = pluginName[0].toUpper();
+
   QString sectionName;
+  // First look for eg. 'Audio-SDL' section, new name with 1.99.5 it seems
+  pluginName = pluginName.toUpper();
   sectionName.sprintf("Audio-%s", pluginName.toLocal8Bit().constData());
-  pDialog = NULL;
-  QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
-  if (subset.count() == 1)
+  ConfigSection* cfg = GetSection(sectionName.toLocal8Bit().constData());
+  if (!cfg)
   {
-      pDialog = new PluginDialog (this,
-          GetSectionHandle (sectionName.toLocal8Bit().constData()),
-          sectionName.toLocal8Bit().constData());
-      GetSectionParameters (sectionName.toLocal8Bit().constData());
-      pDialog->exec();
+      // Now look for eg. 'Audio-Sdl'
+      pluginName = pluginName.toLower();
+      pluginName[0] = pluginName[0].toUpper();
+      cfg = GetSection(sectionName.toLocal8Bit().constData());
+      if (!cfg)
+          return;
   }
-  else
-  {
-    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
-    for (int i = 0; i < subset.count(); i++)
-      qDebug () << subset[i];
-    QMessageBox::information (this, "Nothing to configure",
-        "Couldn't find parameters in " + sectionName + " section.");
-    return;
-  }
+
+  pluginDialog = new PluginDialog (this, cfg);
+  pluginDialog->exec();
+  delete pluginDialog;
 }
 
 void MainWindow::clickedInp ()
 {
-  GetConfigurationSections ();
-  // Delete any section not finishing with a number, since Input-Sdl-Control
-  // gets created on query...
-  for (int i = 0; i < configSections.count(); i++)
-  {
-      QChar ch = configSections[i].at(configSections[i].length() -1);
-      if (ch.isLetter ())
-          configSections.removeAt(i);
-  }
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_InpPlugin->currentText();
   pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
   // Suppress the filename extension
   pluginName.chop(pluginName.length() - pluginName.lastIndexOf('.'));
-  pluginName[0] = pluginName[0].toUpper();
+  //pluginName[0] = pluginName[0].toUpper();
+  pluginName = pluginName.toUpper();
   QString sectionName;
   sectionName.sprintf("Input-%s-Control", pluginName.toLocal8Bit().constData());
-  inputDialog = NULL;
-  QStringList subset = configSections.filter(sectionName, Qt::CaseInsensitive);
-  subset.sort();
-  if (subset.count() == 4)
-  {
-      m64p_handle cfgHandle[4];
-      for (int i = 0; i< 4; i++)
-      {
-        cfgHandle[i] = GetSectionHandle (subset[i].toLocal8Bit().constData());
-      }
 
-      inputDialog = new InputDialog (this, cfgHandle, subset);
-
-      for (int i = 0; i < 4; i++)
-      {
-        //qDebug () << "Getting section parameters for" << subset[i].toLocal8Bit().constData();
-        GetSectionParameters (subset[i].toLocal8Bit().constData());
-        if (i < 3)
-          inputDialog->NextTab ();
-      }
-      inputDialog->SetCurrentTab (0);
-      inputDialog->exec();
-      delete inputDialog;
-  }
-  else
+  QVector<ConfigSection*> inputSections;
+  for (size_t idx = 0; idx < 4; idx++)
   {
-    qDebug () << "Found an unexpected number (" << subset.count () << ") of matching elements:";
-    for (int i = 0; i < subset.count(); i++)
-      qDebug () << subset[i];
-    QMessageBox::information (this, "Nothing to configure",
-        "Couldn't find parameters for " + sectionName + " section.");
+      QString cfgname;
+      cfgname.sprintf("%s%zu", sectionName.toLocal8Bit().constData(), idx);
+      ConfigSection* cfg = GetSection (cfgname.toLocal8Bit().constData());
+      if (cfg)
+      {
+          qDebug () << "Input : adding" << QString::fromStdString(
+                           cfg->m_section_name).toLocal8Bit().constData();
+          inputSections.append(cfg);
+      }
   }
 
+  inputDialog = new InputDialog (this, inputSections, pluginName);
+  inputDialog->exec();
+  delete inputDialog;
 }
 
 void MainWindow::clickedRsp ()
 {
-  GetConfigurationSections ();
   // Extract plugin name from plugin file name
   QString pluginName = ui->cb_RspPlugin->currentText();
   pluginName = pluginName.mid(pluginName.lastIndexOf('-') + 1);
@@ -477,22 +417,12 @@ void MainWindow::clickedRsp ()
   pluginName[0] = pluginName[0].toUpper();
   QString sectionName;
   sectionName.sprintf("Rsp-%s", pluginName.toLocal8Bit().constData());
-  pDialog = NULL;
-  QStringList subset = configSections.filter(pluginName, Qt::CaseInsensitive);
-  if (subset.count() == 1)
-  {
-      pDialog = new PluginDialog (this,
-          GetSectionHandle (sectionName.toLocal8Bit().constData()),
-          sectionName.toLocal8Bit().constData());
-      GetSectionParameters (sectionName.toLocal8Bit().constData());
-      pDialog->exec();
-  }
-  else
-  {
-    qDebug () << "Not sure what to do, found " << subset.count () << " matching elements";
-    QMessageBox::information (this, "Nothing to configure",
-        "Couldn't find parameters in " + sectionName + " section.");
-    return;
-  }
 
+  ConfigSection* cfg = GetSection(sectionName.toLocal8Bit().constData());
+  if (!cfg)
+      return;
+
+  pluginDialog = new PluginDialog(this, GetSection(sectionName.toLocal8Bit().constData()));
+  pluginDialog->exec();
+  delete pluginDialog;
 }

@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-console - osal_files.h                                 *
+ *   Mupen64plus-ui-console - osal_preproc.h                               *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
@@ -19,31 +19,49 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* This header file is for all kinds of system-dependent file handling
+/* This header file is for OS-specific #includes and #defines
  *
  */
 
-#if !defined(OSAL_FILES_H)
-#define OSAL_FILES_H
+#if !defined(OSAL_PREPROC_H)
+#define OSAL_PREPROC_H
 
-#include "m64p_types.h"
-#include "osal/osal_preproc.h"
+#if defined(WIN32)
 
-/* data structure for linked list of shared libraries found in a directory */
-typedef struct _osal_lib_search {
-  char                     filepath[PATH_MAX];
-  char                    *filename;
-  m64p_plugin_type         plugin_type;
-  struct _osal_lib_search *next;
-  } osal_lib_search;
+  #include <windows.h>
+  #ifndef PATH_MAX
+    #define PATH_MAX 2048
+  #endif
+  #define OSAL_DEFAULT_DYNLIB_FILENAME "mupen64plus.dll"
+  #define OSAL_DIR_SEPARATOR           '\\'
+  #define OSAL_CURRENT_DIR             ".\\"
+  #define OSAL_DLL_EXTENSION           ".dll"
+  #define osal_insensitive_strcmp(x, y) _stricmp(x, y)
 
-/* const definitions for system directories to search when looking for mupen64plus plugins */
-extern const int   osal_libsearchdirs;
-extern const char *osal_libsearchpath[];
+#elif defined(__APPLE__)
 
-/* functions for searching for shared libraries in a given directory */
-extern osal_lib_search *osal_library_search(const char *searchpath);
-extern void             osal_free_lib_list(osal_lib_search *head);
+  #include <limits.h>  // for PATH_MAX
+  #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.dylib"
+  #define OSAL_DIR_SEPARATOR           '/'
+  #define OSAL_CURRENT_DIR             "./"
+  #define OSAL_DLL_EXTENSION           ".dylib"
+  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
 
-#endif /* #define OSAL_FILES_H */
+#else  /* Linux-like UNIX */
+
+  #include <limits.h>  // for PATH_MAX
+  #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.so.2"
+  #define OSAL_DIR_SEPARATOR           '/'
+  #define OSAL_CURRENT_DIR             "./"
+  #define OSAL_DLL_EXTENSION           ".so"
+  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
+
+  /* PATH_MAX only may be defined by limits.h */
+  #ifndef PATH_MAX
+    #define PATH_MAX 4096
+  #endif
+
+#endif
+
+#endif /* #define OSAL_PREPROC_H */
 

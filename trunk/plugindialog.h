@@ -27,19 +27,22 @@
 
 #include "m64p_types.h"
 
+class ConfigSection;
+class ConfigParam;
+
 class PluginDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    PluginDialog(QWidget *parent = 0, m64p_handle handle = 0, const char* pluginName = 0);
+    PluginDialog(QWidget *parent = 0, ConfigSection* cfg = 0);
     ~PluginDialog();
 
-    void AddParameter (const char* pName, m64p_type pType, void* pValue);
+    void AddParameter (ConfigParam& par);
 
 private:
     Ui::PluginDialogClass ui;
-    m64p_handle cfgHandle;
+    ConfigSection* config;
     int line;
     int column;
 

@@ -29,21 +29,22 @@
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 
-extern "C" {
-#include "m64p_config.h"
-}
+#include "mupen64plusplus/MupenAPI.h"
+#include "mupen64plusplus/MupenAPIpp.h"
 
-extern ptr_ConfigSetParameter ConfigSetParameter;
-extern ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
-
-PluginDialog::PluginDialog(QWidget *parent, m64p_handle handle, const char* pluginName)
+PluginDialog::PluginDialog(QWidget *parent, ConfigSection* cfg)
     : QDialog(parent)
 {
 	ui.setupUi(this);
-	this->setWindowTitle(pluginName);
-	cfgHandle = handle;
+    if (cfg)
+        this->setWindowTitle(
+                QString::fromStdString(cfg->m_section_name));
+    config = cfg;
 	line = 0;
 	column = 0;
+
+    for (size_t idx = 0; idx < cfg->m_parameters.size(); idx++)
+        AddParameter(cfg->m_parameters[idx]);
 }
 
 PluginDialog::~PluginDialog()
@@ -51,66 +52,53 @@ PluginDialog::~PluginDialog()
 
 }
 
-void PluginDialog::AddParameter (const char* pName, m64p_type pType, void* pValue)
+void PluginDialog::AddParameter (ConfigParam& par)
 {
-  QLabel* label = new QLabel (pName);
-  label->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+  QLabel* label = new QLabel (QString::fromStdString(par.m_param_name));
+  label->setToolTip(QString::fromStdString(par.m_help_string));
   ui.gl_PluginParams->addWidget(label, line, column, Qt::AlignRight|Qt::AlignVCenter);
+
   QComboBox* cbox;
   QLineEdit* ledit;
   QDoubleSpinBox* dspbox;
   QSpinBox* spbox;
 
-  bool* bval;
-  float* fval;
-  int* ival;
-
-  switch (pType)
+  switch (par.m_param_type)
   {
     case M64TYPE_BOOL:
       cbox = new QComboBox ();
-      cbox->setObjectName(pName);
-      cbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+      cbox->setObjectName(QString::fromStdString(par.m_param_name));
       cbox->addItem("true");
       cbox->addItem("false");
-      bval = (bool*)pValue;
-      if (*bval)
+      if (par.getBoolValue())
         cbox->setCurrentIndex(cbox->findText("true"));
       else
         cbox->setCurrentIndex(cbox->findText("false"));
       ui.gl_PluginParams->addWidget(cbox, line, column + 1);
       connect(cbox, SIGNAL(currentIndexChanged(int)), this, SLOT(changedBoolSetting(int)));
-
       break;
     case M64TYPE_FLOAT:
       dspbox = new QDoubleSpinBox ();
-      dspbox->setObjectName(pName);
-      dspbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+      dspbox->setObjectName(QString::fromStdString(par.m_param_name));
       dspbox->setMaximum(16000000);
-      fval = (float*)pValue;
-      dspbox->setValue (*fval);
+      dspbox->setValue (par.getFloatValue());
       ui.gl_PluginParams->addWidget(dspbox, line, column + 1);
       connect(dspbox, SIGNAL(valueChanged(double)), this, SLOT(changedFloatSetting(double)));
       break;
     case M64TYPE_INT:
       spbox = new QSpinBox ();
-      spbox->setObjectName(pName);
-      spbox->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+      spbox->setObjectName(QString::fromStdString(par.m_param_name));
       spbox->setMaximum(65535);
-      ival = (int*)pValue;
-      spbox->setValue (*ival);
+      spbox->setValue (par.getIntValue());
       ui.gl_PluginParams->addWidget(spbox, line, column + 1);
       connect(spbox, SIGNAL(valueChanged(int)), this, SLOT(changedIntSetting(int)));
       break;
     case M64TYPE_STRING:
-      QString tmp ((const char*)pValue);
-      ledit = new QLineEdit (tmp.toLocal8Bit().constData());
-      ledit->setObjectName(pName);
-      ledit->setToolTip((*ConfigGetParameterHelp)(cfgHandle, pName));
+      ledit = new QLineEdit (QString::fromStdString(par.getStringValue()));
+      ledit->setObjectName(QString::fromStdString(par.m_param_name));
       ui.gl_PluginParams->addWidget(ledit, line, column + 1);
       connect(ledit, SIGNAL(editingFinished()), this, SLOT(changedStringSetting()));
   }
-
   if (line < 12)
     line++;
   else
@@ -128,38 +116,47 @@ void PluginDialog::changedBoolSetting (int index)
     newValue = true;
   else
     newValue = false;
-  //qDebug () << sender()->objectName() << "=" << (newValue ? "true" : "false");
-  (*ConfigSetParameter)(cfgHandle,
-      sender()->objectName().toLocal8Bit().constData(),
-      M64TYPE_BOOL,
-      &newValue);
+
+  ConfigParam* par = config->getParamWithName(
+              sender()->objectName().toLocal8Bit().constData());
+  if (par)
+      par->setBoolValue(newValue);
+  else
+      qDebug () << "PluginDialog : no param named" << sender()->objectName().toLocal8Bit().constData();
+  saveConfig();
 }
 
 void PluginDialog::changedFloatSetting (double value)
 {
   float newValue = (float) value;
-  //qDebug () << "Float param" << sender()->objectName().toLocal8Bit().constData() << "=" << newValue;
-  (*ConfigSetParameter)(cfgHandle,
-      sender()->objectName().toLocal8Bit().constData(),
-      M64TYPE_FLOAT,
-      &newValue);
+  ConfigParam* par = config->getParamWithName(
+              sender()->objectName().toLocal8Bit().constData());
+  if (par)
+      par->setFloatValue(newValue);
+  else
+      qDebug () << "PluginDialog : no param named" << sender()->objectName().toLocal8Bit().constData();
+  saveConfig();
 }
 
 void PluginDialog::changedIntSetting (int value)
 {
-  //qDebug () << "Int param" << sender()->objectName().toLocal8Bit().constData() << "=" << value;
-  (*ConfigSetParameter)(cfgHandle,
-      sender()->objectName().toLocal8Bit().constData(),
-      M64TYPE_INT,
-      &value);
+    ConfigParam* par = config->getParamWithName(
+                sender()->objectName().toLocal8Bit().constData());
+    if (par)
+        par->setIntValue(value);
+    else
+        qDebug () << "PluginDialog : no param named" << sender()->objectName().toLocal8Bit().constData();
+    saveConfig();
 }
 
 void PluginDialog::changedStringSetting ()
 {
   QLineEdit* ledit = (QLineEdit*)sender();
-  //qDebug () << "String param" << sender()->objectName().toLocal8Bit().constData() << "=" << ledit->text();
-  (*ConfigSetParameter)(cfgHandle,
-      sender()->objectName().toLocal8Bit().constData(),
-      M64TYPE_STRING,
-      ledit->text().toLocal8Bit().constData());
+  ConfigParam* par = config->getParamWithName(
+              sender()->objectName().toLocal8Bit().constData());
+  if (par)
+      par->setStringValue(ledit->text().toLocal8Bit().constData());
+  else
+      qDebug () << "PluginDialog : no param named" << sender()->objectName().toLocal8Bit().constData();
+  saveConfig();
 }
