@@ -103,12 +103,14 @@ int MainWindow::clickedROM(const QModelIndex & index)
   if (fsmodel->isDir(index))
       return 0;
   ROMFile = fsmodel->filePath(index);
-  //FIXME: doesn't cope well with non-ASCII paths
+  //FIXME: doesn't cope well with non-ASCII paths on Windows
+#if 0
   if (m_api)
   {
       Mupen64PlusPlus::RomInfo info = m_api->getRomInfo(ROMFile);
       ui->statusBar->showMessage(info.name);
   }
+#endif
   return 0;
 }
 

@@ -192,15 +192,17 @@ void MainWindow::editedMupen64DataDir()
 
 void MainWindow::UpdateM64DataDir()
 {
-#if 0
-  // Save the chosen directory in CuteMupen config
-  QSettings settings ("CuteMupen", "CuteMupen");
-  settings.setIniCodec("UTF-8");
-  settings.setValue("Paths/Mupen64DataDir", Mupen64DataDir);
-  // Set label to the chosen directory
-  if (!Mupen64DataDir.isEmpty())
-    ui->le_DataDir->setText(Mupen64DataDir);
-#endif
+  if (QFile::exists(Mupen64DataDir))
+  {
+    // Save the chosen directory in Core config section
+    ConfigSection* cfg = GetSection("Core");
+    if (cfg)
+    {
+        cfg->getParamWithName("SharedDataPath")->setStringValue(Mupen64DataDir.toStdString());
+        ui->le_DataDir->setText(Mupen64DataDir);
+        saveConfig();
+    }
+  }
 }
 
 void MainWindow::chooseMupen64ConfigDir(bool skipDialog)
@@ -231,15 +233,18 @@ void MainWindow::editedMupen64ConfigDir()
 
 void MainWindow::UpdateM64ConfigDir()
 {
-#if 0
-  // Save the chosen directory in CuteMupen config
-  QSettings settings ("CuteMupen", "CuteMupen");
-  settings.setIniCodec("UTF-8");
-  settings.setValue("Paths/Mupen64ConfigDir", Mupen64ConfigDir);
-  // Set label to the chosen directory
   if (!Mupen64ConfigDir.isEmpty())
-    ui->le_ConfigDir->setText(Mupen64ConfigDir);
-#endif
+  {
+    // Save the chosen directory in CuteMupen config
+    ConfigSection* cfg = GetSection("UI-CuteMupen");
+    if (cfg)
+    {
+        cfg->getParamWithName("ConfigDir")->setStringValue(Mupen64ConfigDir.toStdString());
+        // Set label to the chosen directory
+        ui->le_ConfigDir->setText(Mupen64ConfigDir);
+        saveConfig();
+    }
+  }
 }
 
 void MainWindow::chooseROMsDir(bool skipDialog)
