@@ -54,6 +54,7 @@ PluginDialog::~PluginDialog()
 
 void PluginDialog::AddParameter (ConfigParam& par)
 {
+  // Fill a label with param name and set tooltip with param help text
   QLabel* label = new QLabel (QString::fromStdString(par.m_param_name));
   label->setToolTip(QString::fromStdString(par.m_help_string));
   ui.gl_PluginParams->addWidget(label, line, column, Qt::AlignRight|Qt::AlignVCenter);
@@ -63,6 +64,7 @@ void PluginDialog::AddParameter (ConfigParam& par)
   QDoubleSpinBox* dspbox;
   QSpinBox* spbox;
 
+  // Add a widget with param value depending on its type
   switch (par.m_param_type)
   {
     case M64TYPE_BOOL:
