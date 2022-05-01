@@ -13,7 +13,7 @@ windows:LIBS += C:\\dev\\lib\\zlib.lib \
 
 # On other systems (GNU/Linux, Mac OS X, ...), the path to Mupen64Plus API files
 !win32:INCLUDEPATH += /usr/include/mupen64plus
-
+QT += widgets
 # -------------------------------------------------
 CONFIG += debug
 TARGET = cutemupen
