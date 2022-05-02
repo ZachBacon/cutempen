@@ -22,11 +22,11 @@
 #ifndef INPUTDIALOG_H
 #define INPUTDIALOG_H
 
-#include <QtGui/QDialog>
+#include <QtGui>
 #include "ui_inputdialog.h"
 
 #include <QDebug>
-#include <QTabWidget>
+#include <QWidget>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QVector>

@@ -22,7 +22,7 @@
 #ifndef PLUGINDIALOG_H
 #define PLUGINDIALOG_H
 
-#include <QtGui/QDialog>
+#include <QtGui>
 #include "ui_plugindialog.h"
 
 #include "m64p_types.h"

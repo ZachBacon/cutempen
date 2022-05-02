@@ -32,7 +32,7 @@
 //#include <wx/progdlg.h>
 #include <QFile>
 #include <QProgressDialog>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 void Mupen64PlusPlus::StateCallback(void *Context, m64p_core_param param_type, int new_value)
 {
